@@ -1,4 +1,4 @@
-// Create a button element
+// Создание кнопки микрофона
 const micButton = document.createElement('button');
 micButton.innerHTML = '🎤';
 micButton.style.position = 'absolute';
@@ -12,55 +12,69 @@ micButton.style.width = '40px';
 micButton.style.height = '40px';
 micButton.style.cursor = 'pointer';
 
-// Append the button to the body
+// Добавление кнопки на страницу
 document.body.appendChild(micButton);
 
-// Web Speech API setup
-let recognition;
+// Переменные для состояния записи и распознавания речи
+let isListening = false;
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
 
-if ('webkitSpeechRecognition' in window) {
-  recognition = new webkitSpeechRecognition();
-} else if ('SpeechRecognition' in window) {
-  recognition = new SpeechRecognition();
-} else {
-  alert("Ваш браузер не поддерживает Web Speech API");
-}
+// Настройка распознавания речи
+recognition.continuous = true;
+recognition.interimResults = true;
+recognition.lang = 'ru-RU'; // Устанавливаем язык на русский
 
-if (recognition) {
-  recognition.continuous = false;
-  recognition.interimResults = true;
-  recognition.lang = 'ru-RU'; // Устанавливаем язык на русский
+let finalTranscript = '';
+let interimTranscript = '';
 
-  recognition.onstart = () => {
-    console.log('Recognition started');
-  };
+recognition.onresult = (event) => {
+  interimTranscript = '';
+  let finalTranscriptFragment = '';
 
-  recognition.onresult = (event) => {
-    let finalTranscript = '';
+  for (let i = event.resultIndex; i < event.results.length; ++i) {
+    const transcript = event.results[i][0].transcript;
 
-    for (let i = 0; i < event.results.length; i++) {
-      const transcript = event.results[i][0].transcript;
-      if (event.results[i].isFinal) {
-        finalTranscript += transcript;
-      }
+    if (event.results[i].isFinal) {
+      finalTranscriptFragment += transcript + ' ';
+    } else {
+      interimTranscript += transcript;
     }
+  }
 
-    const inputField = document.querySelector('#prompt-textarea');
-    if (inputField) {
-      inputField.value = finalTranscript;
-      inputField.dispatchEvent(new Event('input'));
-    }
-  };
+  finalTranscript += finalTranscriptFragment;
 
-  recognition.onerror = (event) => {
-    console.error('Recognition error!!', event);
-  };
+  const inputField = document.querySelector('#prompt-textarea');
+  if (inputField) {
+    inputField.value = finalTranscript + interimTranscript;
+    inputField.dispatchEvent(new Event('input'));
+  }
+};
 
-  recognition.onend = () => {
-    console.log('Recognition ended');
-  };
+recognition.onerror = (event) => {
+  console.error('Recognition error', event);
+  isListening = false;
+  micButton.style.backgroundColor = '#fff'; // Возвращаем цвет кнопки к исходному
+};
 
-  micButton.addEventListener('click', () => {
+recognition.onend = () => {
+  if (isListening) {
+    recognition.start(); // Перезапуск записи, если она должна продолжаться
+  } else {
+    micButton.style.backgroundColor = '#fff'; // Возвращаем цвет кнопки к исходному
+  }
+};
+
+micButton.addEventListener('click', () => {
+  const inputField = document.querySelector('#prompt-textarea');
+  if (isListening) {
+    recognition.stop();
+    isListening = false;
+  } else {
+    finalTranscript = inputField.value; // Сохраняем текущий текст при начале новой записи
+    interimTranscript = '';
     recognition.start();
-  });
-}
+    isListening = true;
+  }
+  micButton.style.backgroundColor = isListening ? 'red' : '#fff';
+});
