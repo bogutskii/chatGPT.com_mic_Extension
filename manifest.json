@@ -5,7 +5,8 @@
   "description": "Adds a voice-to-text button to ChatGPT input field.",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage"
   ],
   "background": {
     "service_worker": "background.js"

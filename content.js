@@ -12,8 +12,34 @@ micButton.style.width = '40px';
 micButton.style.height = '40px';
 micButton.style.cursor = 'pointer';
 
-// Добавление кнопки на страницу
+// Создание селектора для выбора языка
+const languageSelector = document.createElement('select');
+languageSelector.style.position = 'absolute';
+languageSelector.style.right = '60px';
+languageSelector.style.bottom = '10px';
+languageSelector.style.zIndex = '1000';
+
+// Добавление опций языка
+const languages = [
+  { code: 'ru-RU', name: 'Русский' },
+  { code: 'en-US', name: 'English' },
+  { code: 'fr-FR', name: 'Français' },
+  { code: 'es-ES', name: 'Español' },
+  { code: 'pt-PT', name: 'Português' },
+  { code: 'uk-UA', name: 'Українська' },
+  // Добавьте другие языки, если необходимо
+];
+
+languages.forEach(lang => {
+  const option = document.createElement('option');
+  option.value = lang.code;
+  option.textContent = lang.name;
+  languageSelector.appendChild(option);
+});
+
+// Добавление кнопки и селектора на страницу
 document.body.appendChild(micButton);
+document.body.appendChild(languageSelector);
 
 // Переменные для состояния записи и распознавания речи
 let isListening = false;
@@ -23,10 +49,40 @@ const recognition = new SpeechRecognition();
 // Настройка распознавания речи
 recognition.continuous = true;
 recognition.interimResults = true;
-recognition.lang = 'ru-RU'; // Устанавливаем язык на русский
+
+// Функция для изменения языка
+const changeLanguage = (language) => {
+  recognition.stop();
+  recognition.lang = language;
+  if (isListening) {
+    recognition.start();
+  }
+};
+
+// Загрузка сохраненного языка из локального хранилища
+chrome.storage.local.get(['recognitionLanguage'], (result) => {
+  if (result.recognitionLanguage) {
+    recognition.lang = result.recognitionLanguage;
+    languageSelector.value = result.recognitionLanguage;
+  } else {
+    recognition.lang = 'ru-RU';
+  }
+});
+
+// Обработчик изменения языка
+languageSelector.addEventListener('change', (event) => {
+  const selectedLanguage = event.target.value;
+  chrome.storage.local.set({ recognitionLanguage: selectedLanguage });
+  changeLanguage(selectedLanguage);
+});
 
 let finalTranscript = '';
 let interimTranscript = '';
+
+const resizeTextarea = (textarea) => {
+  textarea.style.height = 'auto';
+  textarea.style.height = textarea.scrollHeight + 'px';
+};
 
 recognition.onresult = (event) => {
   interimTranscript = '';
@@ -48,20 +104,27 @@ recognition.onresult = (event) => {
   if (inputField) {
     inputField.value = finalTranscript + interimTranscript;
     inputField.dispatchEvent(new Event('input'));
+    resizeTextarea(inputField);
   }
 };
 
 recognition.onerror = (event) => {
   console.error('Recognition error', event);
   isListening = false;
-  micButton.style.backgroundColor = '#fff'; // Возвращаем цвет кнопки к исходному
+  micButton.style.backgroundColor = '#fff';
 };
 
 recognition.onend = () => {
   if (isListening) {
-    recognition.start(); // Перезапуск записи, если она должна продолжаться
+    recognition.start();
   } else {
-    micButton.style.backgroundColor = '#fff'; // Возвращаем цвет кнопки к исходному
+    micButton.style.backgroundColor = '#fff';
+    const inputField = document.querySelector('#prompt-textarea');
+    if (inputField) {
+      inputField.value += ' ';
+      inputField.dispatchEvent(new Event('input'));
+      resizeTextarea(inputField);
+    }
   }
 };
 
@@ -71,7 +134,7 @@ micButton.addEventListener('click', () => {
     recognition.stop();
     isListening = false;
   } else {
-    finalTranscript = inputField.value; // Сохраняем текущий текст при начале новой записи
+    finalTranscript = inputField.value;
     interimTranscript = '';
     recognition.start();
     isListening = true;
