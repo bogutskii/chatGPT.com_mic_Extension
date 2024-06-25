@@ -1,4 +1,3 @@
-// Создание кнопки микрофона
 const micButton = document.createElement('button');
 micButton.innerHTML = '🎤';
 micButton.style.position = 'absolute';
@@ -12,14 +11,12 @@ micButton.style.width = '40px';
 micButton.style.height = '40px';
 micButton.style.cursor = 'pointer';
 
-// Создание селектора для выбора языка
 const languageSelector = document.createElement('select');
 languageSelector.style.position = 'absolute';
 languageSelector.style.right = '60px';
 languageSelector.style.bottom = '10px';
 languageSelector.style.zIndex = '1000';
 
-// Добавление опций языка
 const languages = [
   { code: 'ru-RU', name: 'Русский' },
   { code: 'en-US', name: 'English' },
@@ -27,7 +24,6 @@ const languages = [
   { code: 'es-ES', name: 'Español' },
   { code: 'pt-PT', name: 'Português' },
   { code: 'uk-UA', name: 'Українська' },
-  // Добавьте другие языки, если необходимо
 ];
 
 languages.forEach(lang => {
@@ -37,20 +33,16 @@ languages.forEach(lang => {
   languageSelector.appendChild(option);
 });
 
-// Добавление кнопки и селектора на страницу
 document.body.appendChild(micButton);
 document.body.appendChild(languageSelector);
 
-// Переменные для состояния записи и распознавания речи
 let isListening = false;
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 
-// Настройка распознавания речи
 recognition.continuous = true;
 recognition.interimResults = true;
 
-// Функция для изменения языка
 const changeLanguage = (language) => {
   recognition.stop();
   recognition.lang = language;
@@ -59,7 +51,6 @@ const changeLanguage = (language) => {
   }
 };
 
-// Загрузка сохраненного языка из локального хранилища
 chrome.storage.local.get(['recognitionLanguage'], (result) => {
   if (result.recognitionLanguage) {
     recognition.lang = result.recognitionLanguage;
@@ -69,7 +60,6 @@ chrome.storage.local.get(['recognitionLanguage'], (result) => {
   }
 });
 
-// Обработчик изменения языка
 languageSelector.addEventListener('change', (event) => {
   const selectedLanguage = event.target.value;
   chrome.storage.local.set({ recognitionLanguage: selectedLanguage });
@@ -82,6 +72,11 @@ let interimTranscript = '';
 const resizeTextarea = (textarea) => {
   textarea.style.height = 'auto';
   textarea.style.height = textarea.scrollHeight + 'px';
+};
+
+const triggerInputEvent = (inputField) => {
+  const event = new Event('input', { bubbles: true });
+  inputField.dispatchEvent(event);
 };
 
 recognition.onresult = (event) => {
@@ -103,8 +98,8 @@ recognition.onresult = (event) => {
   const inputField = document.querySelector('#prompt-textarea');
   if (inputField) {
     inputField.value = finalTranscript + interimTranscript;
-    inputField.dispatchEvent(new Event('input'));
     resizeTextarea(inputField);
+    triggerInputEvent(inputField);
   }
 };
 
@@ -122,8 +117,8 @@ recognition.onend = () => {
     const inputField = document.querySelector('#prompt-textarea');
     if (inputField) {
       inputField.value += ' ';
-      inputField.dispatchEvent(new Event('input'));
       resizeTextarea(inputField);
+      triggerInputEvent(inputField);
     }
   }
 };
@@ -141,3 +136,12 @@ micButton.addEventListener('click', () => {
   }
   micButton.style.backgroundColor = isListening ? 'red' : '#fff';
 });
+
+// Add event listener for the send button
+const sendButton = document.querySelector('[data-testid="fruitjuice-send-button"]');
+if (sendButton) {
+  sendButton.addEventListener('click', () => {
+    finalTranscript = '';
+    interimTranscript = '';
+  });
+}
