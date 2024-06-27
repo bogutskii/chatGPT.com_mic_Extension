@@ -8,28 +8,21 @@ container.style.alignItems = 'center';
 container.style.gap = '10px';
 
 const micButton = document.createElement('button');
-micButton.innerHTML = '🎤';
-micButton.style.backgroundColor = '#fff';
-micButton.style.border = '1px solid #ccc';
-micButton.style.borderRadius = '50%';
+micButton.style.backgroundColor = 'transparent';
+micButton.style.border = 'none';
 micButton.style.width = '40px';
 micButton.style.height = '40px';
 micButton.style.cursor = 'pointer';
 micButton.style.transition = 'background-color 0.5s ease';
 micButton.style.position = 'relative';
-
-const warningIcon = document.createElement('span');
-warningIcon.innerHTML = '⚠️';
-warningIcon.style.position = 'absolute';
-warningIcon.style.top = '-10px';
-warningIcon.style.right = '-10px';
-warningIcon.style.display = 'none';
+micButton.style.backgroundImage = "url(chrome-extension://" + chrome.runtime.id + "/img/mic_OFF.png)";
+micButton.style.backgroundSize = 'cover';
+micButton.style.backgroundRepeat = 'no-repeat';
 
 const settingsButton = document.createElement('button');
 settingsButton.innerHTML = '⚙️';
-settingsButton.style.backgroundColor = '#b0b1ad';
-settingsButton.style.border = '1px solid #ccc';
-settingsButton.style.borderRadius = '50%';
+settingsButton.style.backgroundColor = 'transparent';
+settingsButton.style.border = 'none';
 settingsButton.style.width = '40px';
 settingsButton.style.height = '40px';
 settingsButton.style.cursor = 'pointer';
@@ -44,7 +37,7 @@ const languages = [
   { code: 'uk-UA', name: 'Українська' },
 ];
 languageSelector.style.color = '#000';
-languageSelector.style.backgroundColor = '#b0b1ad'
+languageSelector.style.backgroundColor = '#f6f6f6';
 languages.forEach(lang => {
   const option = document.createElement('option');
   option.value = lang.code;
@@ -55,7 +48,6 @@ languages.forEach(lang => {
 container.appendChild(micButton);
 container.appendChild(languageSelector);
 container.appendChild(settingsButton);
-micButton.appendChild(warningIcon);
 document.body.appendChild(container);
 
 const modal = document.createElement('div');
@@ -229,23 +221,17 @@ recognition.onresult = (event) => {
     resizeTextarea(inputField);
     triggerInputEvent(inputField);
   }
-
-  if (interimTranscript || finalTranscriptFragment) {
-    warningIcon.style.display = 'none';
-  }
 };
 
 recognition.onerror = (event) => {
   isListening = false;
-  micButton.style.backgroundColor = '#fff';
-  warningIcon.style.display = 'block';
+  micButton.style.backgroundImage = "url(chrome-extension://" + chrome.runtime.id + "/img/mic_ERR.png)";
 };
 
 recognition.onend = () => {
   if (isListening) {
     recognition.start();
   } else {
-    micButton.style.backgroundColor = '#fff';
     const inputField = document.querySelector('#prompt-textarea');
     if (inputField) {
       inputField.value += ' ';
@@ -253,6 +239,7 @@ recognition.onend = () => {
       triggerInputEvent(inputField);
     }
   }
+  micButton.style.backgroundImage = isListening ? "url(chrome-extension://" + chrome.runtime.id + "/img/mic_ON.png)" : "url(chrome-extension://" + chrome.runtime.id + "/img/mic_OFF.png)";
 };
 
 micButton.addEventListener('click', () => {
@@ -266,7 +253,7 @@ micButton.addEventListener('click', () => {
     recognition.start();
     isListening = true;
   }
-  micButton.style.backgroundColor = isListening ? 'red' : '#fff';
+  micButton.style.backgroundImage = isListening ? "url(chrome-extension://" + chrome.runtime.id + "/img/mic_ON.png)" : "url(chrome-extension://" + chrome.runtime.id + "/img/mic_OFF.png)";
 });
 
 document.addEventListener('keydown', (event) => {
@@ -277,6 +264,28 @@ document.addEventListener('keydown', (event) => {
 
 const sendButton = document.querySelector('[data-testid="fruitjuice-send-button"]');
 if (sendButton) {
+  const clearButton = document.createElement('button');
+  clearButton.innerHTML = '🗑️';
+  clearButton.style.marginRight = '10px';
+  clearButton.style.backgroundColor = 'transparent';
+  clearButton.style.border = 'none';
+  clearButton.style.width = '40px';
+  clearButton.style.height = '40px';
+  clearButton.style.cursor = 'pointer';
+  clearButton.style.transition = 'background-color 0.5s ease';
+
+  sendButton.parentNode.insertBefore(clearButton, sendButton);
+
+  clearButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    finalTranscript = '';
+    interimTranscript = '';
+    const inputField = document.querySelector('#prompt-textarea');
+    if (inputField) {
+      inputField.value = '';
+    }
+  });
+
   sendButton.addEventListener('click', () => {
     const inputField = document.querySelector('#prompt-textarea');
     if (inputField) {
@@ -289,10 +298,4 @@ if (sendButton) {
   });
 }
 
-const micButtonAnimation = () => {
-  if (isListening) {
-    micButton.style.backgroundColor = micButton.style.backgroundColor === 'red' ? '#ff8080' : 'red';
-    setTimeout(micButtonAnimation, 500);
-  }
-};
-micButtonAnimation();
+micButton.style.backgroundImage = isListening ? "url(chrome-extension://" + chrome.runtime.id + "/img/mic_ON.png)" : "url(chrome-extension://" + chrome.runtime.id + "/img/mic_OFF.png)";
