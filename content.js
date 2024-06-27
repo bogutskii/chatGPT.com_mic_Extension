@@ -20,12 +20,15 @@ micButton.style.backgroundSize = 'cover';
 micButton.style.backgroundRepeat = 'no-repeat';
 
 const settingsButton = document.createElement('button');
-settingsButton.innerHTML = '⚙️';
 settingsButton.style.backgroundColor = 'transparent';
 settingsButton.style.border = 'none';
 settingsButton.style.width = '40px';
 settingsButton.style.height = '40px';
 settingsButton.style.cursor = 'pointer';
+settingsButton.style.backgroundImage = "url(chrome-extension://" + chrome.runtime.id + "/img/options.png)";
+settingsButton.style.backgroundSize = 'cover';
+settingsButton.style.backgroundRepeat = 'no-repeat';
+
 
 const languageSelector = document.createElement('select');
 const languages = [
@@ -64,6 +67,7 @@ modal.style.border = '1px solid #ccc';
 modal.style.borderRadius = '10px';
 modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
 
+
 const modalOverlay = document.createElement('div');
 modalOverlay.style.display = 'none';
 modalOverlay.style.position = 'fixed';
@@ -75,7 +79,8 @@ modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
 modalOverlay.style.zIndex = '1000';
 
 const modalTitle = document.createElement('h2');
-modalTitle.textContent = 'Settings';
+modalTitle.textContent = 'About';
+modalTitle.style.textAlign = 'center';
 
 const donationLink = document.createElement('a');
 donationLink.href = 'https://buymeacoffee.com/bogutskii';
@@ -85,13 +90,13 @@ donationLink.style.marginTop = '10px';
 donationLink.style.textDecoration = 'underline';
 donationLink.style.color = 'blue';
 
-const feedbackLink = document.createElement('a');
-feedbackLink.href = '#';
-feedbackLink.textContent = 'EmailMe';
-feedbackLink.style.display = 'block';
-feedbackLink.style.marginTop = '10px';
-feedbackLink.style.textDecoration = 'underline';
-feedbackLink.style.color = 'blue';
+const LinkedInLink = document.createElement('a');
+LinkedInLink.href = 'https://www.linkedin.com/in/petr-bogutskii/';
+LinkedInLink.textContent = 'LinkedIn';
+LinkedInLink.style.display = 'block';
+LinkedInLink.style.marginTop = '10px';
+LinkedInLink.style.textDecoration = 'underline';
+LinkedInLink.style.color = 'blue';
 
 const githubLink = document.createElement('a');
 githubLink.href = 'https://github.com/bogutskii';
@@ -105,34 +110,25 @@ const author = document.createElement('div');
 author.textContent = 'Author: Petr Bogutskii';
 author.style.marginTop = '10px';
 
-const saveButton = document.createElement('button');
-saveButton.textContent = 'Save';
-saveButton.style.marginTop = '10px';
-saveButton.style.backgroundColor = '#4CAF50';
-saveButton.style.color = '#fff';
-saveButton.style.border = 'none';
-saveButton.style.padding = '10px 20px';
-saveButton.style.borderRadius = '5px';
-saveButton.style.cursor = 'pointer';
-
-const cancelButton = document.createElement('button');
-cancelButton.textContent = 'Cancel';
-cancelButton.style.marginTop = '10px';
-cancelButton.style.marginLeft = '10px';
-cancelButton.style.backgroundColor = '#f44336';
-cancelButton.style.color = '#fff';
-cancelButton.style.border = 'none';
-cancelButton.style.padding = '10px 20px';
-cancelButton.style.borderRadius = '5px';
-cancelButton.style.cursor = 'pointer';
+const okButton = document.createElement('button');
+okButton.textContent = 'Ok';
+okButton.style.marginTop = '10px';
+okButton.style.backgroundColor = '#4CAF50';
+okButton.style.color = '#fff';
+okButton.style.border = 'none';
+okButton.style.padding = '10px 20px';
+okButton.style.borderRadius = '5px';
+okButton.style.cursor = 'pointer';
+okButton.style.display = 'block';
+okButton.style.margin = '20px auto';
 
 modal.appendChild(modalTitle);
 modal.appendChild(donationLink);
-modal.appendChild(feedbackLink);
+modal.appendChild(LinkedInLink);
 modal.appendChild(githubLink);
 modal.appendChild(author);
-modal.appendChild(saveButton);
-modal.appendChild(cancelButton);
+modal.appendChild(okButton);
+
 document.body.appendChild(modal);
 document.body.appendChild(modalOverlay);
 
@@ -146,12 +142,9 @@ modalOverlay.addEventListener('click', () => {
   modalOverlay.style.display = 'none';
 });
 
-cancelButton.addEventListener('click', () => {
-  modal.style.display = 'none';
-  modalOverlay.style.display = 'none';
-});
 
-saveButton.addEventListener('click', () => {
+
+okButton.addEventListener('click', () => {
   modal.style.display = 'none';
   modalOverlay.style.display = 'none';
 });
@@ -223,7 +216,7 @@ recognition.onresult = (event) => {
   }
 };
 
-recognition.onerror = (event) => {
+recognition.onerror = () => {
   isListening = false;
   micButton.style.backgroundImage = "url(chrome-extension://" + chrome.runtime.id + "/img/mic_ERR.png)";
 };
@@ -265,14 +258,14 @@ document.addEventListener('keydown', (event) => {
 const sendButton = document.querySelector('[data-testid="fruitjuice-send-button"]');
 if (sendButton) {
   const clearButton = document.createElement('button');
-  clearButton.innerHTML = '🗑️';
-  clearButton.style.marginRight = '10px';
   clearButton.style.backgroundColor = 'transparent';
   clearButton.style.border = 'none';
   clearButton.style.width = '40px';
-  clearButton.style.height = '40px';
+  clearButton.style.height = '41px';
   clearButton.style.cursor = 'pointer';
-  clearButton.style.transition = 'background-color 0.5s ease';
+  clearButton.style.backgroundImage = "url(chrome-extension://" + chrome.runtime.id + "/img/clear.png)";
+  clearButton.style.backgroundSize = 'cover';
+  clearButton.style.backgroundRepeat = 'no-repeat';
 
   sendButton.parentNode.insertBefore(clearButton, sendButton);
 
