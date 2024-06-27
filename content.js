@@ -27,7 +27,7 @@ warningIcon.style.display = 'none';
 
 const settingsButton = document.createElement('button');
 settingsButton.innerHTML = '⚙️';
-settingsButton.style.backgroundColor = '#fff';
+settingsButton.style.backgroundColor = '#b0b1ad';
 settingsButton.style.border = '1px solid #ccc';
 settingsButton.style.borderRadius = '50%';
 settingsButton.style.width = '40px';
@@ -43,7 +43,8 @@ const languages = [
   { code: 'pt-PT', name: 'Português' },
   { code: 'uk-UA', name: 'Українська' },
 ];
-
+languageSelector.style.color = '#000';
+languageSelector.style.backgroundColor = '#b0b1ad'
 languages.forEach(lang => {
   const option = document.createElement('option');
   option.value = lang.code;
@@ -58,6 +59,7 @@ micButton.appendChild(warningIcon);
 document.body.appendChild(container);
 
 const modal = document.createElement('div');
+modal.style.color = '#000';
 modal.style.display = 'none';
 modal.style.position = 'fixed';
 modal.style.top = '50%';
@@ -84,7 +86,7 @@ const modalTitle = document.createElement('h2');
 modalTitle.textContent = 'Settings';
 
 const donationLink = document.createElement('a');
-donationLink.href = '#';
+donationLink.href = 'https://buymeacoffee.com/bogutskii';
 donationLink.textContent = 'Donate';
 donationLink.style.display = 'block';
 donationLink.style.marginTop = '10px';
@@ -93,14 +95,14 @@ donationLink.style.color = 'blue';
 
 const feedbackLink = document.createElement('a');
 feedbackLink.href = '#';
-feedbackLink.textContent = 'Feedback';
+feedbackLink.textContent = 'EmailMe';
 feedbackLink.style.display = 'block';
 feedbackLink.style.marginTop = '10px';
 feedbackLink.style.textDecoration = 'underline';
 feedbackLink.style.color = 'blue';
 
 const githubLink = document.createElement('a');
-githubLink.href = 'https://github.com/your-repo';
+githubLink.href = 'https://github.com/bogutskii';
 githubLink.textContent = 'GitHub';
 githubLink.style.display = 'block';
 githubLink.style.marginTop = '10px';
@@ -108,7 +110,7 @@ githubLink.style.textDecoration = 'underline';
 githubLink.style.color = 'blue';
 
 const author = document.createElement('div');
-author.textContent = 'Author: Your Name';
+author.textContent = 'Author: Petr Bogutskii';
 author.style.marginTop = '10px';
 
 const saveButton = document.createElement('button');
@@ -234,7 +236,6 @@ recognition.onresult = (event) => {
 };
 
 recognition.onerror = (event) => {
-  console.error('Recognition error', event);
   isListening = false;
   micButton.style.backgroundColor = '#fff';
   warningIcon.style.display = 'block';
@@ -277,8 +278,14 @@ document.addEventListener('keydown', (event) => {
 const sendButton = document.querySelector('[data-testid="fruitjuice-send-button"]');
 if (sendButton) {
   sendButton.addEventListener('click', () => {
-    finalTranscript = '';
-    interimTranscript = '';
+    const inputField = document.querySelector('#prompt-textarea');
+    if (inputField) {
+      setTimeout(() => {
+        finalTranscript = '';
+        interimTranscript = '';
+        inputField.value = '';
+      }, 10);
+    }
   });
 }
 
