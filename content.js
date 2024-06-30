@@ -32,12 +32,15 @@ settingsButton.style.backgroundRepeat = 'no-repeat';
 
 const languageSelector = document.createElement('select');
 const languages = [
-  { code: 'ru-RU', name: 'Русский' },
   { code: 'en-US', name: 'English' },
+  { code: 'uk-UA', name: 'Українська' },
+  { code: 'ru-RU', name: 'Русский' },
   { code: 'fr-FR', name: 'Français' },
   { code: 'es-ES', name: 'Español' },
   { code: 'pt-PT', name: 'Português' },
-  { code: 'uk-UA', name: 'Українська' },
+  { code: 'ja-JP', name: '日本語' },
+  { code: 'zh-CN', name: '简体中文' }
+
 ];
 languageSelector.style.color = '#000';
 languageSelector.style.backgroundColor = '#f6f6f6';
@@ -122,11 +125,16 @@ okButton.style.cursor = 'pointer';
 okButton.style.display = 'block';
 okButton.style.margin = '20px auto';
 
+const hotkeysInfo = document.createElement('div');
+hotkeysInfo.innerHTML = 'Hotkeys: <b>Control + M</b>';
+hotkeysInfo.style.marginTop = '10px';
+
 modal.appendChild(modalTitle);
 modal.appendChild(donationLink);
 modal.appendChild(LinkedInLink);
 modal.appendChild(githubLink);
 modal.appendChild(author);
+modal.appendChild(hotkeysInfo);
 modal.appendChild(okButton);
 
 document.body.appendChild(modal);
@@ -254,41 +262,51 @@ document.addEventListener('keydown', (event) => {
     micButton.click();
   }
 });
+const ensureClearButton = () => {
+  const sendButton = document.querySelector('[data-testid="fruitjuice-send-button"]');
+  if (sendButton && !document.querySelector('#clearButton')) {
+    const clearButton = document.createElement('button');
+    clearButton.id = 'clearButton';
+    clearButton.style.backgroundColor = 'transparent';
+    clearButton.style.border = 'none';
+    clearButton.style.width = '40px';
+    clearButton.style.height = '41px';
+    clearButton.style.cursor = 'pointer';
+    clearButton.style.backgroundImage = "url(chrome-extension://" + chrome.runtime.id + "/img/clear.png)";
+    clearButton.style.backgroundSize = 'cover';
+    clearButton.style.backgroundRepeat = 'no-repeat';
 
-const sendButton = document.querySelector('[data-testid="fruitjuice-send-button"]');
-if (sendButton) {
-  const clearButton = document.createElement('button');
-  clearButton.style.backgroundColor = 'transparent';
-  clearButton.style.border = 'none';
-  clearButton.style.width = '40px';
-  clearButton.style.height = '41px';
-  clearButton.style.cursor = 'pointer';
-  clearButton.style.backgroundImage = "url(chrome-extension://" + chrome.runtime.id + "/img/clear.png)";
-  clearButton.style.backgroundSize = 'cover';
-  clearButton.style.backgroundRepeat = 'no-repeat';
+    sendButton.parentNode.insertBefore(clearButton, sendButton);
 
-  sendButton.parentNode.insertBefore(clearButton, sendButton);
-
-  clearButton.addEventListener('click', (e) => {
-    e.preventDefault();
-    finalTranscript = '';
-    interimTranscript = '';
-    const inputField = document.querySelector('#prompt-textarea');
-    if (inputField) {
-      inputField.value = '';
-    }
-  });
-
-  sendButton.addEventListener('click', () => {
-    const inputField = document.querySelector('#prompt-textarea');
-    if (inputField) {
-      setTimeout(() => {
-        finalTranscript = '';
-        interimTranscript = '';
+    clearButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      finalTranscript = '';
+      interimTranscript = '';
+      const inputField = document.querySelector('#prompt-textarea');
+      if (inputField) {
         inputField.value = '';
-      }, 10);
-    }
-  });
-}
+      }
+    });
+
+    sendButton.addEventListener('click', () => {
+      const inputField = document.querySelector('#prompt-textarea');
+      if (inputField) {
+        setTimeout(() => {
+          finalTranscript = '';
+          interimTranscript = '';
+          inputField.value = '';
+        }, 10);
+      }
+    });
+  }
+};
+
+ensureClearButton();
+new MutationObserver(ensureClearButton).observe(document.body, { childList: true, subtree: true });
 
 micButton.style.backgroundImage = isListening ? "url(chrome-extension://" + chrome.runtime.id + "/img/mic_ON.png)" : "url(chrome-extension://" + chrome.runtime.id + "/img/mic_OFF.png)";
+
+
+
+
+
