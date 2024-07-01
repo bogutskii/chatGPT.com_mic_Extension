@@ -30,21 +30,9 @@ settingsButton.style.backgroundSize = 'cover';
 settingsButton.style.backgroundRepeat = 'no-repeat';
 
 const languageSelector = document.createElement('select');
-// const languages = [
-//   {code: 'en-US', name: 'English'},
-//   {code: 'uk-UA', name: 'Українська'},
-//   {code: 'ru-RU', name: 'Русский'},
-//   {code: 'fr-FR', name: 'Français'},
-//   {code: 'es-ES', name: 'Español'},
-//   {code: 'pt-PT', name: 'Português'},
-//   {code: 'ja-JP', name: '日本語'},
-//   {code: 'zh-CN', name: '简体中文'}
-// ];
-
 const languages = [
   { code: 'en-US', name: 'English (US)' },
   { code: 'en-GB', name: 'English (UK)' },
-  { code: 'ru-RU', name: 'Русский (Russian)' },
   { code: 'af-ZA', name: 'Afrikaans' },
   { code: 'sq-AL', name: 'Shqip (Albanian)' },
   { code: 'am-ET', name: 'አማርኛ (Amharic)' },
@@ -98,6 +86,7 @@ const languages = [
   { code: 'pt-PT', name: 'Português (European)' },
   { code: 'pa-IN', name: 'ਪੰਜਾਬੀ (Punjabi)' },
   { code: 'ro-RO', name: 'Română (Romanian)' },
+  { code: 'ru-RU', name: 'Русский' },
   { code: 'sr-RS', name: 'Српски (Serbian)' },
   { code: 'si-LK', name: 'සිංහල (Sinhala)' },
   { code: 'sk-SK', name: 'Slovenčina' },
@@ -119,14 +108,37 @@ const languages = [
 
 languageSelector.style.color = '#000';
 languageSelector.style.backgroundColor = '#f6f6f6';
-languages.forEach(lang => {
-  const option = document.createElement('option');
-  option.value = lang.code;
-  option.textContent = lang.name;
-  languageSelector.appendChild(option);
-});
 
-// Adding micButton before languageSelector by default
+// Load favorite languages from local storage
+let favoriteLanguages = [
+  { code: 'en-US', name: 'English (US)' },
+  { code: 'uk-UA', name: 'Українська' },
+  { code: 'ru-RU', name: 'Русский' }];
+
+const loadFavoriteLanguages = () => {
+  chrome.storage.local.get(['favoriteLanguages'], (result) => {
+    if (result.favoriteLanguages) {
+      favoriteLanguages = result.favoriteLanguages;
+      updateLanguageSelector();
+    }
+  });
+};
+
+const updateLanguageSelector = () => {
+  languageSelector.innerHTML = '';
+  favoriteLanguages.forEach(langCode => {
+    const lang = languages.find(l => l.code === langCode);
+    if (lang) {
+      const option = document.createElement('option');
+      option.value = lang.code;
+      option.textContent = lang.name;
+      languageSelector.appendChild(option);
+    }
+  });
+};
+
+loadFavoriteLanguages();
+
 container.appendChild(micButton);
 container.appendChild(languageSelector);
 container.appendChild(settingsButton);
@@ -157,7 +169,7 @@ modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
 modalOverlay.style.zIndex = '1000';
 
 const modalTitle = document.createElement('h2');
-modalTitle.textContent = 'About';
+modalTitle.textContent = 'Settings';
 modalTitle.style.textAlign = 'center';
 
 const donationLink = document.createElement('a');
@@ -210,8 +222,8 @@ micPositionInfo.textContent = 'Microphone Position:';
 
 const micPositionSelector = document.createElement('select');
 const positions = [
-  {value: 'default', name: 'Default'},
-  {value: 'input', name: 'In Input'}
+  { value: 'default', name: 'Default' },
+  { value: 'input', name: 'In Input' }
 ];
 positions.forEach(pos => {
   const option = document.createElement('option');
@@ -222,6 +234,29 @@ positions.forEach(pos => {
 
 micPositionInfo.appendChild(micPositionSelector);
 modal.appendChild(micPositionInfo);
+
+const languageListInfo = document.createElement('div');
+languageListInfo.textContent = 'Select Favorite Languages:';
+
+const languageList = document.createElement('div');
+languageList.style.width = '100%';
+languageList.style.height = '200px';
+languageList.style.overflowY = 'scroll';
+
+languages.forEach(lang => {
+  const label = document.createElement('label');
+  label.style.display = 'block';
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.value = lang.code;
+  checkbox.checked = favoriteLanguages.includes(lang.code);
+  label.appendChild(checkbox);
+  label.appendChild(document.createTextNode(lang.name));
+  languageList.appendChild(label);
+});
+
+languageListInfo.appendChild(languageList);
+modal.appendChild(languageListInfo);
 
 modal.appendChild(modalTitle);
 modal.appendChild(donationLink);
@@ -249,8 +284,12 @@ okButton.addEventListener('click', () => {
   modalOverlay.style.display = 'none';
   // Save microphone position
   const micPosition = micPositionSelector.value;
-  chrome.storage.local.set({micPosition});
+  chrome.storage.local.set({ micPosition });
   positionMicButton(micPosition);
+  // Save favorite languages
+  favoriteLanguages = Array.from(languageList.querySelectorAll('input:checked')).map(input => input.value);
+  chrome.storage.local.set({ favoriteLanguages });
+  updateLanguageSelector();
 });
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -282,7 +321,7 @@ chrome.storage.local.get(['recognitionLanguage', 'micPosition'], (result) => {
 
 languageSelector.addEventListener('change', (event) => {
   const selectedLanguage = event.target.value;
-  chrome.storage.local.set({recognitionLanguage: selectedLanguage});
+  chrome.storage.local.set({ recognitionLanguage: selectedLanguage });
   changeLanguage(selectedLanguage);
 });
 
@@ -296,7 +335,7 @@ const resizeTextarea = (textarea) => {
 };
 
 const triggerInputEvent = (inputField) => {
-  const event = new Event('input', {bubbles: true});
+  const event = new Event('input', { bubbles: true });
   inputField.dispatchEvent(event);
 };
 
@@ -403,7 +442,7 @@ const ensureClearButton = () => {
 };
 
 ensureClearButton();
-new MutationObserver(ensureClearButton).observe(document.body, {childList: true, subtree: true});
+new MutationObserver(ensureClearButton).observe(document.body, { childList: true, subtree: true });
 
 const positionMicButton = (position) => {
   const inputField = document.querySelector('#prompt-textarea');
