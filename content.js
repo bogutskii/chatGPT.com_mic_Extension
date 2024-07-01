@@ -86,7 +86,7 @@ const languages = [
   { code: 'pt-PT', name: 'Português (European)' },
   { code: 'pa-IN', name: 'ਪੰਜਾਬੀ (Punjabi)' },
   { code: 'ro-RO', name: 'Română (Romanian)' },
-  { code: 'ru-RU', name: 'Русский' },
+  { code: 'ru-RU', name: 'Русский (Russian)' },
   { code: 'sr-RS', name: 'Српски (Serbian)' },
   { code: 'si-LK', name: 'සිංහල (Sinhala)' },
   { code: 'sk-SK', name: 'Slovenčina' },
@@ -111,9 +111,8 @@ languageSelector.style.backgroundColor = '#f6f6f6';
 
 // Load favorite languages from local storage
 let favoriteLanguages = [
-  { code: 'en-US', name: 'English (US)' },
-  { code: 'uk-UA', name: 'Українська' },
-  { code: 'ru-RU', name: 'Русский' }];
+  'en-US', 'uk-UA', 'ru-RU'
+];
 
 const loadFavoriteLanguages = () => {
   chrome.storage.local.get(['favoriteLanguages'], (result) => {
@@ -200,8 +199,13 @@ const author = document.createElement('div');
 author.textContent = 'Author: Petr Bogutskii';
 author.style.marginTop = '10px';
 
+const buttonContainer = document.createElement('div');
+buttonContainer.style.display = 'flex';
+buttonContainer.style.justifyContent = 'center';
+buttonContainer.style.gap = '10px'; // Расстояние между кнопками
+
 const okButton = document.createElement('button');
-okButton.textContent = 'Ok';
+okButton.textContent = 'Save';
 okButton.style.marginTop = '10px';
 okButton.style.backgroundColor = '#4CAF50';
 okButton.style.color = '#fff';
@@ -211,6 +215,18 @@ okButton.style.borderRadius = '5px';
 okButton.style.cursor = 'pointer';
 okButton.style.display = 'block';
 okButton.style.margin = '20px auto';
+
+const cancelButton = document.createElement('button');
+cancelButton.textContent = 'Cancel';
+cancelButton.style.marginTop = '10px';
+cancelButton.style.backgroundColor = '#8f8f8f';
+cancelButton.style.color = '#fff';
+cancelButton.style.border = 'none';
+cancelButton.style.padding = '10px 20px';
+cancelButton.style.borderRadius = '5px';
+cancelButton.style.cursor = 'pointer';
+cancelButton.style.display = 'block';
+cancelButton.style.margin = '20px auto';
 
 const hotkeysInfo = document.createElement('div');
 hotkeysInfo.innerHTML = 'Hotkeys: <b>Control + M</b>';
@@ -264,7 +280,9 @@ modal.appendChild(LinkedInLink);
 modal.appendChild(githubLink);
 modal.appendChild(author);
 modal.appendChild(hotkeysInfo);
-modal.appendChild(okButton);
+modal.appendChild(buttonContainer);
+buttonContainer.appendChild(okButton);
+buttonContainer.appendChild(cancelButton);
 
 document.body.appendChild(modal);
 document.body.appendChild(modalOverlay);
@@ -290,6 +308,11 @@ okButton.addEventListener('click', () => {
   favoriteLanguages = Array.from(languageList.querySelectorAll('input:checked')).map(input => input.value);
   chrome.storage.local.set({ favoriteLanguages });
   updateLanguageSelector();
+});
+
+cancelButton.addEventListener('click', () => {
+  modal.style.display = 'none';
+  modalOverlay.style.display = 'none';
 });
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -382,7 +405,8 @@ recognition.onend = () => {
   micButton.style.backgroundImage = isListening ? "url(chrome-extension://" + chrome.runtime.id + "/img/mic_ON.png)" : "url(chrome-extension://" + chrome.runtime.id + "/img/mic_OFF.png)";
 };
 
-micButton.addEventListener('click', () => {
+micButton.addEventListener('click', (event) => {
+  event.preventDefault();
   const inputField = document.querySelector('#prompt-textarea');
   if (isListening) {
     recognition.stop();
@@ -398,6 +422,7 @@ micButton.addEventListener('click', () => {
 
 document.addEventListener('keydown', (event) => {
   if (event.ctrlKey && event.key === 'm') {
+    event.stopPropagation();
     micButton.click();
   }
 });

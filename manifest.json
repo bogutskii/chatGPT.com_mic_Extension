@@ -1,11 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Voice to Text for ChatGPT",
-  "version": "1.0",
+  "version": "1.5",
   "description": "Adds a voice-to-text button to ChatGPT input field.",
   "permissions": [
-    "activeTab",
-    "scripting",
     "storage"
   ],
   "background": {
@@ -24,7 +22,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["img/mic_OFF.png", "img/mic_ON.png", "img/mic_ERR.png", "img/options.png", "img/clear.png"],
+      "resources": ["img/*"],
       "matches": ["<all_urls>"]
     }
   ]
