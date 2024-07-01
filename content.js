@@ -105,7 +105,6 @@ const languages = [
   { code: 'xh-ZA', name: 'isiXhosa (Xhosa)' },
   { code: 'zu-ZA', name: 'isiZulu (Zulu)' },
 ];
-
 languageSelector.style.color = '#000';
 languageSelector.style.backgroundColor = '#f6f6f6';
 
@@ -156,6 +155,9 @@ modal.style.padding = '20px';
 modal.style.border = '1px solid #ccc';
 modal.style.borderRadius = '10px';
 modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+modal.style.transition = 'all 0.3s ease-in-out';
+modal.style.width = '400px';
+modal.style.maxWidth = '90%';
 
 const modalOverlay = document.createElement('div');
 modalOverlay.style.display = 'none';
@@ -170,6 +172,9 @@ modalOverlay.style.zIndex = '1000';
 const modalTitle = document.createElement('h2');
 modalTitle.textContent = 'Settings';
 modalTitle.style.textAlign = 'center';
+modalTitle.style.marginBottom = '20px';
+modalTitle.style.fontSize = '1.5em';
+modalTitle.style.color = '#800080';
 
 const donationLink = document.createElement('a');
 donationLink.href = 'https://buymeacoffee.com/bogutskii';
@@ -177,7 +182,8 @@ donationLink.textContent = 'Donate';
 donationLink.style.display = 'block';
 donationLink.style.marginTop = '10px';
 donationLink.style.textDecoration = 'underline';
-donationLink.style.color = 'blue';
+donationLink.style.color = '#800080';
+donationLink.style.textAlign = 'center';
 
 const LinkedInLink = document.createElement('a');
 LinkedInLink.href = 'https://www.linkedin.com/in/petr-bogutskii/';
@@ -185,7 +191,8 @@ LinkedInLink.textContent = 'LinkedIn';
 LinkedInLink.style.display = 'block';
 LinkedInLink.style.marginTop = '10px';
 LinkedInLink.style.textDecoration = 'underline';
-LinkedInLink.style.color = 'blue';
+LinkedInLink.style.color = '#800080';
+LinkedInLink.style.textAlign = 'center';
 
 const githubLink = document.createElement('a');
 githubLink.href = 'https://github.com/bogutskii';
@@ -193,21 +200,23 @@ githubLink.textContent = 'GitHub';
 githubLink.style.display = 'block';
 githubLink.style.marginTop = '10px';
 githubLink.style.textDecoration = 'underline';
-githubLink.style.color = 'blue';
+githubLink.style.color = '#800080';
+githubLink.style.textAlign = 'center';
 
 const author = document.createElement('div');
 author.textContent = 'Author: Petr Bogutskii';
 author.style.marginTop = '10px';
+author.style.textAlign = 'center';
 
 const buttonContainer = document.createElement('div');
 buttonContainer.style.display = 'flex';
 buttonContainer.style.justifyContent = 'center';
-buttonContainer.style.gap = '10px'; // Расстояние между кнопками
+buttonContainer.style.gap = '10px';
 
 const okButton = document.createElement('button');
 okButton.textContent = 'Save';
 okButton.style.marginTop = '10px';
-okButton.style.backgroundColor = '#4CAF50';
+okButton.style.backgroundColor = '#800080';
 okButton.style.color = '#fff';
 okButton.style.border = 'none';
 okButton.style.padding = '10px 20px';
@@ -231,10 +240,18 @@ cancelButton.style.margin = '20px auto';
 const hotkeysInfo = document.createElement('div');
 hotkeysInfo.innerHTML = 'Hotkeys: <b>Control + M</b>';
 hotkeysInfo.style.marginTop = '10px';
+hotkeysInfo.style.textAlign = 'center';
 
 // Option to choose microphone position
+const micPositionContainer = document.createElement('div');
+micPositionContainer.style.backgroundColor = '#f9f9f9';
+micPositionContainer.style.padding = '10px';
+micPositionContainer.style.borderRadius = '5px';
+micPositionContainer.style.marginBottom = '10px';
+
 const micPositionInfo = document.createElement('div');
 micPositionInfo.textContent = 'Microphone Position:';
+micPositionInfo.style.fontWeight = 'bold';
 
 const micPositionSelector = document.createElement('select');
 const positions = [
@@ -248,20 +265,32 @@ positions.forEach(pos => {
   micPositionSelector.appendChild(option);
 });
 
-micPositionInfo.appendChild(micPositionSelector);
-modal.appendChild(micPositionInfo);
+micPositionContainer.appendChild(micPositionInfo);
+micPositionContainer.appendChild(micPositionSelector);
+
+// Language settings
+const languageContainer = document.createElement('div');
+languageContainer.style.backgroundColor = '#f9f9f9';
+languageContainer.style.padding = '10px';
+languageContainer.style.borderRadius = '5px';
+languageContainer.style.marginBottom = '10px';
 
 const languageListInfo = document.createElement('div');
 languageListInfo.textContent = 'Select Favorite Languages:';
+languageListInfo.style.fontWeight = 'bold';
 
 const languageList = document.createElement('div');
 languageList.style.width = '100%';
 languageList.style.height = '200px';
 languageList.style.overflowY = 'scroll';
+languageList.style.border = '1px solid #ccc';
+languageList.style.borderRadius = '5px';
 
 languages.forEach(lang => {
   const label = document.createElement('label');
   label.style.display = 'block';
+  label.style.padding = '5px';
+  label.style.cursor = 'pointer';
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.value = lang.code;
@@ -271,18 +300,42 @@ languages.forEach(lang => {
   languageList.appendChild(label);
 });
 
-languageListInfo.appendChild(languageList);
-modal.appendChild(languageListInfo);
+languageContainer.appendChild(languageListInfo);
+languageContainer.appendChild(languageList);
+
+// Autogeneration setting
+const autogenerationContainer = document.createElement('div');
+autogenerationContainer.style.backgroundColor = '#f9f9f9';
+autogenerationContainer.style.padding = '10px';
+autogenerationContainer.style.borderRadius = '5px';
+autogenerationContainer.style.marginBottom = '10px';
+
+const autogenerationInfo = document.createElement('label');
+autogenerationInfo.style.display = 'flex';
+autogenerationInfo.style.alignItems = 'center';
+autogenerationInfo.style.fontWeight = 'bold';
+autogenerationInfo.textContent = 'Autogenerate responses:';
+
+const autogenerationCheckbox = document.createElement('input');
+autogenerationCheckbox.type = 'checkbox';
+autogenerationCheckbox.id = 'autogenerationCheckbox';
+autogenerationCheckbox.style.marginLeft = '10px';
+
+autogenerationInfo.appendChild(autogenerationCheckbox);
+autogenerationContainer.appendChild(autogenerationInfo);
 
 modal.appendChild(modalTitle);
+modal.appendChild(languageContainer);
+modal.appendChild(micPositionContainer);
+modal.appendChild(autogenerationContainer);
 modal.appendChild(donationLink);
 modal.appendChild(LinkedInLink);
 modal.appendChild(githubLink);
 modal.appendChild(author);
 modal.appendChild(hotkeysInfo);
-modal.appendChild(buttonContainer);
 buttonContainer.appendChild(okButton);
 buttonContainer.appendChild(cancelButton);
+modal.appendChild(buttonContainer);
 
 document.body.appendChild(modal);
 document.body.appendChild(modalOverlay);
@@ -300,14 +353,14 @@ modalOverlay.addEventListener('click', () => {
 okButton.addEventListener('click', () => {
   modal.style.display = 'none';
   modalOverlay.style.display = 'none';
-  // Save microphone position
   const micPosition = micPositionSelector.value;
   chrome.storage.local.set({ micPosition });
   positionMicButton(micPosition);
-  // Save favorite languages
   favoriteLanguages = Array.from(languageList.querySelectorAll('input:checked')).map(input => input.value);
   chrome.storage.local.set({ favoriteLanguages });
   updateLanguageSelector();
+  const isAutoGenerationEnabled = autogenerationCheckbox.checked;
+  chrome.storage.local.set({ isAutoGenerationEnabled });
 });
 
 cancelButton.addEventListener('click', () => {
@@ -329,7 +382,7 @@ const changeLanguage = (language) => {
   }
 };
 
-chrome.storage.local.get(['recognitionLanguage', 'micPosition'], (result) => {
+chrome.storage.local.get(['recognitionLanguage', 'micPosition', 'isAutoGenerationEnabled'], (result) => {
   if (result.recognitionLanguage) {
     recognition.lang = result.recognitionLanguage;
     languageSelector.value = result.recognitionLanguage;
@@ -339,6 +392,9 @@ chrome.storage.local.get(['recognitionLanguage', 'micPosition'], (result) => {
   if (result.micPosition) {
     micPositionSelector.value = result.micPosition;
     positionMicButton(result.micPosition);
+  }
+  if (result.isAutoGenerationEnabled !== undefined) {
+    autogenerationCheckbox.checked = result.isAutoGenerationEnabled;
   }
 });
 
@@ -411,11 +467,13 @@ micButton.addEventListener('click', (event) => {
   if (isListening) {
     recognition.stop();
     isListening = false;
+    chrome.storage.local.set({ recognitionLanguage: languageSelector.value }); // Save the language when stopping
   } else {
     finalTranscript = inputField.value;
     interimTranscript = '';
     recognition.start();
     isListening = true;
+    chrome.storage.local.set({ recognitionLanguage: languageSelector.value }); // Save the language when starting
   }
   micButton.style.backgroundImage = isListening ? "url(chrome-extension://" + chrome.runtime.id + "/img/mic_ON.png)" : "url(chrome-extension://" + chrome.runtime.id + "/img/mic_OFF.png)";
 });
@@ -491,3 +549,15 @@ chrome.storage.local.get(['micPosition'], (result) => {
 });
 
 micButton.style.backgroundImage = isListening ? "url(chrome-extension://" + chrome.runtime.id + "/img/mic_ON.png)" : "url(chrome-extension://" + chrome.runtime.id + "/img/mic_OFF.png)";
+
+// Function to automatically continue generation
+const checkForContinueButton = () => {
+  const continueButton = document.querySelector('button:contains("Continue"), button:contains("Продолжить создание"), button:contains("Continuar la creación")');
+  if (continueButton && autogenerationCheckbox.checked) {
+    continueButton.click();
+  }
+};
+
+if (autogenerationCheckbox.checked) {
+  setInterval(checkForContinueButton, 5000); // Check every 5 seconds
+}
