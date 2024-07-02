@@ -275,7 +275,7 @@ hotkeysInfo.innerHTML = 'Hotkeys: <b>Control + M</b>';
 hotkeysInfo.style.marginTop = '10px';
 hotkeysInfo.style.textAlign = 'center';
 
-// Microphone position settings
+// Option to choose microphone position
 const micPositionContainer = document.createElement('div');
 micPositionContainer.style.backgroundColor = '#f9f9f9';
 micPositionContainer.style.padding = '10px';
