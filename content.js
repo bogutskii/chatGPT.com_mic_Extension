@@ -325,10 +325,32 @@ autogenerationCheckbox.style.marginLeft = '10px';
 autogenerationInfo.appendChild(autogenerationCheckbox);
 autogenerationContainer.appendChild(autogenerationInfo);
 
+// Chat width options
+const widthExpansionContainer = document.createElement('div');
+widthExpansionContainer.style.backgroundColor = '#f9f9f9';
+widthExpansionContainer.style.padding = '10px';
+widthExpansionContainer.style.borderRadius = '5px';
+widthExpansionContainer.style.marginBottom = '10px';
+
+const widthExpansionInfo = document.createElement('label');
+widthExpansionInfo.style.display = 'flex';
+widthExpansionInfo.style.alignItems = 'center';
+widthExpansionInfo.style.fontWeight = 'bold';
+widthExpansionInfo.textContent = 'Expand chat width:';
+
+const widthExpansionCheckbox = document.createElement('input');
+widthExpansionCheckbox.type = 'checkbox';
+widthExpansionCheckbox.id = 'widthExpansionCheckbox';
+widthExpansionCheckbox.style.marginLeft = '10px';
+
+widthExpansionInfo.appendChild(widthExpansionCheckbox);
+widthExpansionContainer.appendChild(widthExpansionInfo);
+
 modal.appendChild(modalTitle);
 modal.appendChild(languageContainer);
 modal.appendChild(micPositionContainer);
 modal.appendChild(autogenerationContainer);
+modal.appendChild(widthExpansionContainer);
 modal.appendChild(donationLink);
 modal.appendChild(LinkedInLink);
 modal.appendChild(githubLink);
@@ -365,6 +387,10 @@ okButton.addEventListener('click', () => {
   // Save autogenerate setting
   const isAutoGenerationEnabled = autogenerationCheckbox.checked;
   chrome.storage.local.set({ isAutoGenerationEnabled });
+  // Save width expansion setting
+  const isWidthExpansionEnabled = widthExpansionCheckbox.checked;
+  chrome.storage.local.set({ isWidthExpansionEnabled });
+  updateChatWidth(isWidthExpansionEnabled);
 });
 
 cancelButton.addEventListener('click', () => {
@@ -386,7 +412,7 @@ const changeLanguage = (language) => {
   }
 };
 
-chrome.storage.local.get(['recognitionLanguage', 'micPosition', 'isAutoGenerationEnabled'], (result) => {
+chrome.storage.local.get(['recognitionLanguage', 'micPosition', 'isAutoGenerationEnabled', 'isWidthExpansionEnabled'], (result) => {
   if (result.recognitionLanguage) {
     recognition.lang = result.recognitionLanguage;
     languageSelector.value = result.recognitionLanguage;
@@ -401,7 +427,11 @@ chrome.storage.local.get(['recognitionLanguage', 'micPosition', 'isAutoGeneratio
     autogenerationCheckbox.checked = result.isAutoGenerationEnabled;
     if (result.isAutoGenerationEnabled) {
       setInterval(checkForContinueButton, 2000);
-    }
+  }
+  }
+  if (result.isWidthExpansionEnabled !== undefined) {
+    widthExpansionCheckbox.checked = result.isWidthExpansionEnabled;
+    updateChatWidth(result.isWidthExpansionEnabled);
   }
 });
 
@@ -567,4 +597,19 @@ const checkForContinueButton = () => {
 
 if (autogenerationCheckbox.checked) {
   setInterval(checkForContinueButton, 2000);
+}
+
+const updateChatWidth = (isEnabled) => {
+  const chatContainers = document.querySelectorAll('.mx-auto.flex.flex-1.gap-3.text-base.juice\\:gap-4.juice\\:md\\:gap-5.juice\\:lg\\:gap-6.md\\:max-w-3xl');
+  chatContainers.forEach(container => {
+    if (isEnabled) {
+      container.style.maxWidth = '100%';
+    } else {
+      container.style.maxWidth = '';
+    }
+  });
+};
+
+if (widthExpansionCheckbox.checked) {
+  updateChatWidth(true);
 }
