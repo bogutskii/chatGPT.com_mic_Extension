@@ -105,6 +105,7 @@ const languages = [
   { code: 'xh-ZA', name: 'isiXhosa (Xhosa)' },
   { code: 'zu-ZA', name: 'isiZulu (Zulu)' },
 ];
+
 languageSelector.style.color = '#000';
 languageSelector.style.backgroundColor = '#f6f6f6';
 
@@ -353,12 +354,15 @@ modalOverlay.addEventListener('click', () => {
 okButton.addEventListener('click', () => {
   modal.style.display = 'none';
   modalOverlay.style.display = 'none';
+  // Save microphone position
   const micPosition = micPositionSelector.value;
   chrome.storage.local.set({ micPosition });
   positionMicButton(micPosition);
+  // Save favorite languages
   favoriteLanguages = Array.from(languageList.querySelectorAll('input:checked')).map(input => input.value);
   chrome.storage.local.set({ favoriteLanguages });
   updateLanguageSelector();
+  // Save autogenerate setting
   const isAutoGenerationEnabled = autogenerationCheckbox.checked;
   chrome.storage.local.set({ isAutoGenerationEnabled });
 });
@@ -395,6 +399,9 @@ chrome.storage.local.get(['recognitionLanguage', 'micPosition', 'isAutoGeneratio
   }
   if (result.isAutoGenerationEnabled !== undefined) {
     autogenerationCheckbox.checked = result.isAutoGenerationEnabled;
+    if (result.isAutoGenerationEnabled) {
+      setInterval(checkForContinueButton, 2000);
+    }
   }
 });
 
@@ -552,12 +559,12 @@ micButton.style.backgroundImage = isListening ? "url(chrome-extension://" + chro
 
 // Function to automatically continue generation
 const checkForContinueButton = () => {
-  const continueButton = document.querySelector('button:contains("Continue"), button:contains("Продолжить создание"), button:contains("Continuar la creación")');
+  const continueButton = document.querySelector('div.flex.h-full.w-full.items-center.justify-end button');
   if (continueButton && autogenerationCheckbox.checked) {
     continueButton.click();
   }
 };
 
 if (autogenerationCheckbox.checked) {
-  setInterval(checkForContinueButton, 5000); // Check every 5 seconds
+  setInterval(checkForContinueButton, 2000);
 }
