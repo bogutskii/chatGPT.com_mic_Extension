@@ -177,19 +177,6 @@ modalTitle.style.marginBottom = '20px';
 modalTitle.style.fontSize = '1.5em';
 modalTitle.style.color = '#800080';
 
-// Container for different sections
-const sectionContainer = document.createElement('div');
-sectionContainer.style.display = 'flex';
-sectionContainer.style.flexDirection = 'column';
-sectionContainer.style.gap = '10px';
-
-// Donation links container
-const linksContainer = document.createElement('div');
-linksContainer.style.backgroundColor = '#f9f9f9';
-linksContainer.style.padding = '10px';
-linksContainer.style.borderRadius = '5px';
-linksContainer.style.marginBottom = '10px';
-
 const donationLink = document.createElement('a');
 donationLink.href = 'https://buymeacoffee.com/bogutskii';
 donationLink.textContent = 'Donate';
@@ -222,12 +209,6 @@ author.textContent = 'Author: Petr Bogutskii';
 author.style.marginTop = '10px';
 author.style.textAlign = 'center';
 
-linksContainer.appendChild(donationLink);
-linksContainer.appendChild(LinkedInLink);
-linksContainer.appendChild(githubLink);
-linksContainer.appendChild(author);
-
-// Button container
 const buttonContainer = document.createElement('div');
 buttonContainer.style.display = 'flex';
 buttonContainer.style.justifyContent = 'center';
@@ -257,19 +238,6 @@ cancelButton.style.cursor = 'pointer';
 cancelButton.style.display = 'block';
 cancelButton.style.margin = '20px auto';
 
-// Reset button
-const resetButton = document.createElement('button');
-resetButton.textContent = 'Reset';
-resetButton.style.marginTop = '10px';
-resetButton.style.backgroundColor = '#800080';
-resetButton.style.color = '#fff';
-resetButton.style.border = 'none';
-resetButton.style.padding = '10px 20px';
-resetButton.style.borderRadius = '5px';
-resetButton.style.cursor = 'pointer';
-resetButton.style.display = 'block';
-resetButton.style.margin = '20px auto';
-
 const hotkeysInfo = document.createElement('div');
 hotkeysInfo.innerHTML = 'Hotkeys: <b>Control + M</b>';
 hotkeysInfo.style.marginTop = '10px';
@@ -284,9 +252,12 @@ micPositionContainer.style.marginBottom = '10px';
 
 const micPositionInfo = document.createElement('div');
 micPositionInfo.textContent = 'Microphone Position:';
+micPositionInfo.style.margin = '10px auto';
+micPositionInfo.style.textAlign = 'center';
 micPositionInfo.style.fontWeight = 'bold';
 
 const micPositionSelector = document.createElement('select');
+micPositionSelector.style.marginLeft = '35%'
 const positions = [
   {value: 'default', name: 'Default'},
   {value: 'input', name: 'In Input'}
@@ -369,63 +340,61 @@ const autogenerationInfo = document.createElement('label');
 autogenerationInfo.style.display = 'flex';
 autogenerationInfo.style.alignItems = 'center';
 autogenerationInfo.style.fontWeight = 'bold';
-autogenerationInfo.textContent = 'Autogenerate responses:';
+autogenerationInfo.textContent = 'Auto continue generate responses:';
 
 const autogenerationCheckbox = document.createElement('input');
 autogenerationCheckbox.type = 'checkbox';
 autogenerationCheckbox.id = 'autogenerationCheckbox';
 autogenerationCheckbox.style.marginLeft = '10px';
+autogenerationCheckbox.checked = true;
 
 autogenerationInfo.appendChild(autogenerationCheckbox);
 autogenerationContainer.appendChild(autogenerationInfo);
 
-// Width adjustment slider
-const widthAdjustmentContainer = document.createElement('div');
-widthAdjustmentContainer.style.backgroundColor = '#f9f9f9';
-widthAdjustmentContainer.style.padding = '10px';
-widthAdjustmentContainer.style.borderRadius = '5px';
-widthAdjustmentContainer.style.marginBottom = '10px';
-
-const widthAdjustmentInfo = document.createElement('label');
-widthAdjustmentInfo.style.display = 'flex';
-widthAdjustmentInfo.style.alignItems = 'center';
-widthAdjustmentInfo.style.fontWeight = 'bold';
-widthAdjustmentInfo.textContent = 'Adjust Chat Width:';
-
-const widthAdjustmentSlider = document.createElement('input');
-widthAdjustmentSlider.type = 'range';
-widthAdjustmentSlider.min = '50';
-widthAdjustmentSlider.max = '100';
-widthAdjustmentSlider.value = '100';
-widthAdjustmentSlider.style.marginLeft = '10px';
-
-const widthValueDisplay = document.createElement('span');
-widthValueDisplay.textContent = '100%';
-widthValueDisplay.style.marginLeft = '10px';
-
-widthAdjustmentSlider.addEventListener('input', (event) => {
-  const newValue = event.target.value;
-  widthValueDisplay.textContent = `${newValue}%`;
-  document.querySelectorAll('.mx-auto').forEach(element => {
-    element.style.maxWidth = `${newValue}%`;
-  });
-});
-
-widthAdjustmentContainer.appendChild(widthAdjustmentInfo);
-widthAdjustmentContainer.appendChild(widthAdjustmentSlider);
-widthAdjustmentContainer.appendChild(widthValueDisplay);
-
 modal.appendChild(modalTitle);
-sectionContainer.appendChild(languageContainer);
-sectionContainer.appendChild(micPositionContainer);
-sectionContainer.appendChild(autogenerationContainer);
-sectionContainer.appendChild(widthAdjustmentContainer);
-sectionContainer.appendChild(linksContainer);
-modal.appendChild(sectionContainer);
+modal.appendChild(languageContainer);
+modal.appendChild(micPositionContainer);
+modal.appendChild(autogenerationContainer);
+modal.appendChild(donationLink);
+modal.appendChild(LinkedInLink);
+modal.appendChild(githubLink);
+modal.appendChild(author);
+modal.appendChild(hotkeysInfo);
 buttonContainer.appendChild(okButton);
 buttonContainer.appendChild(cancelButton);
-buttonContainer.appendChild(resetButton);
 modal.appendChild(buttonContainer);
+
+const widthSliderContainer = document.createElement('div');
+widthSliderContainer.style.display = 'flex';
+widthSliderContainer.style.flexDirection = 'column';
+widthSliderContainer.style.alignItems = 'center';
+widthSliderContainer.style.marginBottom = '10px';
+const widthSliderLabel = document.createElement('label');
+widthSliderLabel.textContent = 'Adjust Content Width:';
+widthSliderLabel.style.marginBottom = '5px';
+const widthSlider = document.createElement('input');
+widthSlider.type = 'range';
+widthSlider.min = '50';
+widthSlider.max = '100';
+widthSlider.step = '5';
+widthSlider.value = '100'; // Initial value
+widthSliderContainer.appendChild(widthSliderLabel);
+widthSliderContainer.appendChild(widthSlider);
+
+const resetButton = document.createElement('button');
+resetButton.textContent = 'Reset to Default';
+resetButton.style.marginTop = '10px';
+resetButton.style.backgroundColor = '#800080';
+resetButton.style.color = '#fff';
+resetButton.style.border = 'none';
+resetButton.style.padding = '10px 20px';
+resetButton.style.borderRadius = '5px';
+resetButton.style.cursor = 'pointer';
+resetButton.style.display = 'block';
+resetButton.style.margin = '20px auto';
+
+modal.appendChild(widthSliderContainer);
+modal.appendChild(resetButton);
 
 document.body.appendChild(modal);
 document.body.appendChild(modalOverlay);
@@ -454,9 +423,6 @@ okButton.addEventListener('click', () => {
   // Save autogenerate setting
   const isAutoGenerationEnabled = autogenerationCheckbox.checked;
   chrome.storage.local.set({isAutoGenerationEnabled});
-  // Save width adjustment
-  const chatWidth = widthAdjustmentSlider.value;
-  chrome.storage.local.set({chatWidth});
 });
 
 cancelButton.addEventListener('click', () => {
@@ -464,28 +430,36 @@ cancelButton.addEventListener('click', () => {
   modalOverlay.style.display = 'none';
 });
 
-resetButton.addEventListener('click', () => {
-  // Reset to default settings
-  favoriteLanguages = ['en-US', 'uk-UA', 'ru-RU'];
-  updateLanguageSelector();
-  micPositionSelector.value = 'default';
-  positionMicButton('default');
-  autogenerationCheckbox.checked = false;
-  widthAdjustmentSlider.value = '100';
-  widthValueDisplay.textContent = '60%';
-  document.querySelectorAll('.mx-auto').forEach(element => {
-    element.style.maxWidth = '100%';
+const adjustContentWidth = (width) => {
+  const contentElements = document.querySelectorAll('.mx-auto.flex.flex-1.gap-3.text-base.juice\\:gap-4.juice\\:md\\:gap-5.juice\\:lg\\:gap-6');
+  contentElements.forEach(el => {
+    el.style.maxWidth = `${width}%`;
   });
-  chrome.storage.local.set({
-    favoriteLanguages,
-    micPosition: 'default',
-    isAutoGenerationEnabled: false,
-    chatWidth: '60'
-  });
-  modal.style.display = 'none';
-  modalOverlay.style.display = 'none';
+};
+
+chrome.storage.local.get(['contentWidth'], (result) => {
+  const width = result.contentWidth || 100;
+  widthSlider.value = width;
+  adjustContentWidth(width);
 });
 
+widthSlider.addEventListener('input', (event) => {
+  const width = event.target.value;
+  adjustContentWidth(width);
+  chrome.storage.local.set({contentWidth: width});
+});
+
+resetButton.addEventListener('click', () => {
+  widthSlider.value = 0;
+  adjustContentWidth(0);
+  chrome.storage.local.set({contentWidth: 0});
+
+  chrome.storage.local.set({isAutoGenerationEnabled: false, favoriteLanguages: ['en-US', 'uk-UA', 'ru-RU']}, () => {
+    autogenerationCheckbox.checked = false;
+    favoriteLanguages = ['en-US', 'uk-UA', 'ru-RU'];
+    updateLanguageSelector();
+  });
+});
 selectAllButton.addEventListener('click', () => {
   languageList.querySelectorAll('input').forEach(checkbox => {
     checkbox.checked = true;
@@ -512,32 +486,24 @@ const changeLanguage = (language) => {
   }
 };
 
-chrome.storage.local.get(['recognitionLanguage', 'micPosition', 'isAutoGenerationEnabled', 'chatWidth'], (result) => {
-    if (result.recognitionLanguage) {
-      recognition.lang = result.recognitionLanguage;
-      languageSelector.value = result.recognitionLanguage;
-    } else {
-      recognition.lang = 'ru-RU';
-    }
-    if (result.micPosition) {
-      micPositionSelector.value = result.micPosition;
-      positionMicButton(result.micPosition);
-    }
-    if (result.isAutoGenerationEnabled !== undefined) {
-      autogenerationCheckbox.checked = result.isAutoGenerationEnabled;
-      if (result.isAutoGenerationEnabled) {
-        setInterval(checkForContinueButton, 2000);
-      }
-    }
-    if (result.chatWidth) {
-      widthAdjustmentSlider.value = result.chatWidth;
-      widthValueDisplay.textContent = `${result.chatWidth}%`;
-      document.querySelectorAll('.mx-auto').forEach(element => {
-        element.style.maxWidth = `${result.chatWidth}%`;
-      });
+chrome.storage.local.get(['recognitionLanguage', 'micPosition', 'isAutoGenerationEnabled'], (result) => {
+  if (result.recognitionLanguage) {
+    recognition.lang = result.recognitionLanguage;
+    languageSelector.value = result.recognitionLanguage;
+  } else {
+    recognition.lang = 'ru-RU';
+  }
+  if (result.micPosition) {
+    micPositionSelector.value = result.micPosition;
+    positionMicButton(result.micPosition);
+  }
+  if (result.isAutoGenerationEnabled !== undefined) {
+    autogenerationCheckbox.checked = result.isAutoGenerationEnabled;
+    if (result.isAutoGenerationEnabled) {
+      setInterval(checkForContinueButton, 2000);
     }
   }
-)
+});
 
 languageSelector.addEventListener('change', (event) => {
   const selectedLanguage = event.target.value;
@@ -700,5 +666,12 @@ const checkForContinueButton = () => {
 };
 
 if (autogenerationCheckbox.checked) {
-  setInterval(checkForContinueButton, 2000);
+  setInterval(checkForContinueButton, 2000); // Check every 2 seconds
 }
+
+const observer = new MutationObserver(() => {
+  const width = widthSlider.value;
+  adjustContentWidth(width);
+});
+
+observer.observe(document.body, {childList: true, subtree: true});
