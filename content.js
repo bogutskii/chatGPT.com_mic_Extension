@@ -31,79 +31,79 @@ settingsButton.style.backgroundRepeat = 'no-repeat';
 
 const languageSelector = document.createElement('select');
 const languages = [
-  { code: 'en-US', name: 'English (US)' },
-  { code: 'en-GB', name: 'English (UK)' },
-  { code: 'af-ZA', name: 'Afrikaans' },
-  { code: 'sq-AL', name: 'Shqip (Albanian)' },
-  { code: 'am-ET', name: 'አማርኛ (Amharic)' },
-  { code: 'ar-SA', name: 'العربية (Arabic)' },
-  { code: 'hy-AM', name: 'Հայերեն (Armenian)' },
-  { code: 'az-AZ', name: 'Azərbaycan dili' },
-  { code: 'eu-ES', name: 'Euskara (Basque)' },
-  { code: 'bn-BD', name: 'বাংলা (Bengali)' },
-  { code: 'bg-BG', name: 'Български' },
-  { code: 'ca-ES', name: 'Català (Catalan)' },
-  { code: 'zh-CN', name: '简体中文' },
-  { code: 'zh-TW', name: '繁體中文' },
-  { code: 'hr-HR', name: 'Hrvatski' },
-  { code: 'cs-CZ', name: 'Čeština' },
-  { code: 'da-DK', name: 'Dansk' },
-  { code: 'uk-UA', name: 'Українська' },
-  { code: 'nl-NL', name: 'Nederlands' },
-  { code: 'et-EE', name: 'Estonian' },
-  { code: 'fil-PH', name: 'Filipino' },
-  { code: 'fi-FI', name: 'Suomi (Finnish)' },
-  { code: 'fr-FR', name: 'Français' },
-  { code: 'gl-ES', name: 'Galego' },
-  { code: 'ka-GE', name: 'ქართული (Georgian)' },
-  { code: 'de-DE', name: 'Deutsch (German)' },
-  { code: 'el-GR', name: 'Ελληνικά' },
-  { code: 'gu-IN', name: 'ગુજરાતી (Gujarati)' },
-  { code: 'he-IL', name: 'עברית (Hebrew)' },
-  { code: 'hi-IN', name: 'हिन्दी (Hindi)' },
-  { code: 'hu-HU', name: 'Magyar (Hungarian)' },
-  { code: 'is-IS', name: 'Íslenska (Icelandic)' },
-  { code: 'id-ID', name: 'Bahasa Indonesia' },
-  { code: 'it-IT', name: 'Italiano' },
-  { code: 'ja-JP', name: '日本語 (Japanese)' },
-  { code: 'kn-IN', name: 'ಕನ್ನಡ (Kannada)' },
-  { code: 'kk-KZ', name: 'Қазақ тілі' },
-  { code: 'km-KH', name: 'ខ្មែរ (Khmer)' },
-  { code: 'ko-KR', name: '한국어 (Korean)' },
-  { code: 'lo-LA', name: 'ລາວ (Lao)' },
-  { code: 'lv-LV', name: 'Latviešu' },
-  { code: 'lt-LT', name: 'Lietuvių' },
-  { code: 'mk-MK', name: 'Македонски' },
-  { code: 'ms-MY', name: 'Bahasa Melayu' },
-  { code: 'ml-IN', name: 'മലയാളം (Malayalam)' },
-  { code: 'mr-IN', name: 'मराठी (Marathi)' },
-  { code: 'mn-MN', name: 'Монгол (Mongolian)' },
-  { code: 'ne-NP', name: 'नेपाली (Nepali)' },
-  { code: 'no-NO', name: 'Norsk (Norwegian)' },
-  { code: 'fa-IR', name: 'فارسی (Persian)' },
-  { code: 'pl-PL', name: 'Polski (Polish)' },
-  { code: 'pt-BR', name: 'Português (Brazilian)' },
-  { code: 'pt-PT', name: 'Português (European)' },
-  { code: 'pa-IN', name: 'ਪੰਜਾਬੀ (Punjabi)' },
-  { code: 'ro-RO', name: 'Română (Romanian)' },
-  { code: 'ru-RU', name: 'Русский (Russian)' },
-  { code: 'sr-RS', name: 'Српски (Serbian)' },
-  { code: 'si-LK', name: 'සිංහල (Sinhala)' },
-  { code: 'sk-SK', name: 'Slovenčina' },
-  { code: 'sl-SI', name: 'Slovenščina' },
-  { code: 'es-ES', name: 'Español (Spanish)' },
-  { code: 'sw-KE', name: 'Kiswahili (Swahili)' },
-  { code: 'sv-SE', name: 'Svenska (Swedish)' },
-  { code: 'ta-IN', name: 'தமிழ் (Tamil)' },
-  { code: 'te-IN', name: 'తెలుగు (Telugu)' },
-  { code: 'th-TH', name: 'ไทย (Thai)' },
-  { code: 'tr-TR', name: 'Türkçe (Turkish)' },
-  { code: 'ur-PK', name: 'اردو (Urdu)' },
-  { code: 'uz-UZ', name: 'Oʻzbekcha (Uzbek)' },
-  { code: 'vi-VN', name: 'Tiếng Việt (Vietnamese)' },
-  { code: 'cy-GB', name: 'Cymraeg (Welsh)' },
-  { code: 'xh-ZA', name: 'isiXhosa (Xhosa)' },
-  { code: 'zu-ZA', name: 'isiZulu (Zulu)' },
+  {code: 'en-US', name: 'English (US)'},
+  {code: 'en-GB', name: 'English (UK)'},
+  {code: 'af-ZA', name: 'Afrikaans'},
+  {code: 'sq-AL', name: 'Shqip (Albanian)'},
+  {code: 'am-ET', name: 'አማርኛ (Amharic)'},
+  {code: 'ar-SA', name: 'العربية (Arabic)'},
+  {code: 'hy-AM', name: 'Հայերեն (Armenian)'},
+  {code: 'az-AZ', name: 'Azərbaycan dili'},
+  {code: 'eu-ES', name: 'Euskara (Basque)'},
+  {code: 'bn-BD', name: 'বাংলা (Bengali)'},
+  {code: 'bg-BG', name: 'Български'},
+  {code: 'ca-ES', name: 'Català (Catalan)'},
+  {code: 'zh-CN', name: '简体中文'},
+  {code: 'zh-TW', name: '繁體中文'},
+  {code: 'hr-HR', name: 'Hrvatski'},
+  {code: 'cs-CZ', name: 'Čeština'},
+  {code: 'da-DK', name: 'Dansk'},
+  {code: 'uk-UA', name: 'Українська'},
+  {code: 'nl-NL', name: 'Nederlands'},
+  {code: 'et-EE', name: 'Estonian'},
+  {code: 'fil-PH', name: 'Filipino'},
+  {code: 'fi-FI', name: 'Suomi (Finnish)'},
+  {code: 'fr-FR', name: 'Français'},
+  {code: 'gl-ES', name: 'Galego'},
+  {code: 'ka-GE', name: 'ქართული (Georgian)'},
+  {code: 'de-DE', name: 'Deutsch (German)'},
+  {code: 'el-GR', name: 'Ελληνικά'},
+  {code: 'gu-IN', name: 'ગુજરાતી (Gujarati)'},
+  {code: 'he-IL', name: 'עברית (Hebrew)'},
+  {code: 'hi-IN', name: 'हिन्दी (Hindi)'},
+  {code: 'hu-HU', name: 'Magyar (Hungarian)'},
+  {code: 'is-IS', name: 'Íslenska (Icelandic)'},
+  {code: 'id-ID', name: 'Bahasa Indonesia'},
+  {code: 'it-IT', name: 'Italiano'},
+  {code: 'ja-JP', name: '日本語 (Japanese)'},
+  {code: 'kn-IN', name: 'ಕನ್ನಡ (Kannada)'},
+  {code: 'kk-KZ', name: 'Қазақ тілі'},
+  {code: 'km-KH', name: 'ខ្មែរ (Khmer)'},
+  {code: 'ko-KR', name: '한국어 (Korean)'},
+  {code: 'lo-LA', name: 'ລາວ (Lao)'},
+  {code: 'lv-LV', name: 'Latviešu'},
+  {code: 'lt-LT', name: 'Lietuvių'},
+  {code: 'mk-MK', name: 'Македонски'},
+  {code: 'ms-MY', name: 'Bahasa Melayu'},
+  {code: 'ml-IN', name: 'മലയാളം (Malayalam)'},
+  {code: 'mr-IN', name: 'मराठी (Marathi)'},
+  {code: 'mn-MN', name: 'Монгол (Mongolian)'},
+  {code: 'ne-NP', name: 'नेपाली (Nepali)'},
+  {code: 'no-NO', name: 'Norsk (Norwegian)'},
+  {code: 'fa-IR', name: 'فارسی (Persian)'},
+  {code: 'pl-PL', name: 'Polski (Polish)'},
+  {code: 'pt-BR', name: 'Português (Brazilian)'},
+  {code: 'pt-PT', name: 'Português (European)'},
+  {code: 'pa-IN', name: 'ਪੰਜਾਬੀ (Punjabi)'},
+  {code: 'ro-RO', name: 'Română (Romanian)'},
+  {code: 'ru-RU', name: 'Русский (Russian)'},
+  {code: 'sr-RS', name: 'Српски (Serbian)'},
+  {code: 'si-LK', name: 'සිංහල (Sinhala)'},
+  {code: 'sk-SK', name: 'Slovenčina'},
+  {code: 'sl-SI', name: 'Slovenščina'},
+  {code: 'es-ES', name: 'Español (Spanish)'},
+  {code: 'sw-KE', name: 'Kiswahili (Swahili)'},
+  {code: 'sv-SE', name: 'Svenska (Swedish)'},
+  {code: 'ta-IN', name: 'தமிழ் (Tamil)'},
+  {code: 'te-IN', name: 'తెలుగు (Telugu)'},
+  {code: 'th-TH', name: 'ไทย (Thai)'},
+  {code: 'tr-TR', name: 'Türkçe (Turkish)'},
+  {code: 'ur-PK', name: 'اردو (Urdu)'},
+  {code: 'uz-UZ', name: 'Oʻzbekcha (Uzbek)'},
+  {code: 'vi-VN', name: 'Tiếng Việt (Vietnamese)'},
+  {code: 'cy-GB', name: 'Cymraeg (Welsh)'},
+  {code: 'xh-ZA', name: 'isiXhosa (Xhosa)'},
+  {code: 'zu-ZA', name: 'isiZulu (Zulu)'},
 ];
 
 languageSelector.style.color = '#000';
@@ -177,6 +177,19 @@ modalTitle.style.marginBottom = '20px';
 modalTitle.style.fontSize = '1.5em';
 modalTitle.style.color = '#800080';
 
+// Container for different sections
+const sectionContainer = document.createElement('div');
+sectionContainer.style.display = 'flex';
+sectionContainer.style.flexDirection = 'column';
+sectionContainer.style.gap = '10px';
+
+// Donation links container
+const linksContainer = document.createElement('div');
+linksContainer.style.backgroundColor = '#f9f9f9';
+linksContainer.style.padding = '10px';
+linksContainer.style.borderRadius = '5px';
+linksContainer.style.marginBottom = '10px';
+
 const donationLink = document.createElement('a');
 donationLink.href = 'https://buymeacoffee.com/bogutskii';
 donationLink.textContent = 'Donate';
@@ -209,6 +222,12 @@ author.textContent = 'Author: Petr Bogutskii';
 author.style.marginTop = '10px';
 author.style.textAlign = 'center';
 
+linksContainer.appendChild(donationLink);
+linksContainer.appendChild(LinkedInLink);
+linksContainer.appendChild(githubLink);
+linksContainer.appendChild(author);
+
+// Button container
 const buttonContainer = document.createElement('div');
 buttonContainer.style.display = 'flex';
 buttonContainer.style.justifyContent = 'center';
@@ -238,12 +257,25 @@ cancelButton.style.cursor = 'pointer';
 cancelButton.style.display = 'block';
 cancelButton.style.margin = '20px auto';
 
+// Reset button
+const resetButton = document.createElement('button');
+resetButton.textContent = 'Reset';
+resetButton.style.marginTop = '10px';
+resetButton.style.backgroundColor = '#800080';
+resetButton.style.color = '#fff';
+resetButton.style.border = 'none';
+resetButton.style.padding = '10px 20px';
+resetButton.style.borderRadius = '5px';
+resetButton.style.cursor = 'pointer';
+resetButton.style.display = 'block';
+resetButton.style.margin = '20px auto';
+
 const hotkeysInfo = document.createElement('div');
 hotkeysInfo.innerHTML = 'Hotkeys: <b>Control + M</b>';
 hotkeysInfo.style.marginTop = '10px';
 hotkeysInfo.style.textAlign = 'center';
 
-// Option to choose microphone position
+// Microphone position settings
 const micPositionContainer = document.createElement('div');
 micPositionContainer.style.backgroundColor = '#f9f9f9';
 micPositionContainer.style.padding = '10px';
@@ -256,8 +288,8 @@ micPositionInfo.style.fontWeight = 'bold';
 
 const micPositionSelector = document.createElement('select');
 const positions = [
-  { value: 'default', name: 'Default' },
-  { value: 'input', name: 'In Input' }
+  {value: 'default', name: 'Default'},
+  {value: 'input', name: 'In Input'}
 ];
 positions.forEach(pos => {
   const option = document.createElement('option');
@@ -279,6 +311,26 @@ languageContainer.style.marginBottom = '10px';
 const languageListInfo = document.createElement('div');
 languageListInfo.textContent = 'Select Favorite Languages:';
 languageListInfo.style.fontWeight = 'bold';
+
+const selectAllButton = document.createElement('button');
+selectAllButton.textContent = 'Select All';
+selectAllButton.style.marginTop = '10px';
+selectAllButton.style.backgroundColor = '#800080';
+selectAllButton.style.color = '#fff';
+selectAllButton.style.border = 'none';
+selectAllButton.style.padding = '10px 20px';
+selectAllButton.style.borderRadius = '5px';
+selectAllButton.style.cursor = 'pointer';
+
+const deselectAllButton = document.createElement('button');
+deselectAllButton.textContent = 'Deselect All';
+deselectAllButton.style.marginTop = '10px';
+deselectAllButton.style.backgroundColor = '#800080';
+deselectAllButton.style.color = '#fff';
+deselectAllButton.style.border = 'none';
+deselectAllButton.style.padding = '10px 20px';
+deselectAllButton.style.borderRadius = '5px';
+deselectAllButton.style.cursor = 'pointer';
 
 const languageList = document.createElement('div');
 languageList.style.width = '100%';
@@ -302,6 +354,8 @@ languages.forEach(lang => {
 });
 
 languageContainer.appendChild(languageListInfo);
+languageContainer.appendChild(selectAllButton);
+languageContainer.appendChild(deselectAllButton);
 languageContainer.appendChild(languageList);
 
 // Autogeneration setting
@@ -325,39 +379,52 @@ autogenerationCheckbox.style.marginLeft = '10px';
 autogenerationInfo.appendChild(autogenerationCheckbox);
 autogenerationContainer.appendChild(autogenerationInfo);
 
-// Chat width options
-const widthExpansionContainer = document.createElement('div');
-widthExpansionContainer.style.backgroundColor = '#f9f9f9';
-widthExpansionContainer.style.padding = '10px';
-widthExpansionContainer.style.borderRadius = '5px';
-widthExpansionContainer.style.marginBottom = '10px';
+// Width adjustment slider
+const widthAdjustmentContainer = document.createElement('div');
+widthAdjustmentContainer.style.backgroundColor = '#f9f9f9';
+widthAdjustmentContainer.style.padding = '10px';
+widthAdjustmentContainer.style.borderRadius = '5px';
+widthAdjustmentContainer.style.marginBottom = '10px';
 
-const widthExpansionInfo = document.createElement('label');
-widthExpansionInfo.style.display = 'flex';
-widthExpansionInfo.style.alignItems = 'center';
-widthExpansionInfo.style.fontWeight = 'bold';
-widthExpansionInfo.textContent = 'Expand chat width:';
+const widthAdjustmentInfo = document.createElement('label');
+widthAdjustmentInfo.style.display = 'flex';
+widthAdjustmentInfo.style.alignItems = 'center';
+widthAdjustmentInfo.style.fontWeight = 'bold';
+widthAdjustmentInfo.textContent = 'Adjust Chat Width:';
 
-const widthExpansionCheckbox = document.createElement('input');
-widthExpansionCheckbox.type = 'checkbox';
-widthExpansionCheckbox.id = 'widthExpansionCheckbox';
-widthExpansionCheckbox.style.marginLeft = '10px';
+const widthAdjustmentSlider = document.createElement('input');
+widthAdjustmentSlider.type = 'range';
+widthAdjustmentSlider.min = '50';
+widthAdjustmentSlider.max = '100';
+widthAdjustmentSlider.value = '100';
+widthAdjustmentSlider.style.marginLeft = '10px';
 
-widthExpansionInfo.appendChild(widthExpansionCheckbox);
-widthExpansionContainer.appendChild(widthExpansionInfo);
+const widthValueDisplay = document.createElement('span');
+widthValueDisplay.textContent = '100%';
+widthValueDisplay.style.marginLeft = '10px';
+
+widthAdjustmentSlider.addEventListener('input', (event) => {
+  const newValue = event.target.value;
+  widthValueDisplay.textContent = `${newValue}%`;
+  document.querySelectorAll('.mx-auto').forEach(element => {
+    element.style.maxWidth = `${newValue}%`;
+  });
+});
+
+widthAdjustmentContainer.appendChild(widthAdjustmentInfo);
+widthAdjustmentContainer.appendChild(widthAdjustmentSlider);
+widthAdjustmentContainer.appendChild(widthValueDisplay);
 
 modal.appendChild(modalTitle);
-modal.appendChild(languageContainer);
-modal.appendChild(micPositionContainer);
-modal.appendChild(autogenerationContainer);
-modal.appendChild(widthExpansionContainer);
-modal.appendChild(donationLink);
-modal.appendChild(LinkedInLink);
-modal.appendChild(githubLink);
-modal.appendChild(author);
-modal.appendChild(hotkeysInfo);
+sectionContainer.appendChild(languageContainer);
+sectionContainer.appendChild(micPositionContainer);
+sectionContainer.appendChild(autogenerationContainer);
+sectionContainer.appendChild(widthAdjustmentContainer);
+sectionContainer.appendChild(linksContainer);
+modal.appendChild(sectionContainer);
 buttonContainer.appendChild(okButton);
 buttonContainer.appendChild(cancelButton);
+buttonContainer.appendChild(resetButton);
 modal.appendChild(buttonContainer);
 
 document.body.appendChild(modal);
@@ -378,24 +445,57 @@ okButton.addEventListener('click', () => {
   modalOverlay.style.display = 'none';
   // Save microphone position
   const micPosition = micPositionSelector.value;
-  chrome.storage.local.set({ micPosition });
+  chrome.storage.local.set({micPosition});
   positionMicButton(micPosition);
   // Save favorite languages
   favoriteLanguages = Array.from(languageList.querySelectorAll('input:checked')).map(input => input.value);
-  chrome.storage.local.set({ favoriteLanguages });
+  chrome.storage.local.set({favoriteLanguages});
   updateLanguageSelector();
   // Save autogenerate setting
   const isAutoGenerationEnabled = autogenerationCheckbox.checked;
-  chrome.storage.local.set({ isAutoGenerationEnabled });
-  // Save width expansion setting
-  const isWidthExpansionEnabled = widthExpansionCheckbox.checked;
-  chrome.storage.local.set({ isWidthExpansionEnabled });
-  updateChatWidth(isWidthExpansionEnabled);
+  chrome.storage.local.set({isAutoGenerationEnabled});
+  // Save width adjustment
+  const chatWidth = widthAdjustmentSlider.value;
+  chrome.storage.local.set({chatWidth});
 });
 
 cancelButton.addEventListener('click', () => {
   modal.style.display = 'none';
   modalOverlay.style.display = 'none';
+});
+
+resetButton.addEventListener('click', () => {
+  // Reset to default settings
+  favoriteLanguages = ['en-US', 'uk-UA', 'ru-RU'];
+  updateLanguageSelector();
+  micPositionSelector.value = 'default';
+  positionMicButton('default');
+  autogenerationCheckbox.checked = false;
+  widthAdjustmentSlider.value = '100';
+  widthValueDisplay.textContent = '60%';
+  document.querySelectorAll('.mx-auto').forEach(element => {
+    element.style.maxWidth = '100%';
+  });
+  chrome.storage.local.set({
+    favoriteLanguages,
+    micPosition: 'default',
+    isAutoGenerationEnabled: false,
+    chatWidth: '60'
+  });
+  modal.style.display = 'none';
+  modalOverlay.style.display = 'none';
+});
+
+selectAllButton.addEventListener('click', () => {
+  languageList.querySelectorAll('input').forEach(checkbox => {
+    checkbox.checked = true;
+  });
+});
+
+deselectAllButton.addEventListener('click', () => {
+  languageList.querySelectorAll('input').forEach(checkbox => {
+    checkbox.checked = false;
+  });
 });
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -412,32 +512,36 @@ const changeLanguage = (language) => {
   }
 };
 
-chrome.storage.local.get(['recognitionLanguage', 'micPosition', 'isAutoGenerationEnabled', 'isWidthExpansionEnabled'], (result) => {
-  if (result.recognitionLanguage) {
-    recognition.lang = result.recognitionLanguage;
-    languageSelector.value = result.recognitionLanguage;
-  } else {
-    recognition.lang = 'ru-RU';
+chrome.storage.local.get(['recognitionLanguage', 'micPosition', 'isAutoGenerationEnabled', 'chatWidth'], (result) => {
+    if (result.recognitionLanguage) {
+      recognition.lang = result.recognitionLanguage;
+      languageSelector.value = result.recognitionLanguage;
+    } else {
+      recognition.lang = 'ru-RU';
+    }
+    if (result.micPosition) {
+      micPositionSelector.value = result.micPosition;
+      positionMicButton(result.micPosition);
+    }
+    if (result.isAutoGenerationEnabled !== undefined) {
+      autogenerationCheckbox.checked = result.isAutoGenerationEnabled;
+      if (result.isAutoGenerationEnabled) {
+        setInterval(checkForContinueButton, 2000);
+      }
+    }
+    if (result.chatWidth) {
+      widthAdjustmentSlider.value = result.chatWidth;
+      widthValueDisplay.textContent = `${result.chatWidth}%`;
+      document.querySelectorAll('.mx-auto').forEach(element => {
+        element.style.maxWidth = `${result.chatWidth}%`;
+      });
+    }
   }
-  if (result.micPosition) {
-    micPositionSelector.value = result.micPosition;
-    positionMicButton(result.micPosition);
-  }
-  if (result.isAutoGenerationEnabled !== undefined) {
-    autogenerationCheckbox.checked = result.isAutoGenerationEnabled;
-    if (result.isAutoGenerationEnabled) {
-      setInterval(checkForContinueButton, 2000);
-  }
-  }
-  if (result.isWidthExpansionEnabled !== undefined) {
-    widthExpansionCheckbox.checked = result.isWidthExpansionEnabled;
-    updateChatWidth(result.isWidthExpansionEnabled);
-  }
-});
+)
 
 languageSelector.addEventListener('change', (event) => {
   const selectedLanguage = event.target.value;
-  chrome.storage.local.set({ recognitionLanguage: selectedLanguage });
+  chrome.storage.local.set({recognitionLanguage: selectedLanguage});
   changeLanguage(selectedLanguage);
 });
 
@@ -451,7 +555,7 @@ const resizeTextarea = (textarea) => {
 };
 
 const triggerInputEvent = (inputField) => {
-  const event = new Event('input', { bubbles: true });
+  const event = new Event('input', {bubbles: true});
   inputField.dispatchEvent(event);
 };
 
@@ -504,13 +608,13 @@ micButton.addEventListener('click', (event) => {
   if (isListening) {
     recognition.stop();
     isListening = false;
-    chrome.storage.local.set({ recognitionLanguage: languageSelector.value }); // Save the language when stopping
+    chrome.storage.local.set({recognitionLanguage: languageSelector.value}); // Save the language when stopping
   } else {
     finalTranscript = inputField.value;
     interimTranscript = '';
     recognition.start();
     isListening = true;
-    chrome.storage.local.set({ recognitionLanguage: languageSelector.value }); // Save the language when starting
+    chrome.storage.local.set({recognitionLanguage: languageSelector.value}); // Save the language when starting
   }
   micButton.style.backgroundImage = isListening ? "url(chrome-extension://" + chrome.runtime.id + "/img/mic_ON.png)" : "url(chrome-extension://" + chrome.runtime.id + "/img/mic_OFF.png)";
 });
@@ -562,7 +666,7 @@ const ensureClearButton = () => {
 };
 
 ensureClearButton();
-new MutationObserver(ensureClearButton).observe(document.body, { childList: true, subtree: true });
+new MutationObserver(ensureClearButton).observe(document.body, {childList: true, subtree: true});
 
 const positionMicButton = (position) => {
   const inputField = document.querySelector('#prompt-textarea');
@@ -597,19 +701,4 @@ const checkForContinueButton = () => {
 
 if (autogenerationCheckbox.checked) {
   setInterval(checkForContinueButton, 2000);
-}
-
-const updateChatWidth = (isEnabled) => {
-  const chatContainers = document.querySelectorAll('.mx-auto.flex.flex-1.gap-3.text-base.juice\\:gap-4.juice\\:md\\:gap-5.juice\\:lg\\:gap-6.md\\:max-w-3xl');
-  chatContainers.forEach(container => {
-    if (isEnabled) {
-      container.style.maxWidth = '100%';
-    } else {
-      container.style.maxWidth = '';
-    }
-  });
-};
-
-if (widthExpansionCheckbox.checked) {
-  updateChatWidth(true);
 }
