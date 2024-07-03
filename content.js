@@ -32,6 +32,8 @@ settingsButton.style.backgroundRepeat = 'no-repeat';
 const languageSelector = document.createElement('select');
 const languages = [
   {code: 'en-US', name: 'English (US)'},
+  {code: 'uk-UA', name: 'Українська'},
+  {code: 'ru-RU', name: 'Русский'},
   {code: 'en-GB', name: 'English (UK)'},
   {code: 'af-ZA', name: 'Afrikaans'},
   {code: 'sq-AL', name: 'Shqip (Albanian)'},
@@ -48,7 +50,6 @@ const languages = [
   {code: 'hr-HR', name: 'Hrvatski'},
   {code: 'cs-CZ', name: 'Čeština'},
   {code: 'da-DK', name: 'Dansk'},
-  {code: 'uk-UA', name: 'Українська'},
   {code: 'nl-NL', name: 'Nederlands'},
   {code: 'et-EE', name: 'Estonian'},
   {code: 'fil-PH', name: 'Filipino'},
@@ -62,7 +63,7 @@ const languages = [
   {code: 'he-IL', name: 'עברית (Hebrew)'},
   {code: 'hi-IN', name: 'हिन्दी (Hindi)'},
   {code: 'hu-HU', name: 'Magyar (Hungarian)'},
-  {code: 'is-IS', name: 'Íslenska (Icelandic)'},
+  {code: 'is-IS', name: 'Íslenska'},
   {code: 'id-ID', name: 'Bahasa Indonesia'},
   {code: 'it-IT', name: 'Italiano'},
   {code: 'ja-JP', name: '日本語 (Japanese)'},
@@ -81,12 +82,11 @@ const languages = [
   {code: 'ne-NP', name: 'नेपाली (Nepali)'},
   {code: 'no-NO', name: 'Norsk (Norwegian)'},
   {code: 'fa-IR', name: 'فارسی (Persian)'},
-  {code: 'pl-PL', name: 'Polski (Polish)'},
+  {code: 'pl-PL', name: 'Polski'},
   {code: 'pt-BR', name: 'Português (Brazilian)'},
   {code: 'pt-PT', name: 'Português (European)'},
   {code: 'pa-IN', name: 'ਪੰਜਾਬੀ (Punjabi)'},
   {code: 'ro-RO', name: 'Română (Romanian)'},
-  {code: 'ru-RU', name: 'Русский (Russian)'},
   {code: 'sr-RS', name: 'Српски (Serbian)'},
   {code: 'si-LK', name: 'සිංහල (Sinhala)'},
   {code: 'sk-SK', name: 'Slovenčina'},
@@ -205,7 +205,7 @@ githubLink.style.color = '#800080';
 githubLink.style.textAlign = 'center';
 
 const author = document.createElement('div');
-author.textContent = 'Author: Petr Bogutskii';
+author.textContent = '@Petr Bogutskii';
 author.style.marginTop = '10px';
 author.style.textAlign = 'center';
 
@@ -214,20 +214,20 @@ buttonContainer.style.display = 'flex';
 buttonContainer.style.justifyContent = 'center';
 buttonContainer.style.gap = '10px';
 
-const okButton = document.createElement('button');
-okButton.textContent = 'Save';
-okButton.style.marginTop = '10px';
-okButton.style.backgroundColor = '#800080';
-okButton.style.color = '#fff';
-okButton.style.border = 'none';
-okButton.style.padding = '10px 20px';
-okButton.style.borderRadius = '5px';
-okButton.style.cursor = 'pointer';
-okButton.style.display = 'block';
-okButton.style.margin = '20px auto';
+// const okButton = document.createElement('button');
+// okButton.textContent = 'Save';
+// okButton.style.marginTop = '10px';
+// okButton.style.backgroundColor = '#800080';
+// okButton.style.color = '#fff';
+// okButton.style.border = 'none';
+// okButton.style.padding = '10px 20px';
+// okButton.style.borderRadius = '5px';
+// okButton.style.cursor = 'pointer';
+// okButton.style.display = 'block';
+// okButton.style.margin = '20px auto';
 
 const cancelButton = document.createElement('button');
-cancelButton.textContent = 'Cancel';
+cancelButton.textContent = 'Ok';
 cancelButton.style.marginTop = '10px';
 cancelButton.style.backgroundColor = '#8f8f8f';
 cancelButton.style.color = '#fff';
@@ -238,10 +238,39 @@ cancelButton.style.cursor = 'pointer';
 cancelButton.style.display = 'block';
 cancelButton.style.margin = '20px auto';
 
+cancelButton.addEventListener('mouseenter', () => {
+  cancelButton.style.backgroundColor = '#800080';
+});
+
+cancelButton.addEventListener('mouseleave', () => {
+  cancelButton.style.backgroundColor = '#8f8f8f';
+});
+
+const hotkeysInfoContainer = document.createElement('div');
+hotkeysInfoContainer.style.display = 'flex';
+hotkeysInfoContainer.style.alignItems = 'center';
+hotkeysInfoContainer.style.justifyContent = 'center';
+hotkeysInfoContainer.style.marginTop = '10px';
+hotkeysInfoContainer.style.textAlign = 'center';
+
+const hotkeysInfoTitle = document.createElement('div');
+hotkeysInfoTitle.textContent = 'Hotkeys:';
+hotkeysInfoTitle.style.fontWeight = 'bold';
+hotkeysInfoTitle.style.marginRight = '5px';
+
 const hotkeysInfo = document.createElement('div');
-hotkeysInfo.innerHTML = 'Hotkeys: <b>Control + M</b>';
-hotkeysInfo.style.marginTop = '10px';
-hotkeysInfo.style.textAlign = 'center';
+hotkeysInfo.innerHTML = '<b> Control + M</b>';
+hotkeysInfo.style.display = 'flex';
+
+const hotkeysIcon = document.createElement('div');
+hotkeysIcon.textContent = 'ℹ️';
+hotkeysIcon.title = 'Hotkeys: Control + M to start/stop microphone.';
+hotkeysIcon.style.marginLeft = '10px';
+hotkeysIcon.style.cursor = 'pointer';
+
+hotkeysInfoContainer.appendChild(hotkeysInfoTitle);
+hotkeysInfoContainer.appendChild(hotkeysInfo);
+hotkeysInfoContainer.appendChild(hotkeysIcon);
 
 // Option to choose microphone position
 const micPositionContainer = document.createElement('div');
@@ -257,7 +286,7 @@ micPositionInfo.style.textAlign = 'center';
 micPositionInfo.style.fontWeight = 'bold';
 
 const micPositionSelector = document.createElement('select');
-micPositionSelector.style.marginLeft = '35%'
+micPositionSelector.style.marginLeft = '35%';
 const positions = [
   {value: 'default', name: 'Default'},
   {value: 'input', name: 'In Input'}
@@ -268,6 +297,25 @@ positions.forEach(pos => {
   option.textContent = pos.name;
   micPositionSelector.appendChild(option);
 });
+
+const positionMicButton = (position) => {
+  const inputField = document.querySelector('#prompt-textarea');
+  const sendButton = document.querySelector('[data-testid="fruitjuice-send-button"]');
+  const clearButton = document.querySelector('#clearButton');
+  if (position === 'input') {
+    if (inputField && sendButton && clearButton) {
+      sendButton.parentNode.insertBefore(micButton, clearButton);
+    }
+  } else {
+    container.insertBefore(micButton, languageSelector);
+  }
+};
+micPositionSelector.addEventListener('change', (event) => {
+  const selectedPosition = event.target.value;
+  chrome.storage.local.set({micPosition: selectedPosition});
+  positionMicButton(selectedPosition);
+});
+
 
 micPositionContainer.appendChild(micPositionInfo);
 micPositionContainer.appendChild(micPositionSelector);
@@ -309,8 +357,15 @@ languageList.style.height = '200px';
 languageList.style.overflowY = 'scroll';
 languageList.style.border = '1px solid #ccc';
 languageList.style.borderRadius = '5px';
+languageList.style.marginTop = '10px';
 
+const saveFavoriteLanguagesFunction = () => {
+  favoriteLanguages = Array.from(languageList.querySelectorAll('input:checked')).map(input => input.value);
+  chrome.storage.local.set({favoriteLanguages});
+  updateLanguageSelector();
+}
 languages.forEach(lang => {
+
   const label = document.createElement('label');
   label.style.display = 'block';
   label.style.padding = '5px';
@@ -319,6 +374,7 @@ languages.forEach(lang => {
   checkbox.type = 'checkbox';
   checkbox.value = lang.code;
   checkbox.checked = favoriteLanguages.includes(lang.code);
+  checkbox.onclick = saveFavoriteLanguagesFunction;
   label.appendChild(checkbox);
   label.appendChild(document.createTextNode(lang.name));
   languageList.appendChild(label);
@@ -336,6 +392,7 @@ autogenerationContainer.style.padding = '10px';
 autogenerationContainer.style.borderRadius = '5px';
 autogenerationContainer.style.marginBottom = '10px';
 
+
 const autogenerationInfo = document.createElement('label');
 autogenerationInfo.style.display = 'flex';
 autogenerationInfo.style.alignItems = 'center';
@@ -348,22 +405,31 @@ autogenerationCheckbox.id = 'autogenerationCheckbox';
 autogenerationCheckbox.style.marginLeft = '10px';
 autogenerationCheckbox.checked = true;
 
+const autogenerationIcon = document.createElement('span');
+autogenerationIcon.textContent = 'ℹ️';
+autogenerationIcon.title = 'Auto continue generate responses if enabled 2 second delay';
+autogenerationIcon.style.cursor = 'pointer';
+autogenerationIcon.style.marginLeft = '10px';
 autogenerationInfo.appendChild(autogenerationCheckbox);
+autogenerationInfo.appendChild(autogenerationIcon);
 autogenerationContainer.appendChild(autogenerationInfo);
 
-modal.appendChild(modalTitle);
-modal.appendChild(languageContainer);
-modal.appendChild(micPositionContainer);
-modal.appendChild(autogenerationContainer);
-modal.appendChild(donationLink);
-modal.appendChild(LinkedInLink);
-modal.appendChild(githubLink);
-modal.appendChild(author);
-modal.appendChild(hotkeysInfo);
-buttonContainer.appendChild(okButton);
-buttonContainer.appendChild(cancelButton);
-modal.appendChild(buttonContainer);
-
+const checkForContinueButton = () => {
+  const continueButton = document.querySelector('div.flex.h-full.w-full.items-center.justify-end button');
+  if (continueButton && autogenerationCheckbox.checked) {
+    continueButton.click();
+  }
+};
+autogenerationCheckbox.addEventListener('change', () => {
+  const isAutoGenerationEnabled = autogenerationCheckbox.checked;
+  chrome.storage.local.set({isAutoGenerationEnabled});
+  if (isAutoGenerationEnabled) {
+    setInterval(checkForContinueButton, 2000);
+  } else {
+    clearInterval(checkForContinueButton);
+  }
+})
+// Width adjustment setting
 const widthSliderContainer = document.createElement('div');
 widthSliderContainer.style.display = 'flex';
 widthSliderContainer.style.flexDirection = 'column';
@@ -372,6 +438,7 @@ widthSliderContainer.style.backgroundColor = '#f9f9f9';
 widthSliderContainer.style.padding = '10px';
 widthSliderContainer.style.borderRadius = '5px';
 widthSliderContainer.style.marginBottom = '10px';
+
 const widthSliderLabel = document.createElement('label');
 widthSliderLabel.textContent = 'Adjust Content Width:';
 widthSliderLabel.style.marginBottom = '5px';
@@ -384,21 +451,27 @@ widthSlider.value = '50'; // Initial value
 widthSliderContainer.appendChild(widthSliderLabel);
 widthSliderContainer.appendChild(widthSlider);
 
-// Reset button
-const resetButton = document.createElement('button');
-resetButton.textContent = 'Reset to Default';
-resetButton.style.marginTop = '10px';
-resetButton.style.backgroundColor = '#800080';
-resetButton.style.color = '#fff';
-resetButton.style.border = 'none';
-resetButton.style.padding = '10px 20px';
-resetButton.style.borderRadius = '5px';
-resetButton.style.cursor = 'pointer';
-resetButton.style.display = 'block';
-resetButton.style.margin = '20px auto';
+const donationContainer = document.createElement('div');
+donationContainer.style.backgroundColor = '#f9f9f9';
+donationContainer.style.padding = '10px';
+donationContainer.style.borderRadius = '5px';
+donationContainer.style.marginBottom = '10px';
+donationContainer.appendChild(donationLink);
+donationContainer.appendChild(LinkedInLink);
+donationContainer.appendChild(githubLink);
+donationContainer.appendChild(author);
 
+// Append elements to modal
+modal.appendChild(modalTitle);
+modal.appendChild(languageContainer);
+modal.appendChild(micPositionContainer);
+modal.appendChild(autogenerationContainer);
 modal.appendChild(widthSliderContainer);
-modal.appendChild(resetButton);
+modal.appendChild(donationContainer);
+modal.appendChild(hotkeysInfoContainer);
+// buttonContainer.appendChild(okButton);
+buttonContainer.appendChild(cancelButton);
+modal.appendChild(buttonContainer);
 
 document.body.appendChild(modal);
 document.body.appendChild(modalOverlay);
@@ -413,21 +486,22 @@ modalOverlay.addEventListener('click', () => {
   modalOverlay.style.display = 'none';
 });
 
-okButton.addEventListener('click', () => {
+const saveButtonFunction = () => {
+  saveAutoGenerationFunction()
   modal.style.display = 'none';
   modalOverlay.style.display = 'none';
-  // Save microphone position
-  const micPosition = micPositionSelector.value;
-  chrome.storage.local.set({micPosition});
-  positionMicButton(micPosition);
-  // Save favorite languages
-  favoriteLanguages = Array.from(languageList.querySelectorAll('input:checked')).map(input => input.value);
-  chrome.storage.local.set({favoriteLanguages});
-  updateLanguageSelector();
-  // Save autogenerate setting
+}
+
+const saveAutoGenerationFunction = () => {
   const isAutoGenerationEnabled = autogenerationCheckbox.checked;
   chrome.storage.local.set({isAutoGenerationEnabled});
-});
+}
+
+// okButton.addEventListener('click', () => {
+//   saveButtonFunction()
+//   modal.style.display = 'none';
+//   modalOverlay.style.display = 'none';
+// });
 
 cancelButton.addEventListener('click', () => {
   modal.style.display = 'none';
@@ -453,27 +527,18 @@ widthSlider.addEventListener('input', (event) => {
   chrome.storage.local.set({contentWidth: width});
 });
 
-resetButton.addEventListener('click', () => {
-  widthSlider.value = 50;
-  adjustContentWidth(50);
-  chrome.storage.local.set({contentWidth: 50});
-
-  chrome.storage.local.set({isAutoGenerationEnabled: false, favoriteLanguages: ['en-US', 'uk-UA', 'ru-RU']}, () => {
-    autogenerationCheckbox.checked = false;
-    favoriteLanguages = ['en-US', 'uk-UA', 'ru-RU'];
-    updateLanguageSelector();
-  });
-});
 selectAllButton.addEventListener('click', () => {
   languageList.querySelectorAll('input').forEach(checkbox => {
     checkbox.checked = true;
   });
+  saveFavoriteLanguagesFunction()
 });
 
 deselectAllButton.addEventListener('click', () => {
   languageList.querySelectorAll('input').forEach(checkbox => {
     checkbox.checked = false;
   });
+  saveFavoriteLanguagesFunction()
 });
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -483,10 +548,14 @@ recognition.continuous = true;
 recognition.interimResults = true;
 
 const changeLanguage = (language) => {
-  recognition.stop();
-  recognition.lang = language;
   if (isListening) {
-    recognition.start();
+    recognition.stop();
+    recognition.onend = () => {
+      recognition.lang = language;
+      recognition.start();
+    };
+  } else {
+    recognition.lang = language;
   }
 };
 
@@ -638,19 +707,6 @@ const ensureClearButton = () => {
 ensureClearButton();
 new MutationObserver(ensureClearButton).observe(document.body, {childList: true, subtree: true});
 
-const positionMicButton = (position) => {
-  const inputField = document.querySelector('#prompt-textarea');
-  const sendButton = document.querySelector('[data-testid="fruitjuice-send-button"]');
-  const clearButton = document.querySelector('#clearButton');
-  if (position === 'input') {
-    if (inputField && sendButton && clearButton) {
-      sendButton.parentNode.insertBefore(micButton, clearButton);
-    }
-  } else {
-    container.insertBefore(micButton, languageSelector);
-  }
-};
-
 chrome.storage.local.get(['micPosition'], (result) => {
   if (result.micPosition) {
     positionMicButton(result.micPosition);
@@ -661,16 +717,9 @@ chrome.storage.local.get(['micPosition'], (result) => {
 
 micButton.style.backgroundImage = isListening ? "url(chrome-extension://" + chrome.runtime.id + "/img/mic_ON.png)" : "url(chrome-extension://" + chrome.runtime.id + "/img/mic_OFF.png)";
 
-// Function to automatically continue generation
-const checkForContinueButton = () => {
-  const continueButton = document.querySelector('div.flex.h-full.w-full.items-center.justify-end button');
-  if (continueButton && autogenerationCheckbox.checked) {
-    continueButton.click();
-  }
-};
 
 if (autogenerationCheckbox.checked) {
-  setInterval(checkForContinueButton, 2000); // Check every 2 seconds
+  setInterval(checkForContinueButton, 2000);
 }
 
 const observer = new MutationObserver(() => {
