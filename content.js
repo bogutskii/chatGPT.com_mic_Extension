@@ -368,6 +368,9 @@ const widthSliderContainer = document.createElement('div');
 widthSliderContainer.style.display = 'flex';
 widthSliderContainer.style.flexDirection = 'column';
 widthSliderContainer.style.alignItems = 'center';
+widthSliderContainer.style.backgroundColor = '#f9f9f9';
+widthSliderContainer.style.padding = '10px';
+widthSliderContainer.style.borderRadius = '5px';
 widthSliderContainer.style.marginBottom = '10px';
 const widthSliderLabel = document.createElement('label');
 widthSliderLabel.textContent = 'Adjust Content Width:';
@@ -377,10 +380,11 @@ widthSlider.type = 'range';
 widthSlider.min = '50';
 widthSlider.max = '100';
 widthSlider.step = '5';
-widthSlider.value = '100'; // Initial value
+widthSlider.value = '50'; // Initial value
 widthSliderContainer.appendChild(widthSliderLabel);
 widthSliderContainer.appendChild(widthSlider);
 
+// Reset button
 const resetButton = document.createElement('button');
 resetButton.textContent = 'Reset to Default';
 resetButton.style.marginTop = '10px';
@@ -450,9 +454,9 @@ widthSlider.addEventListener('input', (event) => {
 });
 
 resetButton.addEventListener('click', () => {
-  widthSlider.value = 0;
-  adjustContentWidth(0);
-  chrome.storage.local.set({contentWidth: 0});
+  widthSlider.value = 50;
+  adjustContentWidth(50);
+  chrome.storage.local.set({contentWidth: 50});
 
   chrome.storage.local.set({isAutoGenerationEnabled: false, favoriteLanguages: ['en-US', 'uk-UA', 'ru-RU']}, () => {
     autogenerationCheckbox.checked = false;
