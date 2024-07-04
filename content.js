@@ -214,18 +214,6 @@ buttonContainer.style.display = 'flex';
 buttonContainer.style.justifyContent = 'center';
 buttonContainer.style.gap = '10px';
 
-// const okButton = document.createElement('button');
-// okButton.textContent = 'Save';
-// okButton.style.marginTop = '10px';
-// okButton.style.backgroundColor = '#800080';
-// okButton.style.color = '#fff';
-// okButton.style.border = 'none';
-// okButton.style.padding = '10px 20px';
-// okButton.style.borderRadius = '5px';
-// okButton.style.cursor = 'pointer';
-// okButton.style.display = 'block';
-// okButton.style.margin = '20px auto';
-
 const cancelButton = document.createElement('button');
 cancelButton.textContent = 'Ok';
 cancelButton.style.marginTop = '10px';
@@ -315,7 +303,6 @@ micPositionSelector.addEventListener('change', (event) => {
   chrome.storage.local.set({micPosition: selectedPosition});
   positionMicButton(selectedPosition);
 });
-
 
 micPositionContainer.appendChild(micPositionInfo);
 micPositionContainer.appendChild(micPositionSelector);
@@ -469,7 +456,6 @@ modal.appendChild(autogenerationContainer);
 modal.appendChild(widthSliderContainer);
 modal.appendChild(donationContainer);
 modal.appendChild(hotkeysInfoContainer);
-// buttonContainer.appendChild(okButton);
 buttonContainer.appendChild(cancelButton);
 modal.appendChild(buttonContainer);
 
@@ -496,12 +482,6 @@ const saveAutoGenerationFunction = () => {
   const isAutoGenerationEnabled = autogenerationCheckbox.checked;
   chrome.storage.local.set({isAutoGenerationEnabled});
 }
-
-// okButton.addEventListener('click', () => {
-//   saveButtonFunction()
-//   modal.style.display = 'none';
-//   modalOverlay.style.display = 'none';
-// });
 
 cancelButton.addEventListener('click', () => {
   modal.style.display = 'none';
