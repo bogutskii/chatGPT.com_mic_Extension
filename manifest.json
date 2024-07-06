@@ -12,8 +12,13 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://chatgpt.com/*"],
-      "js": ["content.js"]
+      "matches": [
+        "*://chatgpt.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "type": "module"
     }
   ],
   "icons": {
@@ -23,8 +28,21 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["img/*"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "img/*",
+        "autoGeneration.js",
+        "clearButton.js",
+        "languages.js",
+        "micPosition.js",
+        "modal.js",
+        "settings.js",
+        "speech.js",
+        "ui.js",
+        "widthAdjustment.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ]
 }
