@@ -1,3 +1,5 @@
+import { getState, setState } from './state.js';
+
 export const createModal = () => {
   const modal = document.createElement('div');
   modal.style.color = '#000';
@@ -15,23 +17,26 @@ export const createModal = () => {
   modal.style.transition = 'all 0.3s ease-in-out';
   modal.style.width = '400px';
   modal.style.maxWidth = '90%';
+
   return modal;
 };
 
 export const createModalOverlay = () => {
-  const overlay = document.createElement('div');
-  overlay.style.display = 'none';
-  overlay.style.position = 'fixed';
-  overlay.style.top = '0';
-  overlay.style.left = '0';
-  overlay.style.width = '100%';
-  overlay.style.height = '100%';
-  overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-  overlay.style.zIndex = '1000';
-  return overlay;
+  const modalOverlay = document.createElement('div');
+  modalOverlay.style.display = 'none';
+  modalOverlay.style.position = 'fixed';
+  modalOverlay.style.top = '0';
+  modalOverlay.style.left = '0';
+  modalOverlay.style.width = '100%';
+  modalOverlay.style.height = '100%';
+  modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+  modalOverlay.style.zIndex = '1000';
+
+  return modalOverlay;
 };
 
-export const setupModal = async (modal, favoriteLanguages, updateLanguageSelector) => {
+export const setupModal = async (modal, favoriteLanguages, updateLanguageSelector, container, micButton) => {
+  const state = getState();
   const languageContainer = document.createElement('div');
   languageContainer.style.backgroundColor = '#f9f9f9';
   languageContainer.style.padding = '10px';
@@ -71,8 +76,8 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   languageList.style.marginTop = '10px';
 
   const saveFavoriteLanguagesFunction = () => {
-    favoriteLanguages = Array.from(languageList.querySelectorAll('input:checked')).map(input => input.value);
-    chrome.storage.local.set({ favoriteLanguages });
+    const newFavoriteLanguages = Array.from(languageList.querySelectorAll('input:checked')).map(input => input.value);
+    setState({ favoriteLanguages: newFavoriteLanguages });
     updateLanguageSelector();
   };
 
@@ -85,7 +90,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.value = lang.code;
-    checkbox.checked = favoriteLanguages.includes(lang.code);
+    checkbox.checked = state.favoriteLanguages.includes(lang.code);
     checkbox.onclick = saveFavoriteLanguagesFunction;
     label.appendChild(checkbox);
     label.appendChild(document.createTextNode(lang.name));
@@ -140,7 +145,17 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   micPositionSelector.addEventListener('change', (event) => {
     const selectedPosition = event.target.value;
-    chrome.storage.local.set({ micPosition: selectedPosition });
+    setState({ micPosition: selectedPosition });
+    const inputField = document.querySelector('#prompt-textarea');
+    const sendButton = document.querySelector('[data-testid="fruitjuice-send-button"]');
+    const clearButton = document.querySelector('#clearButton');
+    if (selectedPosition === 'input') {
+      if (inputField && sendButton && clearButton) {
+        sendButton.parentNode.insertBefore(micButton, clearButton);
+      }
+    } else {
+      container.appendChild(micButton);
+    }
   });
 
   micPositionContainer.appendChild(micPositionInfo);
@@ -163,7 +178,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   autogenerationCheckbox.type = 'checkbox';
   autogenerationCheckbox.id = 'autogenerationCheckbox';
   autogenerationCheckbox.style.marginLeft = '10px';
-  autogenerationCheckbox.checked = true;
+  autogenerationCheckbox.checked = state.isAutoGenerationEnabled;
 
   const autogenerationIcon = document.createElement('span');
   autogenerationIcon.textContent = 'ℹ️';
@@ -192,7 +207,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   widthSlider.min = '50';
   widthSlider.max = '100';
   widthSlider.step = '5';
-  widthSlider.value = '50';
+  widthSlider.value = state.contentWidth;
   widthSliderContainer.appendChild(widthSliderLabel);
   widthSliderContainer.appendChild(widthSlider);
   modal.appendChild(widthSliderContainer);

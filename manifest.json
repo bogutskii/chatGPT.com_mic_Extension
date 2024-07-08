@@ -30,15 +30,15 @@
     {
       "resources": [
         "img/*",
-        "autoGeneration.js",
-        "clearButton.js",
         "languages.js",
-        "micPosition.js",
-        "modal.js",
-        "settings.js",
-        "speech.js",
         "ui.js",
-        "widthAdjustment.js"
+        "state.js",
+        "speech.js",
+        "modal.js",
+        "micPosition.js",
+        "autoGeneration.js",
+        "widthAdjustment.js",
+        "clearButton.js"
       ],
       "matches": [
         "<all_urls>"

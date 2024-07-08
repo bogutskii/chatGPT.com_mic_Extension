@@ -1,7 +1,7 @@
 (async () => {
   const { languages } = await import(chrome.runtime.getURL('languages.js'));
   const { createContainer, createButton, createSelect } = await import(chrome.runtime.getURL('ui.js'));
-  const { loadFavoriteLanguages, saveFavoriteLanguages } = await import(chrome.runtime.getURL('settings.js'));
+  const { initializeState, getState, setState } = await import(chrome.runtime.getURL('state.js'));
   const { initializeSpeechRecognition } = await import(chrome.runtime.getURL('speech.js'));
   const { createModal, createModalOverlay, setupModal } = await import(chrome.runtime.getURL('modal.js'));
   const { setupMicPosition } = await import(chrome.runtime.getURL('micPosition.js'));
@@ -9,16 +9,18 @@
   const { setupWidthAdjustment } = await import(chrome.runtime.getURL('widthAdjustment.js'));
   const { setupClearButton } = await import(chrome.runtime.getURL('clearButton.js'));
 
+  await initializeState();
+  const state = getState();
+
   const container = createContainer();
   const micButton = createButton(`chrome-extension://${chrome.runtime.id}/img/mic_OFF.png`);
   const settingsButton = createButton(`chrome-extension://${chrome.runtime.id}/img/options.png`);
   const languageOptions = languages.map(lang => ({ value: lang.code, text: lang.name }));
   const languageSelector = createSelect(languageOptions);
 
-  let favoriteLanguages = ['en-US', 'uk-UA', 'ru-RU'];
   const updateLanguageSelector = () => {
     languageSelector.innerHTML = '';
-    favoriteLanguages.forEach(langCode => {
+    state.favoriteLanguages.forEach(langCode => {
       const lang = languages.find(l => l.code === langCode);
       if (lang) {
         const option = document.createElement('option');
@@ -29,10 +31,7 @@
     });
   };
 
-  loadFavoriteLanguages((loadedFavoriteLanguages) => {
-    favoriteLanguages = loadedFavoriteLanguages;
-    updateLanguageSelector();
-  });
+  updateLanguageSelector();
 
   container.appendChild(micButton);
   container.appendChild(languageSelector);
@@ -55,13 +54,17 @@
     modalOverlay.style.display = 'none';
   });
 
-  await setupModal(modal, favoriteLanguages, updateLanguageSelector);
-  await setupMicPosition(container, micButton, languageSelector);
+  await setupModal(modal, state.favoriteLanguages, (newFavoriteLanguages) => {
+    setState({ favoriteLanguages: newFavoriteLanguages });
+    updateLanguageSelector();
+  }, container, micButton);
+
+  await setupMicPosition(container, micButton, state.micPosition);
+
   await setupAutoGeneration(modal);
   await setupWidthAdjustment(modal);
   await setupClearButton(modal);
 
-  let isListening = false;
   let finalTranscript = '';
   let interimTranscript = '';
 
@@ -75,7 +78,7 @@
     inputField.dispatchEvent(event);
   };
 
-  let recognition = initializeSpeechRecognition(languageSelector.value);
+  let recognition = initializeSpeechRecognition(state.recognitionLanguage);
 
   recognition.onresult = (event) => {
     interimTranscript = '';
@@ -98,12 +101,13 @@
   };
 
   recognition.onerror = () => {
-    isListening = false;
+    state.isListening = false;
+    setState({ isListening: false });
     micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ERR.png)`;
   };
 
   recognition.onend = () => {
-    if (isListening) {
+    if (state.isListening) {
       recognition.start();
     } else {
       const inputField = document.querySelector('#prompt-textarea');
@@ -113,24 +117,24 @@
         triggerInputEvent(inputField);
       }
     }
-    micButton.style.backgroundImage = isListening ? `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)` : `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
+    micButton.style.backgroundImage = state.isListening ? `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)` : `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
   };
 
   micButton.addEventListener('click', (event) => {
     event.preventDefault();
     const inputField = document.querySelector('#prompt-textarea');
-    if (isListening) {
+    if (state.isListening) {
       recognition.stop();
-      isListening = false;
-      chrome.storage.local.set({ recognitionLanguage: languageSelector.value });
+      state.isListening = false;
+      setState({ isListening: false });
     } else {
       finalTranscript = inputField.value;
       interimTranscript = '';
       recognition.start();
-      isListening = true;
-      chrome.storage.local.set({ recognitionLanguage: languageSelector.value });
+      state.isListening = true;
+      setState({ isListening: true });
     }
-    micButton.style.backgroundImage = isListening ? `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)` : `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
+    micButton.style.backgroundImage = state.isListening ? `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)` : `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
   });
 
   document.addEventListener('keydown', (event) => {
@@ -140,21 +144,22 @@
     }
   });
 
-  chrome.storage.local.get(['micPosition'], (result) => {
-    if (result.micPosition) {
-      setupMicPosition(container, micButton, languageSelector, result.micPosition);
-    } else {
-      container.appendChild(micButton);
+  languageSelector.addEventListener('change', (event) => {
+    const selectedLanguage = event.target.value;
+    setState({ recognitionLanguage: selectedLanguage });
+    recognition.lang = selectedLanguage;
+    if (state.isListening) {
+      recognition.stop();
+      recognition = initializeSpeechRecognition(selectedLanguage);
+      recognition.start();
     }
   });
 
-  languageSelector.addEventListener('change', (event) => {
-    const selectedLanguage = event.target.value;
-    chrome.storage.local.set({ recognitionLanguage: selectedLanguage });
-    recognition.lang = selectedLanguage;
-    if (isListening) {
-      recognition.stop();
-      recognition.start();
+  chrome.storage.local.get(['micPosition'], (result) => {
+    if (result.micPosition) {
+      setupMicPosition(container, micButton, result.micPosition);
+    } else {
+      container.appendChild(micButton);
     }
   });
 })();
