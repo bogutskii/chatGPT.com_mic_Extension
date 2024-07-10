@@ -77,8 +77,8 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const saveFavoriteLanguagesFunction = () => {
     const newFavoriteLanguages = Array.from(languageList.querySelectorAll('input:checked')).map(input => input.value);
+    console.log('New favorite languages:', newFavoriteLanguages);
     setState({ favoriteLanguages: newFavoriteLanguages });
-    updateLanguageSelector();
   };
 
   const { languages } = await import(chrome.runtime.getURL('languages.js'));
@@ -285,7 +285,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const buttonContainer = document.createElement('div');
   buttonContainer.style.display = 'flex';
-  buttonContainer.style.justifyContent = 'center';
   buttonContainer.style.gap = '10px';
 
   const cancelButton = document.createElement('button');
