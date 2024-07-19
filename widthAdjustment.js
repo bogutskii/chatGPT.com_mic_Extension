@@ -2,7 +2,7 @@ export const setupWidthAdjustment = (modal) => {
   const widthSlider = modal.querySelector('input[type="range"]');
 
   const adjustContentWidth = (width) => {
-    const contentElements = document.querySelectorAll('.mx-auto.flex.flex-1.gap-3.text-base.juice\\:gap-4.juice\\:md\\:gap-5.juice\\:lg\\:gap-6');
+    const contentElements = document.querySelectorAll('.mx-auto.flex.flex-1');
     contentElements.forEach(el => {
       el.style.maxWidth = `${width}%`;
     });

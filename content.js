@@ -117,8 +117,7 @@
     }
   };
 
-  recognition.onerror = (event) => {
-    console.error('Recognition error:', event.error);
+  recognition.onerror = () => {
     state.isListening = false;
     isRecognitionRunning = false;
     setState({ isListening: false });
@@ -166,7 +165,7 @@
 
   const ensureMicButtonVisible = () => {
     const inputField = document.querySelector('#prompt-textarea');
-    const sendButton = document.querySelector('[data-testid="fruitjuice-send-button"]');
+    const sendButton = document.querySelector('[data-testid="send-button"]');
     const clearButton = document.querySelector('#clearButton');
 
     if (state.micPosition === 'input') {

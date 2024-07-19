@@ -1,6 +1,6 @@
 export const setupMicPosition = (container, micButton, position = 'default') => {
   const inputField = document.querySelector('#prompt-textarea');
-  const sendButton = document.querySelector('[data-testid="fruitjuice-send-button"]');
+  const sendButton = document.querySelector('[data-testid="send-button"]');
   const clearButton = document.querySelector('#clearButton');
 
   // Remove micButton from its current parent if it has one

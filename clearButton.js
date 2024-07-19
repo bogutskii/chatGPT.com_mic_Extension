@@ -1,5 +1,5 @@
 export const setupClearButton = () => {
-  const sendButton = document.querySelector('[data-testid="fruitjuice-send-button"]');
+  const sendButton = document.querySelector('[data-testid="send-button"]');
 
   if (sendButton && !document.querySelector('#clearButton')) {
   const clearButton = document.createElement('button');

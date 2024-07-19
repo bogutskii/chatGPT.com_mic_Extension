@@ -147,7 +147,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
     const selectedPosition = event.target.value;
     setState({ micPosition: selectedPosition });
     const inputField = document.querySelector('#prompt-textarea');
-    const sendButton = document.querySelector('[data-testid="fruitjuice-send-button"]');
+    const sendButton = document.querySelector('[data-testid="send-button"]');
     const clearButton = document.querySelector('#clearButton');
     if (selectedPosition === 'input') {
       if (inputField && sendButton && clearButton) {
