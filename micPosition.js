@@ -3,14 +3,15 @@ export const setupMicPosition = (container, micButton, position = 'default') => 
   const sendButton = document.querySelector('[data-testid="send-button"]');
   const clearButton = document.querySelector('#clearButton');
 
-  // Remove micButton from its current parent if it has one
   if (micButton.parentNode) {
     micButton.parentNode.removeChild(micButton);
   }
 
   if (position === 'input') {
     if (inputField && sendButton && clearButton) {
-      sendButton.parentNode.insertBefore(micButton, clearButton);
+      if (sendButton.parentNode) {
+        sendButton.parentNode.insertBefore(micButton, clearButton);
+      }
     }
   } else {
     container.appendChild(micButton);
