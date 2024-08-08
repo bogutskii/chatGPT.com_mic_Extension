@@ -1,0 +1,156 @@
+/* styles.css */
+
+.modal {
+    color: #000;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90%;
+    overflow-y: auto;
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.columns {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+    .columns {
+        flex-direction: row;
+    }
+}
+
+.column {
+    flex: 1;
+    margin-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+    .column {
+        margin-right: 10px;
+        margin-bottom: 0;
+    }
+
+    .column:last-child {
+        margin-right: 0;
+    }
+}
+
+.language-container,
+.mic-position-container,
+.autogeneration-container,
+.width-slider-container,
+.donation-container {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.language-list-info {
+    font-weight: bold;
+}
+
+.select-all-button,
+.deselect-all-button,
+.cancel-button {
+    background-color: #800080;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.cancel-button {
+    background-color: #8f8f8f;
+}
+
+.cancel-button:hover {
+    background-color: #800080;
+}
+
+.language-list {
+    width: 100%;
+    height: 200px;
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.mic-position-info,
+.hotkeys-info-title {
+    font-weight: bold;
+}
+
+.mic-position-selector {
+    width: 100%;
+}
+
+.donation-links {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.donation-link,
+.linkedin-link,
+.github-link {
+    text-decoration: underline;
+    color: #800080;
+    text-align: center;
+}
+
+.author {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.hotkeys-info-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.hotkeys-icon {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.width-slider-label {
+    margin-bottom: 5px;
+}
