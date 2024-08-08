@@ -11,17 +11,16 @@
 
   await initializeState();
   let state = getState();
-  console.log('Initial state:', state);
-
+  //   console.log('Initial state:', state);
   const container = createContainer();
   const micButton = createButton(`chrome-extension://${chrome.runtime.id}/img/mic_OFF.png`);
-const settingsButton = createButton(`chrome-extension://${chrome.runtime.id}/img/options.png`);
-const languageOptions = languages.map(lang => ({ value: lang.code, text: lang.name }));
-const languageSelector = createSelect(languageOptions);
+  const settingsButton = createButton(`chrome-extension://${chrome.runtime.id}/img/options.png`);
+  const languageOptions = languages.map(lang => ({ value: lang.code, text: lang.name }));
+  const languageSelector = createSelect(languageOptions);
 
 const updateLanguageSelector = (currentState) => {
   languageSelector.innerHTML = '';
-  console.log('Updating language selector with favoriteLanguages:', currentState.favoriteLanguages);
+  //   console.log('Updating language selector with favoriteLanguages:', currentState.favoriteLanguages);
   currentState.favoriteLanguages.forEach(langCode => {
     const lang = languages.find(l => l.code === langCode);
     if (lang) {
@@ -32,7 +31,7 @@ const updateLanguageSelector = (currentState) => {
     }
   });
   languageSelector.value = currentState.recognitionLanguage;
-  console.log('Language selector updated to:', languageSelector.value);
+  //   console.log('Language selector updated to:', languageSelector.value);
 };
 
 updateLanguageSelector(state);
@@ -57,11 +56,11 @@ const ensureMicButtonVisible = () => {
 
 subscribe(() => {
   state = getState();
-  console.log('State updated:', state);
+  //   console.log('State updated:', state);
   updateLanguageSelector(state);
   if (recognition && state.recognitionLanguage) {
     recognition.lang = state.recognitionLanguage;
-    console.log('Recognition language set to:', state.recognitionLanguage);
+    //   console.log('Recognition language set to:', state.recognitionLanguage);
   }
   ensureMicButtonVisible();
 });
@@ -89,7 +88,7 @@ modalOverlay.addEventListener('click', () => {
 
 await setupModal(modal, state.favoriteLanguages, (newFavoriteLanguages) => {
   setState({ favoriteLanguages: newFavoriteLanguages });
-  console.log('Favorite languages set to:', newFavoriteLanguages);
+  //   console.log('Favorite languages set to:', newFavoriteLanguages);
   updateLanguageSelector(state);
 }, container, micButton);
 
@@ -143,13 +142,13 @@ recognition.onerror = () => {
 };
 
 recognition.onend = () => {
-  console.log('Recognition ended');
+  //   console.log('Recognition ended');
   isRecognitionRunning = false;
   if (state.isListening) {
     recognition.start();
     isRecognitionRunning = true;
     micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)`;
-    console.log('Recognition restarted');
+    //   console.log('Recognition restarted');
   } else {
     micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
   }
@@ -160,14 +159,14 @@ micButton.addEventListener('click', (event) => {
   const inputField = document.querySelector('#prompt-textarea');
   if (isRecognitionRunning) {
     recognition.stop();
-    console.log('Recognition stopped');
+    //   console.log('Recognition stopped');
     isRecognitionRunning = false;
     setState({ isListening: false });
   } else {
     finalTranscript = inputField.value;
     interimTranscript = '';
     recognition.start();
-    console.log('Recognition started');
+    //   console.log('Recognition started');
     isRecognitionRunning = true;
     setState({ isListening: true });
     micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)`;
@@ -194,11 +193,11 @@ chrome.storage.local.get(['micPosition'], (result) => {
 
 languageSelector.addEventListener('change', async (event) => {
   const selectedLanguage = event.target.value;
-  console.log('Language selected:', selectedLanguage);
+  //   console.log('Language selected:', selectedLanguage);
   setState({ recognitionLanguage: selectedLanguage });
 
   languageSelector.value = selectedLanguage;
-  console.log('Language selector manually updated to:', languageSelector.value);
+  //   console.log('Language selector manually updated to:', languageSelector.value);
 
   if (recognition) {
     recognition.lang = selectedLanguage;
@@ -209,7 +208,7 @@ languageSelector.addEventListener('change', async (event) => {
         recognition.lang = selectedLanguage;
         recognition.start();
         isRecognitionRunning = true;
-        console.log('Recognition restarted with new language:', selectedLanguage);
+        //   console.log('Recognition restarted with new language:', selectedLanguage);
       };
     } else {
       recognition.lang = selectedLanguage;
@@ -229,7 +228,7 @@ if (clearButton) {
       resizeTextarea(inputField);
       triggerInputEvent(inputField);
     }
-    console.log('Transcript cleared');
+    //   console.log('Transcript cleared');
   });
 }
 

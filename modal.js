@@ -1,79 +1,54 @@
 import { getState, setState } from './state.js';
 
+const loadCSS = (url) => {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = url;
+  document.head.appendChild(link);
+};
+
+loadCSS(chrome.runtime.getURL('styles.css'));
+
 export const createModal = () => {
   const modal = document.createElement('div');
-  modal.style.color = '#000';
-  modal.style.display = 'none';
-  modal.style.position = 'fixed';
-  modal.style.top = '50%';
-  modal.style.left = '50%';
-  modal.style.transform = 'translate(-50%, -50%)';
-  modal.style.zIndex = '1001';
-  modal.style.backgroundColor = '#fff';
-  modal.style.padding = '20px';
-  modal.style.border = '1px solid #ccc';
-  modal.style.borderRadius = '10px';
-  modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
-  modal.style.transition = 'all 0.3s ease-in-out';
-  modal.style.width = '400px';
-  modal.style.maxWidth = '90%';
+  modal.classList.add('modal');
 
   return modal;
 };
 
 export const createModalOverlay = () => {
   const modalOverlay = document.createElement('div');
-  modalOverlay.style.display = 'none';
-  modalOverlay.style.position = 'fixed';
-  modalOverlay.style.top = '0';
-  modalOverlay.style.left = '0';
-  modalOverlay.style.width = '100%';
-  modalOverlay.style.height = '100%';
-  modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-  modalOverlay.style.zIndex = '1000';
+  modalOverlay.classList.add('modal-overlay');
 
   return modalOverlay;
 };
 
 export const setupModal = async (modal, favoriteLanguages, updateLanguageSelector, container, micButton) => {
   const state = getState();
+
+  // Создаем контейнер для колонок
+  const columnsContainer = document.createElement('div');
+  columnsContainer.classList.add('columns');
+
+  // Первая колонка
   const languageContainer = document.createElement('div');
-  languageContainer.style.backgroundColor = '#f9f9f9';
-  languageContainer.style.padding = '10px';
-  languageContainer.style.borderRadius = '5px';
-  languageContainer.style.marginBottom = '10px';
+  languageContainer.classList.add('column', 'language-container');
 
   const languageListInfo = document.createElement('div');
   languageListInfo.textContent = 'Select Favorite Languages:';
-  languageListInfo.style.fontWeight = 'bold';
+  languageListInfo.classList.add('language-list-info');
 
   const selectAllButton = document.createElement('button');
   selectAllButton.textContent = 'Select All';
-  selectAllButton.style.marginTop = '10px';
-  selectAllButton.style.backgroundColor = '#800080';
-  selectAllButton.style.color = '#fff';
-  selectAllButton.style.border = 'none';
-  selectAllButton.style.padding = '10px 20px';
-  selectAllButton.style.borderRadius = '5px';
-  selectAllButton.style.cursor = 'pointer';
+  selectAllButton.classList.add('select-all-button');
 
   const deselectAllButton = document.createElement('button');
   deselectAllButton.textContent = 'Deselect All';
-  deselectAllButton.style.marginTop = '10px';
-  deselectAllButton.style.backgroundColor = '#800080';
-  deselectAllButton.style.color = '#fff';
-  deselectAllButton.style.border = 'none';
-  deselectAllButton.style.padding = '10px 20px';
-  deselectAllButton.style.borderRadius = '5px';
-  deselectAllButton.style.cursor = 'pointer';
+  deselectAllButton.classList.add('deselect-all-button');
 
   const languageList = document.createElement('div');
-  languageList.style.width = '100%';
-  languageList.style.height = '200px';
-  languageList.style.overflowY = 'scroll';
-  languageList.style.border = '1px solid #ccc';
-  languageList.style.borderRadius = '5px';
-  languageList.style.marginTop = '10px';
+  languageList.classList.add('language-list');
 
   const saveFavoriteLanguagesFunction = () => {
     const newFavoriteLanguages = Array.from(languageList.querySelectorAll('input:checked')).map(input => input.value);
@@ -116,22 +91,21 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
     saveFavoriteLanguagesFunction();
   });
 
-  modal.appendChild(languageContainer);
+  columnsContainer.appendChild(languageContainer);
+
+  // Вторая колонка
+  const settingsContainer = document.createElement('div');
+  settingsContainer.classList.add('column');
 
   const micPositionContainer = document.createElement('div');
-  micPositionContainer.style.backgroundColor = '#f9f9f9';
-  micPositionContainer.style.padding = '10px';
-  micPositionContainer.style.borderRadius = '5px';
-  micPositionContainer.style.marginBottom = '10px';
+  micPositionContainer.classList.add('mic-position-container');
 
   const micPositionInfo = document.createElement('div');
   micPositionInfo.textContent = 'Microphone Position:';
-  micPositionInfo.style.margin = '10px auto';
-  micPositionInfo.style.textAlign = 'center';
-  micPositionInfo.style.fontWeight = 'bold';
+  micPositionInfo.classList.add('mic-position-info');
 
   const micPositionSelector = document.createElement('select');
-  micPositionSelector.style.marginLeft = '35%';
+  micPositionSelector.classList.add('mic-position-selector');
   const positions = [
     { value: 'default', name: 'Default' },
     { value: 'input', name: 'In Input' }
@@ -160,48 +134,35 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   micPositionContainer.appendChild(micPositionInfo);
   micPositionContainer.appendChild(micPositionSelector);
-  modal.appendChild(micPositionContainer);
+  settingsContainer.appendChild(micPositionContainer);
 
   const autogenerationContainer = document.createElement('div');
-  autogenerationContainer.style.backgroundColor = '#f9f9f9';
-  autogenerationContainer.style.padding = '10px';
-  autogenerationContainer.style.borderRadius = '5px';
-  autogenerationContainer.style.marginBottom = '10px';
+  autogenerationContainer.classList.add('autogeneration-container');
 
   const autogenerationInfo = document.createElement('label');
-  autogenerationInfo.style.display = 'flex';
-  autogenerationInfo.style.alignItems = 'center';
-  autogenerationInfo.style.fontWeight = 'bold';
+  autogenerationInfo.classList.add('autogeneration-info');
   autogenerationInfo.textContent = 'Auto continue generate responses:';
 
   const autogenerationCheckbox = document.createElement('input');
   autogenerationCheckbox.type = 'checkbox';
   autogenerationCheckbox.id = 'autogenerationCheckbox';
-  autogenerationCheckbox.style.marginLeft = '10px';
   autogenerationCheckbox.checked = state.isAutoGenerationEnabled;
 
   const autogenerationIcon = document.createElement('span');
   autogenerationIcon.textContent = 'ℹ️';
+  autogenerationIcon.classList.add('hotkeys-icon');
   autogenerationIcon.title = 'Auto continue generate responses if enabled 2 second delay';
-  autogenerationIcon.style.cursor = 'pointer';
-  autogenerationIcon.style.marginLeft = '10px';
   autogenerationInfo.appendChild(autogenerationCheckbox);
   autogenerationInfo.appendChild(autogenerationIcon);
   autogenerationContainer.appendChild(autogenerationInfo);
-  modal.appendChild(autogenerationContainer);
+  settingsContainer.appendChild(autogenerationContainer);
 
   const widthSliderContainer = document.createElement('div');
-  widthSliderContainer.style.display = 'flex';
-  widthSliderContainer.style.flexDirection = 'column';
-  widthSliderContainer.style.alignItems = 'center';
-  widthSliderContainer.style.backgroundColor = '#f9f9f9';
-  widthSliderContainer.style.padding = '10px';
-  widthSliderContainer.style.borderRadius = '5px';
-  widthSliderContainer.style.marginBottom = '10px';
+  widthSliderContainer.classList.add('width-slider-container');
 
   const widthSliderLabel = document.createElement('label');
+  widthSliderLabel.classList.add('width-slider-label');
   widthSliderLabel.textContent = 'Adjust Content Width:';
-  widthSliderLabel.style.marginBottom = '5px';
   const widthSlider = document.createElement('input');
   widthSlider.type = 'range';
   widthSlider.min = '50';
@@ -210,73 +171,63 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   widthSlider.value = state.contentWidth;
   widthSliderContainer.appendChild(widthSliderLabel);
   widthSliderContainer.appendChild(widthSlider);
-  modal.appendChild(widthSliderContainer);
+  settingsContainer.appendChild(widthSliderContainer);
 
+  columnsContainer.appendChild(settingsContainer);
+
+  // Добавляем контейнер с колонками в модальное окно
+  modal.appendChild(columnsContainer);
+
+  // Нижний блок
   const donationContainer = document.createElement('div');
-  donationContainer.style.backgroundColor = '#f9f9f9';
-  donationContainer.style.padding = '10px';
-  donationContainer.style.borderRadius = '5px';
-  donationContainer.style.marginBottom = '10px';
+  donationContainer.classList.add('donation-container');
+
+  const linksContainer = document.createElement('div');
+  linksContainer.classList.add('donation-links');
 
   const donationLink = document.createElement('a');
   donationLink.href = 'https://buymeacoffee.com/bogutskii';
+  donationLink.classList.add('donation-link');
   donationLink.textContent = 'Donate';
-  donationLink.style.display = 'block';
-  donationLink.style.marginTop = '10px';
-  donationLink.style.textDecoration = 'underline';
-  donationLink.style.color = '#800080';
-  donationLink.style.textAlign = 'center';
 
   const LinkedInLink = document.createElement('a');
   LinkedInLink.href = 'https://www.linkedin.com/in/petr-bogutskii/';
+  LinkedInLink.classList.add('linkedin-link');
   LinkedInLink.textContent = 'LinkedIn';
-  LinkedInLink.style.display = 'block';
-  LinkedInLink.style.marginTop = '10px';
-  LinkedInLink.style.textDecoration = 'underline';
-  LinkedInLink.style.color = '#800080';
-  LinkedInLink.style.textAlign = 'center';
 
   const githubLink = document.createElement('a');
   githubLink.href = 'https://github.com/bogutskii';
+  githubLink.classList.add('github-link');
   githubLink.textContent = 'GitHub';
-  githubLink.style.display = 'block';
-  githubLink.style.marginTop = '10px';
-  githubLink.style.textDecoration = 'underline';
-  githubLink.style.color = '#800080';
-  githubLink.style.textAlign = 'center';
+
+  linksContainer.appendChild(donationLink);
+  linksContainer.appendChild(LinkedInLink);
+  linksContainer.appendChild(githubLink);
+
+  donationContainer.appendChild(linksContainer);
 
   const author = document.createElement('div');
+  author.classList.add('author');
   author.textContent = '@Petr Bogutskii';
-  author.style.marginTop = '10px';
-  author.style.textAlign = 'center';
 
-  donationContainer.appendChild(donationLink);
-  donationContainer.appendChild(LinkedInLink);
-  donationContainer.appendChild(githubLink);
   donationContainer.appendChild(author);
+
   modal.appendChild(donationContainer);
 
   const hotkeysInfoContainer = document.createElement('div');
-  hotkeysInfoContainer.style.display = 'flex';
-  hotkeysInfoContainer.style.alignItems = 'center';
-  hotkeysInfoContainer.style.justifyContent = 'center';
-  hotkeysInfoContainer.style.marginTop = '10px';
-  hotkeysInfoContainer.style.textAlign = 'center';
+  hotkeysInfoContainer.classList.add('hotkeys-info-container');
 
   const hotkeysInfoTitle = document.createElement('div');
+  hotkeysInfoTitle.classList.add('hotkeys-info-title');
   hotkeysInfoTitle.textContent = 'Hotkeys:';
-  hotkeysInfoTitle.style.fontWeight = 'bold';
-  hotkeysInfoTitle.style.marginRight = '5px';
 
   const hotkeysInfo = document.createElement('div');
   hotkeysInfo.innerHTML = '<b> Control + M</b>';
-  hotkeysInfo.style.display = 'flex';
 
   const hotkeysIcon = document.createElement('div');
+  hotkeysIcon.classList.add('hotkeys-icon');
   hotkeysIcon.textContent = 'ℹ️';
   hotkeysIcon.title = 'Hotkeys: Control + M to start/stop microphone.';
-  hotkeysIcon.style.marginLeft = '10px';
-  hotkeysIcon.style.cursor = 'pointer';
 
   hotkeysInfoContainer.appendChild(hotkeysInfoTitle);
   hotkeysInfoContainer.appendChild(hotkeysInfo);
@@ -284,34 +235,17 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   modal.appendChild(hotkeysInfoContainer);
 
   const buttonContainer = document.createElement('div');
-  buttonContainer.style.display = 'flex';
-  buttonContainer.style.gap = '10px';
+  buttonContainer.classList.add('button-container');
 
   const cancelButton = document.createElement('button');
+  cancelButton.classList.add('cancel-button');
   cancelButton.textContent = 'Ok';
-  cancelButton.style.marginTop = '10px';
-  cancelButton.style.backgroundColor = '#8f8f8f';
-  cancelButton.style.color = '#fff';
-  cancelButton.style.border = 'none';
-  cancelButton.style.padding = '10px 20px';
-  cancelButton.style.borderRadius = '5px';
-  cancelButton.style.cursor = 'pointer';
-  cancelButton.style.display = 'block';
-  cancelButton.style.margin = '20px auto';
-
-  cancelButton.addEventListener('mouseenter', () => {
-    cancelButton.style.backgroundColor = '#800080';
-  });
-
-  cancelButton.addEventListener('mouseleave', () => {
-    cancelButton.style.backgroundColor = '#8f8f8f';
-  });
-
-  buttonContainer.appendChild(cancelButton);
-  modal.appendChild(buttonContainer);
 
   cancelButton.addEventListener('click', () => {
     modal.style.display = 'none';
     document.querySelector('.modal-overlay').style.display = 'none';
   });
+
+  buttonContainer.appendChild(cancelButton);
+  modal.appendChild(buttonContainer);
 };
