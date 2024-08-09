@@ -27,11 +27,11 @@ export const createModalOverlay = () => {
 export const setupModal = async (modal, favoriteLanguages, updateLanguageSelector, container, micButton) => {
   const state = getState();
 
-  // Создаем контейнер для колонок
+  // column container
   const columnsContainer = document.createElement('div');
   columnsContainer.classList.add('columns');
 
-  // Первая колонка
+  // first column
   const languageContainer = document.createElement('div');
   languageContainer.classList.add('column', 'language-container');
 
@@ -93,7 +93,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   columnsContainer.appendChild(languageContainer);
 
-  // Вторая колонка
+  // second column
   const settingsContainer = document.createElement('div');
   settingsContainer.classList.add('column');
 
@@ -107,7 +107,8 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const micPositionSelector = document.createElement('select');
   micPositionSelector.classList.add('mic-position-selector');
   const positions = [
-    { value: 'default', name: 'Default' },
+    { value: 'default-left', name: 'Default Left' },
+    { value: 'default-right', name: 'Default Right' },
     { value: 'input', name: 'In Input' }
   ];
   positions.forEach(pos => {
@@ -127,7 +128,9 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
       if (inputField && sendButton && clearButton) {
         sendButton.parentNode.insertBefore(micButton, clearButton);
       }
-    } else {
+    } else if (selectedPosition === 'default-left') {
+      container.insertBefore(micButton, container.querySelector('select'));
+    } else if (selectedPosition === 'default-right') {
       container.appendChild(micButton);
     }
   });
@@ -175,10 +178,8 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   columnsContainer.appendChild(settingsContainer);
 
-  // Добавляем контейнер с колонками в модальное окно
   modal.appendChild(columnsContainer);
 
-  // Нижний блок
   const donationContainer = document.createElement('div');
   donationContainer.classList.add('donation-container');
 

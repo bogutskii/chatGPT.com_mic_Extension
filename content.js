@@ -20,6 +20,7 @@
 
 const updateLanguageSelector = (currentState) => {
   languageSelector.innerHTML = '';
+  languageSelector.style.width = '120px'
   //   console.log('Updating language selector with favoriteLanguages:', currentState.favoriteLanguages);
   currentState.favoriteLanguages.forEach(langCode => {
     const lang = languages.find(l => l.code === langCode);

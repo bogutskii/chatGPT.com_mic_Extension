@@ -1,6 +1,6 @@
 let state = {
   favoriteLanguages: ['en-US', 'uk-UA', 'ru-RU'],
-  micPosition: 'default',
+  micPosition: 'default-left', // 'default-left', 'default-right', 'input'
   recognitionLanguage: 'ru-RU',
   isListening: false,
   isAutoGenerationEnabled: true,
