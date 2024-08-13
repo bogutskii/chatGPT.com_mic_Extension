@@ -1,6 +1,6 @@
 let state = {
   favoriteLanguages: ['en-US', 'uk-UA', 'ru-RU'],
-  micPosition: 'default-left', // 'default-left', 'default-right', 'input'
+  micPosition: 'default-left',
   recognitionLanguage: 'ru-RU',
   isListening: false,
   isAutoGenerationEnabled: true,
@@ -31,4 +31,12 @@ export const setState = (newState) => {
 export const subscribe = (listener) => {
   listeners.push(listener);
   console.log('New listener added. Total listeners:', listeners.length);
+};
+
+export const syncState = async () => {
+  const storedState = await new Promise((resolve) => {
+    chrome.storage.local.get(null, resolve);
+  });
+  state = { ...state, ...storedState };
+  listeners.forEach(listener => listener());
 };

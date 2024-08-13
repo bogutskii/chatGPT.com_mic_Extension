@@ -11,18 +11,26 @@ export const createContainer = () => {
 };
 
 export const createButton = (backgroundImageUrl) => {
-  const button = document.createElement('button');
-  button.style.backgroundColor = 'transparent';
-  button.style.border = 'none';
-  button.style.width = '40px';
-  button.style.height = '40px';
-  button.style.cursor = 'pointer';
-  button.style.transition = 'background-color 0.5s ease';
-  button.style.position = 'relative';
-  button.style.backgroundImage = `url(${backgroundImageUrl})`;
-  button.style.backgroundSize = 'cover';
-  button.style.backgroundRepeat = 'no-repeat';
-  return button;
+  try {
+    const button = document.createElement('button');
+    button.style.backgroundColor = 'transparent';
+    button.style.border = 'none';
+    button.style.width = '40px';
+    button.style.height = '40px';
+    button.style.cursor = 'pointer';
+    button.style.transition = 'background-color 0.5s ease';
+    button.style.position = 'relative';
+    if (!backgroundImageUrl) {
+      throw new Error('Background image URL is not provided');
+    }
+    button.style.backgroundImage = `url(${backgroundImageUrl})`;
+    button.style.backgroundSize = 'cover';
+    button.style.backgroundRepeat = 'no-repeat';
+    return button;
+  } catch (error) {
+    console.error('Failed to create button:', error);
+    return null;
+  }
 };
 
 export const createSelect = (options) => {
