@@ -21,14 +21,14 @@ export const createButton = (backgroundImageUrl) => {
     button.style.transition = 'background-color 0.5s ease';
     button.style.position = 'relative';
     if (!backgroundImageUrl) {
-      throw new Error('Background image URL is not provided');
+      // throw new Error('Background image URL is not provided');
     }
     button.style.backgroundImage = `url(${backgroundImageUrl})`;
     button.style.backgroundSize = 'cover';
     button.style.backgroundRepeat = 'no-repeat';
     return button;
   } catch (error) {
-    console.error('Failed to create button:', error);
+    // console.error('Failed to create button:', error);
     return null;
   }
 };

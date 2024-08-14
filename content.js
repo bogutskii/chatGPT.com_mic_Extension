@@ -145,8 +145,8 @@
     }
   };
 
-  recognition.onerror = (event) => {
-    console.error('Speech recognition error:', event.error);
+  recognition.onerror = () => {
+    // console.error('Speech recognition error:', event.error);
     state.isListening = false;
     isRecognitionRunning = false;
     setState({ isListening: false });
