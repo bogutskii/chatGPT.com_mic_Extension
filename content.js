@@ -1,7 +1,7 @@
 (async () => {
   const { languages } = await import(chrome.runtime.getURL('languages.js'));
-  const { createContainer, createButton, createSelect } = await import(chrome.runtime.getURL('ui.js'));
-  const { initializeState, getState, setState, subscribe, syncState } = await import(chrome.runtime.getURL('state.js'));
+  const { createContainer, createButton, createSelect, createResetButton } = await import(chrome.runtime.getURL('ui.js'));
+  const { initializeState, getState, setState, subscribe, syncState, rerenderComponents } = await import(chrome.runtime.getURL('state.js'));
   const { initializeSpeechRecognition } = await import(chrome.runtime.getURL('speech.js'));
   const { createModal, createModalOverlay, setupModal } = await import(chrome.runtime.getURL('modal.js'));
   const { setupMicPosition } = await import(chrome.runtime.getURL('micPosition.js'));
@@ -14,6 +14,7 @@
   const container = createContainer();
   const micButton = createButton(`chrome-extension://${chrome.runtime.id}/img/mic_OFF.png`);
   const settingsButton = createButton(`chrome-extension://${chrome.runtime.id}/img/options.png`);
+  const resetButton = createResetButton();
   const languageOptions = languages.map(lang => ({ value: lang.code, text: lang.name }));
   const languageSelector = createSelect(languageOptions);
 
@@ -64,6 +65,7 @@
   container.appendChild(micButton);
   container.appendChild(languageSelector);
   container.appendChild(settingsButton);
+  container.appendChild(resetButton);
   document.body.appendChild(container);
 
   const modal = createModal();
@@ -146,7 +148,6 @@
   };
 
   recognition.onerror = () => {
-    // console.error('Speech recognition error:', event.error);
     state.isListening = false;
     isRecognitionRunning = false;
     setState({ isListening: false });
@@ -156,7 +157,7 @@
       if (!state.isListening) {
         micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
       }
-    }, 3000);
+    }, 1000);
   };
 
   recognition.onend = () => {
@@ -180,6 +181,12 @@
       event.stopPropagation();
       toggleRecognition();
     }
+  });
+
+  resetButton.addEventListener('click', async () => {
+    await syncState();
+    rerenderComponents();
+    console.log('Elements re-rendered according to current state or default settings');
   });
 
   chrome.storage.local.get(['micPosition'], (result) => {

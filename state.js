@@ -14,7 +14,7 @@ export const initializeState = async () => {
     chrome.storage.local.get(null, resolve);
   });
   state = { ...state, ...storedState };
-  console.log('State initialized:', state);
+  // console.log('State initialized:', state);
 };
 
 export const getState = () => state;
@@ -23,20 +23,27 @@ export const setState = (newState) => {
   state = { ...state, ...newState };
   console.log('Setting new state:', newState);
   chrome.storage.local.set(state, () => {
-    console.log('State saved:', state);
+    // console.log('State saved:', state);
     listeners.forEach(listener => listener());
   });
 };
 
 export const subscribe = (listener) => {
   listeners.push(listener);
-  console.log('New listener added. Total listeners:', listeners.length);
+  // console.log('New listener added. Total listeners:', listeners.length);
 };
 
 export const syncState = async () => {
-  const storedState = await new Promise((resolve) => {
-    chrome.storage.local.get(null, resolve);
-  });
-  state = { ...state, ...storedState };
+  try {
+    const state = getState();
+    chrome.storage.local.set(state, () => {
+      console.log('State synchronized:', state);
+      document.dispatchEvent(new CustomEvent('stateSynced', { detail: state }));
+    });
+  } catch (error) {
+    console.error('Error during state synchronization:', error);
+  }
+};
+export const rerenderComponents = () => {
   listeners.forEach(listener => listener());
 };
