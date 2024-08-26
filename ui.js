@@ -18,7 +18,6 @@ export const createButton = (backgroundImageUrl) => {
   button.style.height = '40px';
   button.style.cursor = 'pointer';
   button.style.transition = 'background-color 0.5s ease';
-  button.style.position = 'relative';
   if (backgroundImageUrl) {
     button.style.backgroundImage = `url(${backgroundImageUrl})`;
     button.style.backgroundSize = 'cover';
@@ -55,3 +54,4 @@ export const createResetButton = () => {
   resetButton.style.backgroundRepeat = 'no-repeat';
   return resetButton;
 };
+

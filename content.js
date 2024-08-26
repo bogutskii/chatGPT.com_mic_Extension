@@ -1,6 +1,6 @@
 (async () => {
   const { languages } = await import(chrome.runtime.getURL('languages.js'));
-  const { createContainer, createButton, createSelect, createResetButton } = await import(chrome.runtime.getURL('ui.js'));
+  const { createContainer, createButton, createSelect, createResetButton, refreshUI } = await import(chrome.runtime.getURL('ui.js'));
   const { initializeState, getState, setState, subscribe, syncState, rerenderComponents } = await import(chrome.runtime.getURL('state.js'));
   const { initializeSpeechRecognition } = await import(chrome.runtime.getURL('speech.js'));
   const { createModal, createModalOverlay, setupModal } = await import(chrome.runtime.getURL('modal.js'));
@@ -186,6 +186,7 @@
   resetButton.addEventListener('click', async () => {
     await syncState();
     rerenderComponents();
+    refreshUI(); // вызываем функцию обновления UI
     console.log('Elements re-rendered according to current state or default settings');
   });
 
