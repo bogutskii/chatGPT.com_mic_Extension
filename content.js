@@ -36,14 +36,14 @@
   updateLanguageSelector(state);
 
   const ensureMicButtonVisible = () => {
-    const inputField = document.querySelector('#prompt-textarea');
+    const inputField = document.querySelector('.ProseMirror');
     const sendButton = document.querySelector('[data-testid="send-button"]');
     const clearButton = document.querySelector('#clearButton');
 
     if (state.micPosition === 'input') {
       if (inputField && sendButton && clearButton) {
         if (!sendButton.parentNode.contains(micButton)) {
-          sendButton.parentNode.insertBefore(micButton, clearButton);
+          sendButton.parentNode.insertBefore(micButton, sendButton.nextSibling);
         }
       }
     } else {
@@ -90,7 +90,6 @@
   }, container, micButton);
 
   await setupMicPosition(container, micButton, state.micPosition);
-
   await setupAutoGeneration(modal);
   await setupWidthAdjustment(modal);
   await setupClearButton(modal);
@@ -112,13 +111,14 @@
   let isRecognitionRunning = false;
 
   const toggleRecognition = () => {
+    const inputField = document.querySelector('.ProseMirror');
     if (isRecognitionRunning) {
       recognition.stop();
       isRecognitionRunning = false;
       setState({ isListening: false });
       micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
     } else {
-      finalTranscript = document.querySelector('#prompt-textarea').value;
+      finalTranscript = inputField ? inputField.textContent : ''; // Обновлено
       interimTranscript = '';
       recognition.start();
       isRecognitionRunning = true;
@@ -139,9 +139,9 @@
       }
     }
     finalTranscript += finalTranscriptFragment;
-    const inputField = document.querySelector('#prompt-textarea');
+    const inputField = document.querySelector('.ProseMirror');
     if (inputField) {
-      inputField.value = finalTranscript + interimTranscript;
+      inputField.textContent = finalTranscript + interimTranscript;
       resizeTextarea(inputField);
       triggerInputEvent(inputField);
     }
@@ -186,7 +186,7 @@
   resetButton.addEventListener('click', async () => {
     await syncState();
     rerenderComponents();
-    refreshUI(); // вызываем функцию обновления UI
+    refreshUI();
     console.log('Elements re-rendered according to current state or default settings');
   });
 
@@ -229,9 +229,9 @@
       e.preventDefault();
       finalTranscript = '';
       interimTranscript = '';
-      const inputField = document.querySelector('#prompt-textarea');
+      const inputField = document.querySelector('.ProseMirror');
       if (inputField) {
-        inputField.value = '';
+        inputField.textContent = '';
         resizeTextarea(inputField);
         triggerInputEvent(inputField);
       }
