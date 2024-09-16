@@ -14,7 +14,7 @@
   const container = createContainer();
   const micButton = createButton(`chrome-extension://${chrome.runtime.id}/img/mic_OFF.png`);
   const settingsButton = createButton(`chrome-extension://${chrome.runtime.id}/img/options.png`);
-  const resetButton = createResetButton();
+  // const resetButton = createResetButton();
   const languageOptions = languages.map(lang => ({ value: lang.code, text: lang.name }));
   const languageSelector = createSelect(languageOptions);
 
@@ -65,7 +65,7 @@
   container.appendChild(micButton);
   container.appendChild(languageSelector);
   container.appendChild(settingsButton);
-  container.appendChild(resetButton);
+  // container.appendChild(resetButton);
   document.body.appendChild(container);
 
   const modal = createModal();
@@ -182,13 +182,13 @@
       toggleRecognition();
     }
   });
-
-  resetButton.addEventListener('click', async () => {
-    await syncState();
-    rerenderComponents();
-    refreshUI();
-    console.log('Elements re-rendered according to current state or default settings');
-  });
+  //
+  // resetButton.addEventListener('click', async () => {
+  //   await syncState();
+  //   rerenderComponents();
+  //   refreshUI();
+  //   console.log('Elements re-rendered according to current state or default settings');
+  // });
 
   chrome.storage.local.get(['micPosition'], (result) => {
     if (result.micPosition) {
