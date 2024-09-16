@@ -1,7 +1,7 @@
 (async () => {
   const { languages } = await import(chrome.runtime.getURL('languages.js'));
-  const { createContainer, createButton, createSelect, createResetButton, refreshUI } = await import(chrome.runtime.getURL('ui.js'));
-  const { initializeState, getState, setState, subscribe, syncState, rerenderComponents } = await import(chrome.runtime.getURL('state.js'));
+  const { createContainer, createButton, createSelect} = await import(chrome.runtime.getURL('ui.js'));
+  const { initializeState, getState, setState, subscribe} = await import(chrome.runtime.getURL('state.js'));
   const { initializeSpeechRecognition } = await import(chrome.runtime.getURL('speech.js'));
   const { createModal, createModalOverlay, setupModal } = await import(chrome.runtime.getURL('modal.js'));
   const { setupMicPosition } = await import(chrome.runtime.getURL('micPosition.js'));
