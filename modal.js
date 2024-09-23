@@ -22,7 +22,7 @@ export const createModalOverlay = () => {
   return modalOverlay;
 };
 
-export const setupModal = async (modal, favoriteLanguages, updateLanguageSelector, container, micButton) => {
+export const setupModal = async (modal, favoriteLanguages, updateLanguageSelector, container, micButton, updateFloatingButtonPosition, floatingButtonContainer) => {
   const state = getState();
 
   // column container
@@ -105,7 +105,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   micPositionSelector.classList.add('mic-position-selector');
   const positions = [
     { value: 'default-left', name: 'Default Left' },
-    { value: 'default-right', name: 'Default Right' },
+    { value: 'default-right', name: 'Default Right' }
   ];
   positions.forEach(pos => {
     const option = document.createElement('option');
@@ -171,6 +171,17 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   widthSliderContainer.appendChild(widthSliderLabel);
   widthSliderContainer.appendChild(widthSlider);
   settingsContainer.appendChild(widthSliderContainer);
+
+  const centerMicButton = document.createElement('button');
+  centerMicButton.classList.add('center-mic-button');
+  centerMicButton.textContent = 'Centered Microphone Block';
+  centerMicButton.addEventListener('click', () => {
+    const centerX = window.innerWidth / 2 - floatingButtonContainer.offsetWidth / 2;
+    const centerY = window.innerHeight / 2 - floatingButtonContainer.offsetHeight / 2;
+    updateFloatingButtonPosition(centerX, centerY);
+  });
+
+  settingsContainer.appendChild(centerMicButton);
 
   columnsContainer.appendChild(settingsContainer);
   modal.appendChild(columnsContainer);

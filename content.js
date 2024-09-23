@@ -7,13 +7,13 @@
   const { setupMicPosition } = await import(chrome.runtime.getURL('micPosition.js'));
   const { setupAutoGeneration } = await import(chrome.runtime.getURL('autoGeneration.js'));
   const { setupWidthAdjustment } = await import(chrome.runtime.getURL('widthAdjustment.js'));
-  const { setupClearButton } = await import(chrome.runtime.getURL('clearButton.js'));
 
   await initializeState();
   let state = getState();
   const container = createContainer();
   const micButton = createButton(`chrome-extension://${chrome.runtime.id}/img/mic_OFF.png`);
   const floatingMicButton = createButton(`chrome-extension://${chrome.runtime.id}/img/mic_OFF.png`);
+  const floatingClearButton = createButton(`chrome-extension://${chrome.runtime.id}/img/clear.png`);
   const settingsButton = createButton(`chrome-extension://${chrome.runtime.id}/img/options.png`);
   const languageOptions = languages.map(lang => ({ value: lang.code, text: lang.name }));
   const languageSelector = createSelect(languageOptions);
@@ -22,12 +22,8 @@
   floatingButtonContainer.id = 'floatingMicButtonContainer';
   floatingButtonContainer.classList.add('floating-button-container');
   floatingButtonContainer.appendChild(floatingMicButton);
-  document.body.appendChild(floatingButtonContainer);
-
-  // Добавляем кнопку очистки рядом с плавающей кнопкой микрофона
-  const floatingClearButton = document.createElement('button');
-  floatingClearButton.classList.add('floating-clear-button');
   floatingButtonContainer.appendChild(floatingClearButton);
+  document.body.appendChild(floatingButtonContainer);
 
   const updateFloatingButtonPosition = (x, y) => {
     floatingButtonContainer.style.left = `${x}px`;
@@ -68,6 +64,24 @@
   document.addEventListener('mouseup', () => {
     isDragging = false;
   });
+
+  floatingClearButton.addEventListener('click', (e) => {
+    const inputField = document.querySelector('.ProseMirror');
+    if (inputField) {
+      inputField.textContent = '';
+      finalTranscript = '';
+      interimTranscript = '';
+      resizeTextarea(inputField);
+      triggerInputEvent(inputField);
+      const event = new Event('input', { bubbles: true });
+      inputField.dispatchEvent(event);
+    }
+    e.preventDefault()
+    finalTranscript = '';
+    interimTranscript = '';
+  });
+
+
 
   const updateLanguageSelector = (currentState) => {
     languageSelector.innerHTML = '';
@@ -136,12 +150,11 @@
   await setupModal(modal, state.favoriteLanguages, (newFavoriteLanguages) => {
     setState({ favoriteLanguages: newFavoriteLanguages });
     updateLanguageSelector(state);
-  }, container, micButton);
+  }, container, micButton, updateFloatingButtonPosition, floatingButtonContainer);
 
   await setupMicPosition(container, micButton, state.micPosition);
   await setupAutoGeneration(modal);
   await setupWidthAdjustment(modal);
-  await setupClearButton(modal);
 
   let finalTranscript = '';
   let interimTranscript = '';
@@ -242,15 +255,6 @@
       toggleRecognition();
     }
   });
-  const centerMicButton = document.createElement('button');
-  centerMicButton.classList.add('center-mic-button');
-  centerMicButton.textContent = 'Center Microphone';
-  centerMicButton.addEventListener('click', () => {
-    const centerX = window.innerWidth / 2 - floatingButtonContainer.offsetWidth / 2;
-    const centerY = window.innerHeight / 2 - floatingButtonContainer.offsetHeight / 2;
-    updateFloatingButtonPosition(centerX, centerY);
-  });
-  modal.appendChild(centerMicButton);
 
   chrome.storage.local.get(['micPosition'], (result) => {
     if (result.micPosition) {
@@ -285,20 +289,7 @@
     }
   });
 
-  const clearButton = document.querySelector('#clearButton');
-  if (clearButton) {
-    clearButton.addEventListener('click', (e) => {
-      e.preventDefault();
-      finalTranscript = '';
-      interimTranscript = '';
-      const inputField = document.querySelector('.ProseMirror');
-      if (inputField) {
-        inputField.textContent = '';
-        resizeTextarea(inputField);
-        triggerInputEvent(inputField);
-      }
-    });
-  }
+
 
   ensureMicButtonVisible();
 })();

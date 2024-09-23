@@ -70,7 +70,9 @@
     margin-bottom: 10px;
 }
 
-.language-list-info {
+.language-list-info,
+.mic-position-info,
+.hotkeys-info-title {
     font-weight: bold;
 }
 
@@ -101,15 +103,6 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-top: 10px;
-}
-
-.mic-position-info,
-.hotkeys-info-title {
-    font-weight: bold;
-}
-
-.mic-position-selector {
-    width: 100%;
 }
 
 .donation-links {
@@ -154,8 +147,9 @@
 .width-slider-label {
     margin-bottom: 5px;
 }
-#autogenerationCheckbox{
-    margin:0 5px;
+
+#autogenerationCheckbox {
+    margin: 0 5px;
 }
 
 #floatingMicButtonContainer {
@@ -163,13 +157,15 @@
     z-index: 9999;
     padding: 10px;
     cursor: move;
-    border: 1px solid #737373;
-    border-radius: 12px;
-    background-color: #c9c9ca;
+    border: 1px solid #767676;
+    border-radius: 30px;
+    background-color: #c4c0c0;
+    display: flex;
+    gap: 5px;
 }
 
 .center-mic-button {
-    background-color: #007bff;
+    background-color:  #800080;
     color: white;
     padding: 10px;
     border: none;
@@ -178,6 +174,20 @@
 }
 
 .center-mic-button:hover {
-    background-color: #0056b3;
+    background-color: #690169;
 }
 
+button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    background-size: cover;
+    background-repeat: no-repeat;
+    transition: background-color 0.5s ease;
+}
+
+.floating-clear-button {
+    background-image: url("chrome-extension://${chrome.runtime.id}/img/clear.png");
+    width: 40px;
+    height: 40px;
+}
