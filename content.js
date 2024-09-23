@@ -64,23 +64,40 @@
   document.addEventListener('mouseup', () => {
     isDragging = false;
   });
+const clearInput = () => {
+  if (state.isListening) {
+    recognition.stop();
+  }
 
+  const inputField = document.querySelector('.ProseMirror');
+  if (inputField) {
+    inputField.textContent = '';
+    const event = new Event('input', { bubbles: true });
+    inputField.dispatchEvent(event);
+  }
+
+  finalTranscript = '';
+  interimTranscript = '';
+
+  if (inputField) {
+    inputField.textContent = finalTranscript + interimTranscript;
+    resizeTextarea(inputField);
+    triggerInputEvent(inputField);
+  }
+}
   floatingClearButton.addEventListener('click', (e) => {
-    const inputField = document.querySelector('.ProseMirror');
-    if (inputField) {
-      inputField.textContent = '';
-      finalTranscript = '';
-      interimTranscript = '';
-      resizeTextarea(inputField);
-      triggerInputEvent(inputField);
-      const event = new Event('input', { bubbles: true });
-      inputField.dispatchEvent(event);
-    }
-    e.preventDefault()
-    finalTranscript = '';
-    interimTranscript = '';
+    clearInput(e)
   });
 
+  micButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    toggleRecognition();
+
+    if (!state.isListening) {
+      recognition.start();
+      setState({ isListening: true });
+    }
+  });
 
 
   const updateLanguageSelector = (currentState) => {
@@ -102,19 +119,11 @@
   const ensureMicButtonVisible = () => {
     const inputField = document.querySelector('.ProseMirror');
     const sendButton = document.querySelector('[data-testid="send-button"]');
-    const clearButton = document.querySelector('#clearButton');
+    // const clearButton = document.querySelector('#clearButton');
 
-    if (state.micPosition === 'input') {
-      if (inputField && sendButton && clearButton) {
-        if (!sendButton.parentNode.contains(micButton)) {
-          sendButton.parentNode.insertBefore(micButton, sendButton.nextSibling);
-        }
-      }
-    } else {
-      if (!container.contains(micButton)) {
-        container.appendChild(micButton);
-      }
-    }
+    sendButton.addEventListener('click', (e) => {
+      clearInput()
+    });
   };
 
   subscribe(() => {
