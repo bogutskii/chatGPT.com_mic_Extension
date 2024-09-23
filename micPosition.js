@@ -8,13 +8,8 @@ export const setupMicPosition = (container, micButton, position = 'default-left'
     micButton.parentNode.removeChild(micButton);
   }
 
-  if (position === 'input') {
-    if (inputField && sendButton && clearButton) {
-      if (sendButton.parentNode) {
-        sendButton.parentNode.insertBefore(micButton, clearButton);
-      }
-    }
-  } else if (position === 'default-left') {
+
+    if (position === 'default-left') {
     container.insertBefore(micButton, languageSelector);
   } else if (position === 'default-right') {
     container.appendChild(micButton);

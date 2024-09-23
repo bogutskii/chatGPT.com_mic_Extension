@@ -157,3 +157,27 @@
 #autogenerationCheckbox{
     margin:0 5px;
 }
+
+#floatingMicButtonContainer {
+    position: fixed;
+    z-index: 9999;
+    padding: 10px;
+    cursor: move;
+    border: 1px solid #737373;
+    border-radius: 12px;
+    background-color: #c9c9ca;
+}
+
+.center-mic-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.center-mic-button:hover {
+    background-color: #0056b3;
+}
+

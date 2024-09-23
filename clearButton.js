@@ -12,10 +12,11 @@ export const setupClearButton = () => {
     clearButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/clear.png)`;
     clearButton.style.backgroundSize = 'cover';
     clearButton.style.backgroundRepeat = 'no-repeat';
+    clearButton.style.position = 'fixed';
+    clearButton.style.right = '10px';
+    clearButton.style.bottom = '55px';
 
-    if (sendButton.parentNode) {
-      sendButton.parentNode.insertBefore(clearButton, sendButton);
-    }
+    document.body.appendChild(clearButton);
 
     clearButton.addEventListener('click', (e) => {
       e.preventDefault();

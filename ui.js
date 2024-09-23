@@ -54,4 +54,3 @@ export const createResetButton = () => {
   resetButton.style.backgroundRepeat = 'no-repeat';
   return resetButton;
 };
-

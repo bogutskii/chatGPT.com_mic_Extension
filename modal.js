@@ -13,14 +13,12 @@ loadCSS(chrome.runtime.getURL('styles.css'));
 export const createModal = () => {
   const modal = document.createElement('div');
   modal.classList.add('modal');
-
   return modal;
 };
 
 export const createModalOverlay = () => {
   const modalOverlay = document.createElement('div');
   modalOverlay.classList.add('modal-overlay');
-
   return modalOverlay;
 };
 
@@ -52,7 +50,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const saveFavoriteLanguagesFunction = () => {
     const newFavoriteLanguages = Array.from(languageList.querySelectorAll('input:checked')).map(input => input.value);
-    console.log('New favorite languages:', newFavoriteLanguages);
     setState({ favoriteLanguages: newFavoriteLanguages });
   };
 
@@ -109,7 +106,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const positions = [
     { value: 'default-left', name: 'Default Left' },
     { value: 'default-right', name: 'Default Right' },
-    { value: 'input', name: 'In Input' }
   ];
   positions.forEach(pos => {
     const option = document.createElement('option');
@@ -177,7 +173,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   settingsContainer.appendChild(widthSliderContainer);
 
   columnsContainer.appendChild(settingsContainer);
-
   modal.appendChild(columnsContainer);
 
   const donationContainer = document.createElement('div');

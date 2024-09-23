@@ -5,6 +5,8 @@ let state = {
   isListening: false,
   isAutoGenerationEnabled: true,
   contentWidth: 100,
+  floatingButtonX: undefined,
+  floatingButtonY: undefined,
 };
 
 const listeners = [];

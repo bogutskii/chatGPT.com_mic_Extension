@@ -1,7 +1,7 @@
 (async () => {
   const { languages } = await import(chrome.runtime.getURL('languages.js'));
-  const { createContainer, createButton, createSelect} = await import(chrome.runtime.getURL('ui.js'));
-  const { initializeState, getState, setState, subscribe} = await import(chrome.runtime.getURL('state.js'));
+  const { createContainer, createButton, createSelect } = await import(chrome.runtime.getURL('ui.js'));
+  const { initializeState, getState, setState, subscribe } = await import(chrome.runtime.getURL('state.js'));
   const { initializeSpeechRecognition } = await import(chrome.runtime.getURL('speech.js'));
   const { createModal, createModalOverlay, setupModal } = await import(chrome.runtime.getURL('modal.js'));
   const { setupMicPosition } = await import(chrome.runtime.getURL('micPosition.js'));
@@ -13,14 +13,64 @@
   let state = getState();
   const container = createContainer();
   const micButton = createButton(`chrome-extension://${chrome.runtime.id}/img/mic_OFF.png`);
+  const floatingMicButton = createButton(`chrome-extension://${chrome.runtime.id}/img/mic_OFF.png`);
   const settingsButton = createButton(`chrome-extension://${chrome.runtime.id}/img/options.png`);
-  // const resetButton = createResetButton();
   const languageOptions = languages.map(lang => ({ value: lang.code, text: lang.name }));
   const languageSelector = createSelect(languageOptions);
 
+  const floatingButtonContainer = document.createElement('div');
+  floatingButtonContainer.id = 'floatingMicButtonContainer';
+  floatingButtonContainer.classList.add('floating-button-container');
+  floatingButtonContainer.appendChild(floatingMicButton);
+  document.body.appendChild(floatingButtonContainer);
+
+  // Добавляем кнопку очистки рядом с плавающей кнопкой микрофона
+  const floatingClearButton = document.createElement('button');
+  floatingClearButton.classList.add('floating-clear-button');
+  floatingButtonContainer.appendChild(floatingClearButton);
+
+  const updateFloatingButtonPosition = (x, y) => {
+    floatingButtonContainer.style.left = `${x}px`;
+    floatingButtonContainer.style.top = `${y}px`;
+    setState({ floatingButtonX: x, floatingButtonY: y });
+  };
+
+  const initFloatingButtonPosition = () => {
+    const { floatingButtonX, floatingButtonY } = getState();
+    if (floatingButtonX !== undefined && floatingButtonY !== undefined) {
+      updateFloatingButtonPosition(floatingButtonX, floatingButtonY);
+    } else {
+      const centerX = window.innerWidth / 2 - floatingButtonContainer.offsetWidth / 2;
+      const centerY = window.innerHeight / 2 - floatingButtonContainer.offsetHeight / 2;
+      updateFloatingButtonPosition(centerX, centerY);
+    }
+  };
+
+  initFloatingButtonPosition();
+
+  let isDragging = false;
+  let startX, startY;
+
+  floatingButtonContainer.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startX = e.clientX - floatingButtonContainer.offsetLeft;
+    startY = e.clientY - floatingButtonContainer.offsetTop;
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      const x = e.clientX - startX;
+      const y = e.clientY - startY;
+      updateFloatingButtonPosition(x, y);
+    }
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+
   const updateLanguageSelector = (currentState) => {
     languageSelector.innerHTML = '';
-    languageSelector.style.width = '120px';
     currentState.favoriteLanguages.forEach(langCode => {
       const lang = languages.find(l => l.code === langCode);
       if (lang) {
@@ -65,7 +115,6 @@
   container.appendChild(micButton);
   container.appendChild(languageSelector);
   container.appendChild(settingsButton);
-  // container.appendChild(resetButton);
   document.body.appendChild(container);
 
   const modal = createModal();
@@ -117,13 +166,15 @@
       isRecognitionRunning = false;
       setState({ isListening: false });
       micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
+      floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
     } else {
-      finalTranscript = inputField ? inputField.textContent : ''; // Обновлено
+      finalTranscript = inputField ? inputField.textContent : '';
       interimTranscript = '';
       recognition.start();
       isRecognitionRunning = true;
       setState({ isListening: true });
       micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)`;
+      floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)`;
     }
   };
 
@@ -152,10 +203,12 @@
     isRecognitionRunning = false;
     setState({ isListening: false });
     micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ERR.png)`;
+    floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ERR.png)`;
 
     setTimeout(() => {
       if (!state.isListening) {
         micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
+        floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
       }
     }, 1000);
   };
@@ -166,12 +219,19 @@
       recognition.start();
       isRecognitionRunning = true;
       micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)`;
+      floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)`;
     } else {
       micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
+      floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
     }
   };
 
   micButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    toggleRecognition();
+  });
+
+  floatingMicButton.addEventListener('click', (event) => {
     event.preventDefault();
     toggleRecognition();
   });
@@ -182,13 +242,15 @@
       toggleRecognition();
     }
   });
-  //
-  // resetButton.addEventListener('click', async () => {
-  //   await syncState();
-  //   rerenderComponents();
-  //   refreshUI();
-  //   console.log('Elements re-rendered according to current state or default settings');
-  // });
+  const centerMicButton = document.createElement('button');
+  centerMicButton.classList.add('center-mic-button');
+  centerMicButton.textContent = 'Center Microphone';
+  centerMicButton.addEventListener('click', () => {
+    const centerX = window.innerWidth / 2 - floatingButtonContainer.offsetWidth / 2;
+    const centerY = window.innerHeight / 2 - floatingButtonContainer.offsetHeight / 2;
+    updateFloatingButtonPosition(centerX, centerY);
+  });
+  modal.appendChild(centerMicButton);
 
   chrome.storage.local.get(['micPosition'], (result) => {
     if (result.micPosition) {
