@@ -191,3 +191,6 @@ button {
     width: 40px;
     height: 40px;
 }
+body > div.relative.flex.h-full.w-full.overflow-hidden.transition-colors.z-0 {
+    overflow: visible !important;
+}

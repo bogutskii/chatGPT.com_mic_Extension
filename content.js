@@ -1,3 +1,38 @@
+let finalTranscript = '';
+let interimTranscript = '';
+let isRecognitionRunning = false;
+let recognition;
+
+const micButtonImgOff = `chrome-extension://${chrome.runtime.id}/img/mic_OFF.png`;
+const micButtonImgOn = `chrome-extension://${chrome.runtime.id}/img/mic_ON.png`;
+const micButtonImgErr = `chrome-extension://${chrome.runtime.id}/img/mic_ERR.png`;
+const floatingClearButtonImg = `chrome-extension://${chrome.runtime.id}/img/clear.png`;
+const settingsButtonImg = `chrome-extension://${chrome.runtime.id}/img/options.png`;
+
+const sendMessage = () => {
+  const inputField = document.querySelector('.ProseMirror');
+  if (inputField && inputField.textContent.trim()) {
+    console.log("Message sent: ", inputField.textContent);
+    clearInput();
+  }
+};
+
+const clearInput = () => {
+  if (state.isListening) {
+    recognition.stop();
+  }
+
+  const inputField = document.querySelector('.ProseMirror');
+  if (inputField) {
+    inputField.textContent = '';
+    const event = new Event('input', { bubbles: true });
+    inputField.dispatchEvent(event);
+  }
+
+  finalTranscript = '';
+  interimTranscript = '';
+};
+
 (async () => {
   const { languages } = await import(chrome.runtime.getURL('languages.js'));
   const { createContainer, createButton, createSelect } = await import(chrome.runtime.getURL('ui.js'));
@@ -11,10 +46,10 @@
   await initializeState();
   let state = getState();
   const container = createContainer();
-  const micButton = createButton(`chrome-extension://${chrome.runtime.id}/img/mic_OFF.png`);
-  const floatingMicButton = createButton(`chrome-extension://${chrome.runtime.id}/img/mic_OFF.png`);
-  const floatingClearButton = createButton(`chrome-extension://${chrome.runtime.id}/img/clear.png`);
-  const settingsButton = createButton(`chrome-extension://${chrome.runtime.id}/img/options.png`);
+  const micButton = createButton(micButtonImgOff);
+  const floatingMicButton = createButton(micButtonImgOff);
+  const floatingClearButton = createButton(floatingClearButtonImg);
+  const settingsButton = createButton(settingsButtonImg);
   const languageOptions = languages.map(lang => ({ value: lang.code, text: lang.name }));
   const languageSelector = createSelect(languageOptions);
 
@@ -86,19 +121,17 @@ const clearInput = () => {
   }
 }
   floatingClearButton.addEventListener('click', (e) => {
-    clearInput(e)
+    clearInput();
   });
 
   micButton.addEventListener('click', (event) => {
     event.preventDefault();
     toggleRecognition();
-
     if (!state.isListening) {
       recognition.start();
       setState({ isListening: true });
     }
   });
-
 
   const updateLanguageSelector = (currentState) => {
     languageSelector.innerHTML = '';
@@ -119,12 +152,29 @@ const clearInput = () => {
   const ensureMicButtonVisible = () => {
     const inputField = document.querySelector('.ProseMirror');
     const sendButton = document.querySelector('[data-testid="send-button"]');
-    // const clearButton = document.querySelector('#clearButton');
+
+    const sendMessage = () => {
+      const timeoutId = setTimeout(() => {
+        clearInput();
+      }, 500);
+      floatingClearButton.onclick = () => {
+        clearInput();
+        clearTimeout(timeoutId);
+      };
+    };
 
     sendButton.addEventListener('click', (e) => {
-      clearInput()
+      sendMessage();
     });
   };
+
+  const inputField = document.querySelector('.ProseMirror');
+  inputField.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      sendMessage();
+      event.preventDefault();
+    }
+  });
 
   subscribe(() => {
     state = getState();
@@ -165,9 +215,6 @@ const clearInput = () => {
   await setupAutoGeneration(modal);
   await setupWidthAdjustment(modal);
 
-  let finalTranscript = '';
-  let interimTranscript = '';
-
   const resizeTextarea = (textarea) => {
     textarea.style.height = 'auto';
     textarea.style.height = textarea.scrollHeight + 'px';
@@ -178,8 +225,7 @@ const clearInput = () => {
     inputField.dispatchEvent(event);
   };
 
-  let recognition = initializeSpeechRecognition(state.recognitionLanguage);
-  let isRecognitionRunning = false;
+  recognition = initializeSpeechRecognition(state.recognitionLanguage);
 
   const toggleRecognition = () => {
     const inputField = document.querySelector('.ProseMirror');
@@ -297,8 +343,6 @@ const clearInput = () => {
       }
     }
   });
-
-
 
   ensureMicButtonVisible();
 })();
