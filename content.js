@@ -2,10 +2,9 @@ let finalTranscript = '';
 let interimTranscript = '';
 let isRecognitionRunning = false;
 let recognition;
+let isRecognitionComplete = false;
 
 const micButtonImgOff = `chrome-extension://${chrome.runtime.id}/img/mic_OFF.png`;
-const micButtonImgOn = `chrome-extension://${chrome.runtime.id}/img/mic_ON.png`;
-const micButtonImgErr = `chrome-extension://${chrome.runtime.id}/img/mic_ERR.png`;
 const floatingClearButtonImg = `chrome-extension://${chrome.runtime.id}/img/clear.png`;
 const settingsButtonImg = `chrome-extension://${chrome.runtime.id}/img/options.png`;
 
@@ -13,7 +12,9 @@ const sendMessage = () => {
   const inputField = document.querySelector('.ProseMirror');
   if (inputField && inputField.textContent.trim()) {
     console.log("Message sent: ", inputField.textContent);
-    clearInput();
+    setTimeout(() => {
+      clearInput();
+    }, 500);
   }
 };
 
@@ -121,7 +122,13 @@ const clearInput = () => {
   }
 }
   floatingClearButton.addEventListener('click', (e) => {
-    clearInput();
+    if (isRecognitionComplete) {
+      clearInput();
+    } else {
+      setTimeout(() => {
+        clearInput();
+      }, 500);
+    }
   });
 
   micButton.addEventListener('click', (event) => {
