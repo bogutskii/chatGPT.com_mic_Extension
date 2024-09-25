@@ -41,16 +41,3 @@ export const createSelect = (options) => {
   });
   return select;
 };
-
-export const createResetButton = () => {
-  const resetButton = createButton(`chrome-extension://${chrome.runtime.id}/img/refresh_170.png`);
-  resetButton.style.width = '60px';
-  resetButton.style.height = '60px';
-  resetButton.style.cursor = 'pointer';
-  resetButton.style.marginLeft = "-10px";
-  resetButton.style.transition = 'background-color 0.5s ease';
-  resetButton.style.position = 'relative';
-  resetButton.style.backgroundSize = 'cover';
-  resetButton.style.backgroundRepeat = 'no-repeat';
-  return resetButton;
-};

@@ -40,14 +40,12 @@ const clearInput = () => {
   const { initializeState, getState, setState, subscribe } = await import(chrome.runtime.getURL('state.js'));
   const { initializeSpeechRecognition } = await import(chrome.runtime.getURL('speech.js'));
   const { createModal, createModalOverlay, setupModal } = await import(chrome.runtime.getURL('modal.js'));
-  const { setupMicPosition } = await import(chrome.runtime.getURL('micPosition.js'));
   const { setupAutoGeneration } = await import(chrome.runtime.getURL('autoGeneration.js'));
   const { setupWidthAdjustment } = await import(chrome.runtime.getURL('widthAdjustment.js'));
 
   await initializeState();
   let state = getState();
   const container = createContainer();
-  const micButton = createButton(micButtonImgOff);
   const floatingMicButton = createButton(micButtonImgOff);
   const floatingClearButton = createButton(floatingClearButtonImg);
   const settingsButton = createButton(settingsButtonImg);
@@ -131,15 +129,6 @@ const clearInput = () => {
     }
   });
 
-  micButton.addEventListener('click', (event) => {
-    event.preventDefault();
-    toggleRecognition();
-    if (!state.isListening) {
-      recognition.start();
-      setState({ isListening: true });
-    }
-  });
-
   const updateLanguageSelector = (currentState) => {
     languageSelector.innerHTML = '';
     currentState.favoriteLanguages.forEach(langCode => {
@@ -192,7 +181,6 @@ const clearInput = () => {
     ensureMicButtonVisible();
   });
 
-  container.appendChild(micButton);
   container.appendChild(languageSelector);
   container.appendChild(settingsButton);
   document.body.appendChild(container);
@@ -216,9 +204,8 @@ const clearInput = () => {
   await setupModal(modal, state.favoriteLanguages, (newFavoriteLanguages) => {
     setState({ favoriteLanguages: newFavoriteLanguages });
     updateLanguageSelector(state);
-  }, container, micButton, updateFloatingButtonPosition, floatingButtonContainer);
+  }, container, updateFloatingButtonPosition, floatingButtonContainer);
 
-  await setupMicPosition(container, micButton, state.micPosition);
   await setupAutoGeneration(modal);
   await setupWidthAdjustment(modal);
 
@@ -240,7 +227,6 @@ const clearInput = () => {
       recognition.stop();
       isRecognitionRunning = false;
       setState({ isListening: false });
-      micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
       floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
     } else {
       finalTranscript = inputField ? inputField.textContent : '';
@@ -248,7 +234,6 @@ const clearInput = () => {
       recognition.start();
       isRecognitionRunning = true;
       setState({ isListening: true });
-      micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)`;
       floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)`;
     }
   };
@@ -277,7 +262,6 @@ const clearInput = () => {
     state.isListening = false;
     isRecognitionRunning = false;
     setState({ isListening: false });
-    micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ERR.png)`;
     floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ERR.png)`;
 
     setTimeout(() => {
@@ -293,18 +277,11 @@ const clearInput = () => {
     if (state.isListening) {
       recognition.start();
       isRecognitionRunning = true;
-      micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)`;
       floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)`;
     } else {
-      micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
       floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
     }
   };
-
-  micButton.addEventListener('click', (event) => {
-    event.preventDefault();
-    toggleRecognition();
-  });
 
   floatingMicButton.addEventListener('click', (event) => {
     event.preventDefault();
@@ -316,17 +293,6 @@ const clearInput = () => {
       event.stopPropagation();
       toggleRecognition();
     }
-  });
-
-  chrome.storage.local.get(['micPosition'], (result) => {
-    if (result.micPosition) {
-      state.micPosition = result.micPosition;
-    } else {
-      state.micPosition = 'default';
-    }
-    setState({ micPosition: state.micPosition });
-    setupMicPosition(container, micButton, state.micPosition);
-    ensureMicButtonVisible();
   });
 
   languageSelector.addEventListener('change', async (event) => {

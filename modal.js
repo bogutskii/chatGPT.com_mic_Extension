@@ -94,47 +94,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const settingsContainer = document.createElement('div');
   settingsContainer.classList.add('column');
 
-  const micPositionContainer = document.createElement('div');
-  micPositionContainer.classList.add('mic-position-container');
-
-  const micPositionInfo = document.createElement('div');
-  micPositionInfo.textContent = 'Microphone Position:';
-  micPositionInfo.classList.add('mic-position-info');
-
-  const micPositionSelector = document.createElement('select');
-  micPositionSelector.classList.add('mic-position-selector');
-  const positions = [
-    { value: 'default-left', name: 'Default Left' },
-    { value: 'default-right', name: 'Default Right' }
-  ];
-  positions.forEach(pos => {
-    const option = document.createElement('option');
-    option.value = pos.value;
-    option.textContent = pos.name;
-    micPositionSelector.appendChild(option);
-  });
-
-  micPositionSelector.addEventListener('change', (event) => {
-    const selectedPosition = event.target.value;
-    setState({ micPosition: selectedPosition });
-    const inputField = document.querySelector('#prompt-textarea');
-    const sendButton = document.querySelector('[data-testid="send-button"]');
-    const clearButton = document.querySelector('#clearButton');
-    if (selectedPosition === 'input') {
-      if (inputField && sendButton && clearButton) {
-        sendButton.parentNode.insertBefore(micButton, clearButton);
-      }
-    } else if (selectedPosition === 'default-left') {
-      container.insertBefore(micButton, container.querySelector('select'));
-    } else if (selectedPosition === 'default-right') {
-      container.appendChild(micButton);
-    }
-  });
-
-  micPositionContainer.appendChild(micPositionInfo);
-  micPositionContainer.appendChild(micPositionSelector);
-  settingsContainer.appendChild(micPositionContainer);
-
   const autogenerationContainer = document.createElement('div');
   autogenerationContainer.classList.add('autogeneration-container');
 
