@@ -164,7 +164,7 @@
 }
 
 .center-mic-button {
-    background-color:  #800080;
+    background-color: #800080;
     color: white;
     padding: 10px;
     border: none;
@@ -195,6 +195,7 @@
     right: 10px;
     bottom: 55px;
 }
+
 .mainMenu-container {
     position: absolute;
     right: 10px;

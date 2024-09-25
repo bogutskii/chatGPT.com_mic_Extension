@@ -1,7 +1,7 @@
 export const loadFavoriteLanguages = (callback) => {
 
   chrome.storage.local.get(['favoriteLanguages'], (result) => {
-    console.log('loadFavoriteLanguages ' , result.favoriteLanguages)
+    console.log('loadFavoriteLanguages ', result.favoriteLanguages)
     if (result.favoriteLanguages) {
       callback(result.favoriteLanguages);
     } else {
@@ -11,5 +11,5 @@ export const loadFavoriteLanguages = (callback) => {
 };
 
 export const saveFavoriteLanguages = (favoriteLanguages) => {
-  chrome.storage.local.set({ favoriteLanguages });
+  chrome.storage.local.set({favoriteLanguages});
 };

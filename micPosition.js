@@ -1,17 +1,3 @@
-export const setupMicPosition = (container, micButton, position = 'default-left') => {
-  const inputField = document.querySelector('#prompt-textarea');
-  const sendButton = document.querySelector('[data-testid="send-button"]');
-  const clearButton = document.querySelector('#clearButton');
+export const setupMicPosition = (container) => {
   const languageSelector = container.querySelector('select');
-
-  if (micButton.parentNode) {
-    micButton.parentNode.removeChild(micButton);
-  }
-
-
-    if (position === 'default-left') {
-    container.insertBefore(micButton, languageSelector);
-  } else if (position === 'default-right') {
-    container.appendChild(micButton);
-  }
 };

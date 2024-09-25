@@ -26,7 +26,7 @@ const clearInput = () => {
   const inputField = document.querySelector('.ProseMirror');
   if (inputField) {
     inputField.textContent = '';
-    const event = new Event('input', { bubbles: true });
+    const event = new Event('input', {bubbles: true});
     inputField.dispatchEvent(event);
   }
 
@@ -35,13 +35,13 @@ const clearInput = () => {
 };
 
 (async () => {
-  const { languages } = await import(chrome.runtime.getURL('languages.js'));
-  const { createContainer, createButton, createSelect } = await import(chrome.runtime.getURL('ui.js'));
-  const { initializeState, getState, setState, subscribe } = await import(chrome.runtime.getURL('state.js'));
-  const { initializeSpeechRecognition } = await import(chrome.runtime.getURL('speech.js'));
-  const { createModal, createModalOverlay, setupModal } = await import(chrome.runtime.getURL('modal.js'));
-  const { setupAutoGeneration } = await import(chrome.runtime.getURL('autoGeneration.js'));
-  const { setupWidthAdjustment } = await import(chrome.runtime.getURL('widthAdjustment.js'));
+  const {languages} = await import(chrome.runtime.getURL('languages.js'));
+  const {createContainer, createButton, createSelect} = await import(chrome.runtime.getURL('ui.js'));
+  const {initializeState, getState, setState, subscribe} = await import(chrome.runtime.getURL('state.js'));
+  const {initializeSpeechRecognition} = await import(chrome.runtime.getURL('speech.js'));
+  const {createModal, createModalOverlay, setupModal} = await import(chrome.runtime.getURL('modal.js'));
+  const {setupAutoGeneration} = await import(chrome.runtime.getURL('autoGeneration.js'));
+  const {setupWidthAdjustment} = await import(chrome.runtime.getURL('widthAdjustment.js'));
 
   await initializeState();
   let state = getState();
@@ -49,7 +49,7 @@ const clearInput = () => {
   const floatingMicButton = createButton(micButtonImgOff);
   const floatingClearButton = createButton(floatingClearButtonImg);
   const settingsButton = createButton(settingsButtonImg);
-  const languageOptions = languages.map(lang => ({ value: lang.code, text: lang.name }));
+  const languageOptions = languages.map(lang => ({value: lang.code, text: lang.name}));
   const languageSelector = createSelect(languageOptions);
 
   const floatingButtonContainer = document.createElement('div');
@@ -62,11 +62,11 @@ const clearInput = () => {
   const updateFloatingButtonPosition = (x, y) => {
     floatingButtonContainer.style.left = `${x}px`;
     floatingButtonContainer.style.top = `${y}px`;
-    setState({ floatingButtonX: x, floatingButtonY: y });
+    setState({floatingButtonX: x, floatingButtonY: y});
   };
 
   const initFloatingButtonPosition = () => {
-    const { floatingButtonX, floatingButtonY } = getState();
+    const {floatingButtonX, floatingButtonY} = getState();
     if (floatingButtonX !== undefined && floatingButtonY !== undefined) {
       updateFloatingButtonPosition(floatingButtonX, floatingButtonY);
     } else {
@@ -98,28 +98,28 @@ const clearInput = () => {
   document.addEventListener('mouseup', () => {
     isDragging = false;
   });
-const clearInput = () => {
-  if (state.isListening) {
-    recognition.stop();
-  }
+  const clearInput = () => {
+    if (state.isListening) {
+      recognition.stop();
+    }
 
-  const inputField = document.querySelector('.ProseMirror');
-  if (inputField) {
-    inputField.textContent = '';
-    const event = new Event('input', { bubbles: true });
-    inputField.dispatchEvent(event);
-  }
+    const inputField = document.querySelector('.ProseMirror');
+    if (inputField) {
+      inputField.textContent = '';
+      const event = new Event('input', {bubbles: true});
+      inputField.dispatchEvent(event);
+    }
 
-  finalTranscript = '';
-  interimTranscript = '';
+    finalTranscript = '';
+    interimTranscript = '';
 
-  if (inputField) {
-    inputField.textContent = finalTranscript + interimTranscript;
-    resizeTextarea(inputField);
-    triggerInputEvent(inputField);
+    if (inputField) {
+      inputField.textContent = finalTranscript + interimTranscript;
+      resizeTextarea(inputField);
+      triggerInputEvent(inputField);
+    }
   }
-}
-  floatingClearButton.addEventListener('click', (e) => {
+  floatingClearButton.addEventListener('click', () => {
     if (isRecognitionComplete) {
       clearInput();
     } else {
@@ -182,7 +182,7 @@ const clearInput = () => {
   });
 
   await setupModal(modal, state.favoriteLanguages, (newFavoriteLanguages) => {
-    setState({ favoriteLanguages: newFavoriteLanguages });
+    setState({favoriteLanguages: newFavoriteLanguages});
     updateLanguageSelector(state);
   }, container, updateFloatingButtonPosition, floatingButtonContainer);
 
@@ -195,7 +195,7 @@ const clearInput = () => {
   };
 
   const triggerInputEvent = (inputField) => {
-    const event = new Event('input', { bubbles: true });
+    const event = new Event('input', {bubbles: true});
     inputField.dispatchEvent(event);
   };
 
@@ -206,14 +206,14 @@ const clearInput = () => {
     if (isRecognitionRunning) {
       recognition.stop();
       isRecognitionRunning = false;
-      setState({ isListening: false });
+      setState({isListening: false});
       floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
     } else {
       finalTranscript = inputField ? inputField.textContent : '';
       interimTranscript = '';
       recognition.start();
       isRecognitionRunning = true;
-      setState({ isListening: true });
+      setState({isListening: true});
       floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)`;
     }
   };
@@ -241,7 +241,7 @@ const clearInput = () => {
   recognition.onerror = () => {
     state.isListening = false;
     isRecognitionRunning = false;
-    setState({ isListening: false });
+    setState({isListening: false});
     floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ERR.png)`;
 
     setTimeout(() => {
@@ -276,7 +276,7 @@ const clearInput = () => {
 
   languageSelector.addEventListener('change', async (event) => {
     const selectedLanguage = event.target.value;
-    setState({ recognitionLanguage: selectedLanguage });
+    setState({recognitionLanguage: selectedLanguage});
 
     languageSelector.value = selectedLanguage;
 

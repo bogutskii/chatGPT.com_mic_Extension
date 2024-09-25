@@ -20,7 +20,7 @@ export const initializeState = async () => {
         resolve(result);
       });
     });
-    state = { ...state, ...storedState };
+    state = {...state, ...storedState};
   } catch (error) {
     console.error('Error during state initialization:', error);
   }
@@ -29,7 +29,7 @@ export const initializeState = async () => {
 export const getState = () => state;
 
 export const setState = (newState) => {
-  state = { ...state, ...newState };
+  state = {...state, ...newState};
   chrome.storage.local.set(state, () => {
     if (chrome.runtime.lastError) {
       console.error('Failed to save state:', chrome.runtime.lastError);
@@ -53,7 +53,7 @@ export const syncState = async () => {
         resolve(result);
       });
     });
-    state = { ...state, ...storedState };
+    state = {...state, ...storedState};
     listeners.forEach(listener => listener());
   } catch (error) {
     console.error('Error during state synchronization:', error);

@@ -1,4 +1,4 @@
-import { getState, setState } from './state.js';
+import {getState, setState} from './state.js';
 
 const loadCSS = (url) => {
   const link = document.createElement('link');
@@ -49,10 +49,10 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const saveFavoriteLanguagesFunction = () => {
     const newFavoriteLanguages = Array.from(languageList.querySelectorAll('input:checked')).map(input => input.value);
-    setState({ favoriteLanguages: newFavoriteLanguages });
+    setState({favoriteLanguages: newFavoriteLanguages});
   };
 
-  const { languages } = await import(chrome.runtime.getURL('languages.js'));
+  const {languages} = await import(chrome.runtime.getURL('languages.js'));
   languages.forEach(lang => {
     const label = document.createElement('label');
     label.style.display = 'block';
