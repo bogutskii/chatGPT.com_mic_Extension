@@ -8,16 +8,17 @@
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 2000;
-    background-color: #fff;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease-in-out;
     width: 90%;
     max-width: 800px;
     max-height: 90%;
     overflow-y: auto;
+    background: rgba( 255, 255, 255, 0.45 );
+    backdrop-filter: blur( 11px );
+    -webkit-backdrop-filter: blur( 11px );
 }
 
 .modal-overlay {
@@ -88,7 +89,7 @@
 }
 
 .cancel-button {
-    background-color: #8f8f8f;
+    background-color: #423d42;
 }
 
 .cancel-button:hover {
@@ -156,11 +157,13 @@
     z-index: 9999;
     padding: 10px;
     cursor: move;
-    border: 1px solid #767676;
-    border-radius: 30px;
-    background-color: #c4c0c0;
     display: flex;
     gap: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(2px);
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .center-mic-button {
