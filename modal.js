@@ -22,9 +22,8 @@ export const createModalOverlay = () => {
   return modalOverlay;
 };
 
-export const setupModal = async (modal, favoriteLanguages, updateLanguageSelector, container, micButton, updateFloatingButtonPosition, floatingButtonContainer) => {
+export const setupModal = async (modal, favoriteLanguages, updateLanguageSelector, container, updateFloatingButtonPosition, floatingButtonContainer) => {
   const state = getState();
-
   // column container
   const columnsContainer = document.createElement('div');
   columnsContainer.classList.add('columns');

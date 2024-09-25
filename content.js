@@ -145,25 +145,6 @@ const clearInput = () => {
 
   updateLanguageSelector(state);
 
-  const ensureMicButtonVisible = () => {
-    const inputField = document.querySelector('.ProseMirror');
-    const sendButton = document.querySelector('[data-testid="send-button"]');
-
-    const sendMessage = () => {
-      const timeoutId = setTimeout(() => {
-        clearInput();
-      }, 500);
-      floatingClearButton.onclick = () => {
-        clearInput();
-        clearTimeout(timeoutId);
-      };
-    };
-
-    sendButton.addEventListener('click', (e) => {
-      sendMessage();
-    });
-  };
-
   const inputField = document.querySelector('.ProseMirror');
   inputField.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
@@ -178,7 +159,6 @@ const clearInput = () => {
     if (recognition && state.recognitionLanguage) {
       recognition.lang = state.recognitionLanguage;
     }
-    ensureMicButtonVisible();
   });
 
   container.appendChild(languageSelector);
@@ -266,7 +246,6 @@ const clearInput = () => {
 
     setTimeout(() => {
       if (!state.isListening) {
-        micButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
         floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
       }
     }, 1000);
@@ -317,5 +296,4 @@ const clearInput = () => {
     }
   });
 
-  ensureMicButtonVisible();
 })();
