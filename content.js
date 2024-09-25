@@ -9,7 +9,7 @@ const floatingClearButtonImg = `chrome-extension://${chrome.runtime.id}/img/clea
 const settingsButtonImg = `chrome-extension://${chrome.runtime.id}/img/options.png`;
 
 const sendMessage = () => {
-  const inputField = document.querySelector('.ProseMirror');
+  const inputField = document.getElementById('prompt-textarea');
   if (inputField && inputField.textContent.trim()) {
     console.log("Message sent: ", inputField.textContent);
     setTimeout(() => {
@@ -23,7 +23,7 @@ const clearInput = () => {
     recognition.stop();
   }
 
-  const inputField = document.querySelector('.ProseMirror');
+  const inputField = document.getElementById('prompt-textarea');
   if (inputField) {
     inputField.textContent = '';
     const event = new Event('input', {bubbles: true});
@@ -103,7 +103,7 @@ const clearInput = () => {
       recognition.stop();
     }
 
-    const inputField = document.querySelector('.ProseMirror');
+    const inputField = document.querySelector('#prompt-textarea');
     if (inputField) {
       inputField.textContent = '';
       const event = new Event('input', {bubbles: true});
@@ -115,8 +115,6 @@ const clearInput = () => {
 
     if (inputField) {
       inputField.textContent = finalTranscript + interimTranscript;
-      resizeTextarea(inputField);
-      triggerInputEvent(inputField);
     }
   }
   floatingClearButton.addEventListener('click', () => {
@@ -145,7 +143,7 @@ const clearInput = () => {
 
   updateLanguageSelector(state);
 
-  const inputField = document.querySelector('.ProseMirror');
+  const inputField = document.querySelector('#prompt-textarea');
   inputField.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
       sendMessage();
@@ -189,20 +187,10 @@ const clearInput = () => {
   await setupAutoGeneration(modal);
   await setupWidthAdjustment(modal);
 
-  const resizeTextarea = (textarea) => {
-    textarea.style.height = 'auto';
-    textarea.style.height = textarea.scrollHeight + 'px';
-  };
-
-  const triggerInputEvent = (inputField) => {
-    const event = new Event('input', {bubbles: true});
-    inputField.dispatchEvent(event);
-  };
-
   recognition = initializeSpeechRecognition(state.recognitionLanguage);
 
   const toggleRecognition = () => {
-    const inputField = document.querySelector('.ProseMirror');
+    const inputField = document.querySelector('#prompt-textarea');
     if (isRecognitionRunning) {
       recognition.stop();
       isRecognitionRunning = false;
@@ -230,11 +218,10 @@ const clearInput = () => {
       }
     }
     finalTranscript += finalTranscriptFragment;
-    const inputField = document.querySelector('.ProseMirror');
+    const inputField = document.querySelector('#prompt-textarea');
+    inputField.focus();
     if (inputField) {
       inputField.textContent = finalTranscript + interimTranscript;
-      resizeTextarea(inputField);
-      triggerInputEvent(inputField);
     }
   };
 
@@ -295,5 +282,26 @@ const clearInput = () => {
       }
     }
   });
+
+  const checkButtonPosition = () => {
+    const floatingButtonContainer = document.getElementById('floatingMicButtonContainer');
+    const containerRect = floatingButtonContainer.getBoundingClientRect();
+
+    if (containerRect.left < 0) {
+      floatingButtonContainer.style.left = '0px';
+    }
+    if (containerRect.top < 0) {
+      floatingButtonContainer.style.top = '0px';
+    }
+    if (containerRect.right > window.innerWidth) {
+      floatingButtonContainer.style.left = `${window.innerWidth - containerRect.width}px`;
+    }
+    if (containerRect.bottom > window.innerHeight) {
+      floatingButtonContainer.style.top = `${window.innerHeight - containerRect.height}px`;
+    }
+  };
+
+  window.addEventListener('resize', checkButtonPosition);
+  checkButtonPosition();
 
 })();
