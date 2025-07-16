@@ -283,6 +283,37 @@ const clearInput = () => {
     }
   });
 
+  const throttleWithFinalCall = (func, limit) => {
+    let inThrottle;
+    let lastFunc;
+    let lastRan;
+
+    return function() {
+      const args = arguments;
+      const context = this;
+
+      if (!inThrottle) {
+        func.apply(context, args);
+        lastRan = Date.now();
+        inThrottle = true;
+        setTimeout(() => {
+          inThrottle = false;
+          if (lastFunc) {
+            lastFunc.apply(context, args);
+            lastFunc = null;
+          }
+        }, limit);
+      } else {
+        lastFunc = function() {
+          if (Date.now() - lastRan >= limit) {
+            func.apply(context, args);
+            lastRan = Date.now();
+          }
+        };
+      }
+    };
+  };
+
   const checkButtonPosition = () => {
     const floatingButtonContainer = document.getElementById('floatingMicButtonContainer');
     const containerRect = floatingButtonContainer.getBoundingClientRect();
@@ -301,7 +332,7 @@ const clearInput = () => {
     }
   };
 
-  window.addEventListener('resize', checkButtonPosition);
+  const throttledCheckButtonPosition = throttleWithFinalCall(checkButtonPosition, 1000);
+  window.addEventListener('resize', throttledCheckButtonPosition);
   checkButtonPosition();
-
 })();
