@@ -1,6 +1,10 @@
 import {getState, setState} from './state.js';
 
 const loadCSS = (url) => {
+  const existingLink = document.querySelector(`link[href="${url}"]`);
+  if (existingLink) {
+    return;
+  }
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.type = 'text/css';

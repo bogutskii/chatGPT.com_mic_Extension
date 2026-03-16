@@ -2,36 +2,53 @@ let finalTranscript = '';
 let interimTranscript = '';
 let isRecognitionRunning = false;
 let recognition;
-let isRecognitionComplete = false;
+let shouldAutoRestart = false;
+let pendingLanguageChange = null;
 
 const micButtonImgOff = `chrome-extension://${chrome.runtime.id}/img/mic_OFF.png`;
 const floatingClearButtonImg = `chrome-extension://${chrome.runtime.id}/img/clear.png`;
 const settingsButtonImg = `chrome-extension://${chrome.runtime.id}/img/options.png`;
 
-const sendMessage = () => {
-  const inputField = document.getElementById('prompt-textarea');
-  if (inputField && inputField.textContent.trim()) {
-    console.log("Message sent: ", inputField.textContent);
-    setTimeout(() => {
-      clearInput();
-    }, 500);
+const INPUT_SELECTOR = '#prompt-textarea';
+const SEND_BUTTON_SELECTOR = '[data-testid="send-button"]';
+const INPUT_BOUND_ATTR = 'data-voice-input-bound';
+const SEND_BOUND_ATTR = 'data-voice-send-bound';
+
+const getInputField = () => document.querySelector(INPUT_SELECTOR);
+
+const readInputValue = () => {
+  const input = getInputField();
+  if (!input) {
+    return '';
   }
+  if ('value' in input) {
+    return input.value;
+  }
+  return input.textContent || '';
 };
 
-const clearInput = () => {
-  if (state.isListening) {
-    recognition.stop();
+const writeInputValue = (value) => {
+  const input = getInputField();
+  if (!input) {
+    return;
   }
-
-  const inputField = document.getElementById('prompt-textarea');
-  if (inputField) {
-    inputField.textContent = '';
-    const event = new Event('input', {bubbles: true});
-    inputField.dispatchEvent(event);
+  if ('value' in input) {
+    input.value = value;
+  } else {
+    input.textContent = value;
   }
+  const event = new Event('input', {bubbles: true});
+  input.dispatchEvent(event);
+};
 
+const applyTranscriptsToInput = () => {
+  writeInputValue(`${finalTranscript}${interimTranscript}`);
+};
+
+const clearRecognizedText = () => {
   finalTranscript = '';
   interimTranscript = '';
+  applyTranscriptsToInput();
 };
 
 (async () => {
@@ -98,33 +115,49 @@ const clearInput = () => {
   document.addEventListener('mouseup', () => {
     isDragging = false;
   });
-  const clearInput = () => {
-    if (state.isListening) {
-      recognition.stop();
+
+  const bindInputListenersIfNeeded = () => {
+    const inputField = getInputField();
+    if (!inputField || inputField.hasAttribute(INPUT_BOUND_ATTR)) {
+      return;
     }
 
-    const inputField = document.querySelector('#prompt-textarea');
-    if (inputField) {
-      inputField.textContent = '';
-      const event = new Event('input', {bubbles: true});
-      inputField.dispatchEvent(event);
+    inputField.setAttribute(INPUT_BOUND_ATTR, 'true');
+    inputField.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        const sendButton = document.querySelector(SEND_BUTTON_SELECTOR);
+        sendButton?.click();
+      }
+    });
+  };
+
+  const bindSendButtonClearIfNeeded = () => {
+    const sendButton = document.querySelector(SEND_BUTTON_SELECTOR);
+    if (!sendButton || sendButton.hasAttribute(SEND_BOUND_ATTR)) {
+      return;
     }
 
-    finalTranscript = '';
-    interimTranscript = '';
-
-    if (inputField) {
-      inputField.textContent = finalTranscript + interimTranscript;
-    }
-  }
-  floatingClearButton.addEventListener('click', () => {
-    if (isRecognitionComplete) {
-      clearInput();
-    } else {
+    sendButton.setAttribute(SEND_BOUND_ATTR, 'true');
+    sendButton.addEventListener('click', () => {
       setTimeout(() => {
-        clearInput();
-      }, 500);
-    }
+        clearRecognizedText();
+      }, 50);
+    });
+  };
+
+  const mutationObserver = new MutationObserver(() => {
+    bindInputListenersIfNeeded();
+    bindSendButtonClearIfNeeded();
+  });
+
+  mutationObserver.observe(document.body, {childList: true, subtree: true});
+
+  bindInputListenersIfNeeded();
+  bindSendButtonClearIfNeeded();
+
+  floatingClearButton.addEventListener('click', () => {
+    clearRecognizedText();
   });
 
   const updateLanguageSelector = (currentState) => {
@@ -142,14 +175,6 @@ const clearInput = () => {
   };
 
   updateLanguageSelector(state);
-
-  const inputField = document.querySelector('#prompt-textarea');
-  inputField.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      sendMessage();
-      event.preventDefault();
-    }
-  });
 
   subscribe(() => {
     state = getState();
@@ -188,17 +213,26 @@ const clearInput = () => {
   await setupWidthAdjustment(modal);
 
   recognition = initializeSpeechRecognition(state.recognitionLanguage);
+  if (!recognition) {
+    console.error('Speech recognition init failed');
+    return;
+  }
+
+  recognition.continuous = true;
+  recognition.interimResults = true;
 
   const toggleRecognition = () => {
-    const inputField = document.querySelector('#prompt-textarea');
+    const inputField = getInputField();
     if (isRecognitionRunning) {
+      shouldAutoRestart = false;
       recognition.stop();
       isRecognitionRunning = false;
       setState({isListening: false});
       floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
     } else {
-      finalTranscript = inputField ? inputField.textContent : '';
+      finalTranscript = inputField ? readInputValue() : '';
       interimTranscript = '';
+      shouldAutoRestart = true;
       recognition.start();
       isRecognitionRunning = true;
       setState({isListening: true});
@@ -218,21 +252,18 @@ const clearInput = () => {
       }
     }
     finalTranscript += finalTranscriptFragment;
-    const inputField = document.querySelector('#prompt-textarea');
-    inputField.focus();
-    if (inputField) {
-      inputField.textContent = finalTranscript + interimTranscript;
-    }
+    applyTranscriptsToInput();
   };
 
-  recognition.onerror = () => {
-    state.isListening = false;
+  recognition.onerror = (event) => {
+    console.error('Speech recognition error', event);
     isRecognitionRunning = false;
+    shouldAutoRestart = false;
     setState({isListening: false});
     floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ERR.png)`;
 
     setTimeout(() => {
-      if (!state.isListening) {
+      if (!getState().isListening) {
         floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
       }
     }, 1000);
@@ -240,12 +271,13 @@ const clearInput = () => {
 
   recognition.onend = () => {
     isRecognitionRunning = false;
-    if (state.isListening) {
+    if (shouldAutoRestart) {
       recognition.start();
       isRecognitionRunning = true;
       floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)`;
     } else {
       floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
+      setState({isListening: false});
     }
   };
 
@@ -264,24 +296,26 @@ const clearInput = () => {
   languageSelector.addEventListener('change', async (event) => {
     const selectedLanguage = event.target.value;
     setState({recognitionLanguage: selectedLanguage});
-
     languageSelector.value = selectedLanguage;
 
     if (recognition) {
-      recognition.lang = selectedLanguage;
-
       if (isRecognitionRunning) {
+        pendingLanguageChange = selectedLanguage;
+        shouldAutoRestart = true;
         recognition.stop();
-        recognition.onend = () => {
-          recognition.lang = selectedLanguage;
-          recognition.start();
-          isRecognitionRunning = true;
-        };
       } else {
         recognition.lang = selectedLanguage;
       }
     }
   });
+
+  recognition.onstart = () => {
+    shouldAutoRestart = true;
+    if (pendingLanguageChange) {
+      recognition.lang = pendingLanguageChange;
+      pendingLanguageChange = null;
+    }
+  };
 
   const throttleWithFinalCall = (func, limit) => {
     let inThrottle;

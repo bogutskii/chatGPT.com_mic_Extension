@@ -3,9 +3,32 @@ export const setupAutoGeneration = (modal) => {
   let intervalId;
 
   const checkForContinueButton = () => {
-    const continueButton = document.querySelector('div.flex.h-full.w-full.items-center.justify-end button');
-    if (continueButton && autogenerationCheckbox.checked) {
-      continueButton.click();
+    try {
+      let continueButton = document.querySelector('button[aria-label*="Continue"]');
+      
+      if (!continueButton) {
+        const buttons = document.querySelectorAll('button');
+        for (const btn of buttons) {
+          if (btn.textContent.toLowerCase().includes('continue')) {
+            continueButton = btn;
+            break;
+          }
+        }
+      }
+      
+      if (!continueButton) {
+        const fallbackButton = document.querySelector('div.flex.h-full.w-full.items-center.justify-end button');
+        if (fallbackButton && fallbackButton.textContent.toLowerCase().includes('continue') && autogenerationCheckbox.checked) {
+          fallbackButton.click();
+        }
+        return;
+      }
+      
+      if (continueButton && autogenerationCheckbox.checked) {
+        continueButton.click();
+      }
+    } catch (error) {
+      console.error('Auto-generation button check failed:', error);
     }
   };
 

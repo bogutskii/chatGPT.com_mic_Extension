@@ -28,14 +28,22 @@ export const initializeState = async () => {
 
 export const getState = () => state;
 
+let saveQueue = Promise.resolve();
+
 export const setState = (newState) => {
   state = {...state, ...newState};
-  chrome.storage.local.set(state, () => {
-    if (chrome.runtime.lastError) {
-      console.error('Failed to save state:', chrome.runtime.lastError);
-    } else {
-      listeners.forEach(listener => listener());
-    }
+  
+  saveQueue = saveQueue.then(() => {
+    return new Promise((resolve) => {
+      chrome.storage.local.set(newState, () => {
+        if (chrome.runtime.lastError) {
+          console.error('Failed to save state:', chrome.runtime.lastError);
+        }
+        resolve();
+      });
+    });
+  }).then(() => {
+    listeners.forEach(listener => listener());
   });
 };
 
