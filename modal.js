@@ -136,7 +136,11 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const centerMicButton = document.createElement('button');
   centerMicButton.classList.add('center-mic-button');
-  centerMicButton.textContent = 'Centered Microphone Block';
+  centerMicButton.textContent = 'Center Mic';
+  centerMicButton.style.marginTop = '8px';
+  centerMicButton.style.marginBottom = '4px';
+  centerMicButton.style.marginLeft = 'auto';
+  centerMicButton.style.marginRight = 'auto';
   centerMicButton.addEventListener('click', () => {
     const centerX = window.innerWidth / 2 - floatingButtonContainer.offsetWidth / 2;
     const centerY = window.innerHeight / 2 - floatingButtonContainer.offsetHeight / 2;
@@ -144,6 +148,27 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   });
 
   settingsContainer.appendChild(centerMicButton);
+
+  // Center panel button
+  const centerPanelButton = document.createElement('button');
+  centerPanelButton.classList.add('center-mic-button');
+  centerPanelButton.textContent = 'Center Panel';
+  centerPanelButton.style.marginTop = '8px';
+  centerPanelButton.style.marginLeft = 'auto';
+  centerPanelButton.style.marginRight = 'auto';
+
+  centerPanelButton.addEventListener('click', () => {
+    // Reset conflicting CSS properties
+    container.style.right = 'auto';
+    container.style.bottom = 'auto';
+    const centerX = window.innerWidth / 2 - container.offsetWidth / 2;
+    const centerY = window.innerHeight / 2 - container.offsetHeight / 2;
+    container.style.left = `${centerX}px`;
+    container.style.top = `${centerY}px`;
+    setState({ panelX: centerX, panelY: centerY });
+  });
+
+  settingsContainer.appendChild(centerPanelButton);
 
   columnsContainer.appendChild(settingsContainer);
   modal.appendChild(columnsContainer);

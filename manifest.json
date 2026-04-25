@@ -1,14 +1,23 @@
 {
   "manifest_version": 3,
   "name": "Voice to Text for ChatGPT",
-  "version": "2.0",
+  "version": "2.1",
   "description": "Adds a voice-to-text button to ChatGPT input field.",
   "author": "Petr Bogutskii",
   "permissions": [
-    "storage"
+    "storage",
+    "contextMenus",
+    "activeTab"
   ],
   "background": {
     "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    }
   },
   "content_scripts": [
     {

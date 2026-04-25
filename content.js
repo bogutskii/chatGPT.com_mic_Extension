@@ -5,9 +5,32 @@ let recognition;
 let shouldAutoRestart = false;
 let pendingLanguageChange = null;
 
-const micButtonImgOff = `chrome-extension://${chrome.runtime.id}/img/mic_OFF.png`;
-const floatingClearButtonImg = `chrome-extension://${chrome.runtime.id}/img/clear.png`;
-const settingsButtonImg = `chrome-extension://${chrome.runtime.id}/img/options.png`;
+// Check if extension context is valid, reload page if not
+const isExtensionContextValid = () => {
+  try {
+    return !!chrome.runtime?.id;
+  } catch {
+    return false;
+  }
+};
+
+if (!isExtensionContextValid()) {
+  location.reload();
+  throw new Error('Extension context invalidated - reloading page');
+}
+
+// Safe wrapper for chrome.runtime.id
+const getExtensionUrl = (path) => {
+  if (!isExtensionContextValid()) {
+    location.reload();
+    return '';
+  }
+  return `chrome-extension://${chrome.runtime.id}${path}`;
+};
+
+const micButtonImgOff = getExtensionUrl('/img/mic_OFF.png');
+const floatingClearButtonImg = getExtensionUrl('/img/clear.png');
+const settingsButtonImg = getExtensionUrl('/img/options.png');
 
 const INPUT_SELECTOR = '#prompt-textarea';
 const SEND_BUTTON_SELECTOR = '[data-testid="send-button"]';
@@ -69,6 +92,68 @@ const clearRecognizedText = () => {
   const languageOptions = languages.map(lang => ({value: lang.code, text: lang.name}));
   const languageSelector = createSelect(languageOptions);
 
+  // Add drag handle to container
+  const dragHandle = document.createElement('div');
+  dragHandle.classList.add('drag-handle');
+  container.appendChild(dragHandle);
+
+  // Add collapse/expand toggle strip
+  const collapseToggle = document.createElement('button');
+  collapseToggle.classList.add('collapse-toggle');
+
+  const updateToggleArrow = () => {
+    const isMinimized = container.classList.contains('minimized');
+    collapseToggle.textContent = isMinimized ? '<' : '>';
+    collapseToggle.title = isMinimized ? 'Expand panel' : 'Collapse panel';
+  };
+
+  const toggleMinimize = () => {
+    const wasMinimized = container.classList.contains('minimized');
+    const isMinimized = container.classList.toggle('minimized');
+    setState({ isPanelMinimized: isMinimized });
+    updateToggleArrow();
+
+    // If expanding and panel is near edge, push it back into view
+    if (wasMinimized && !isMinimized) {
+      requestAnimationFrame(() => {
+        const rect = container.getBoundingClientRect();
+        let newLeft = container.offsetLeft;
+        let newTop = container.offsetTop;
+        let moved = false;
+
+        if (rect.right > window.innerWidth) {
+          newLeft = Math.max(0, window.innerWidth - rect.width);
+          moved = true;
+        }
+        if (rect.bottom > window.innerHeight) {
+          newTop = Math.max(0, window.innerHeight - rect.height);
+          moved = true;
+        }
+        if (rect.left < 0) {
+          newLeft = 0;
+          moved = true;
+        }
+        if (rect.top < 0) {
+          newTop = 0;
+          moved = true;
+        }
+
+        if (moved) {
+          container.style.left = `${newLeft}px`;
+          container.style.top = `${newTop}px`;
+          setState({ panelX: newLeft, panelY: newTop });
+        }
+      });
+    }
+  };
+
+  collapseToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMinimize();
+  });
+
+  container.appendChild(collapseToggle);
+
   const floatingButtonContainer = document.createElement('div');
   floatingButtonContainer.id = 'floatingMicButtonContainer';
   floatingButtonContainer.classList.add('floating-button-container');
@@ -95,6 +180,189 @@ const clearRecognizedText = () => {
 
   initFloatingButtonPosition();
 
+  // Panel positioning and drag functionality
+  const applyPanelPosition = (mode) => {
+    // Remove all position classes
+    container.classList.remove(
+      'position-bottom-right',
+      'position-bottom-left',
+      'position-top-right',
+      'position-top-left',
+      'position-top',
+      'position-bottom',
+      'position-left',
+      'position-right',
+      'position-center',
+      'position-custom',
+      'draggable'
+    );
+
+    // Reset all positioning styles
+    container.style.left = '';
+    container.style.top = '';
+    container.style.right = '';
+    container.style.bottom = '';
+    container.style.transform = '';
+
+    if (mode === 'custom') {
+      container.classList.add('position-custom', 'draggable');
+      const { panelX, panelY } = getState();
+
+      if (panelX !== undefined && panelY !== undefined) {
+        container.style.left = `${panelX}px`;
+        container.style.top = `${panelY}px`;
+      } else {
+        // Default to bottom-right corner
+        const defaultX = window.innerWidth - container.offsetWidth - 16;
+        const defaultY = window.innerHeight - container.offsetHeight - 16;
+        container.style.left = `${defaultX}px`;
+        container.style.top = `${defaultY}px`;
+        setState({ panelX: defaultX, panelY: defaultY });
+      }
+    } else {
+      container.classList.add(`position-${mode}`);
+    }
+
+    // Force reflow to ensure styles are applied immediately
+    void container.offsetHeight;
+
+    console.log('[VoiceToText] Position applied:', mode, container.className);
+  };
+
+  // Always use custom mode - allow dragging to any position
+  const initPanel = () => {
+    container.classList.add('position-custom', 'draggable');
+    // Reset conflicting CSS properties
+    container.style.right = 'auto';
+    container.style.bottom = 'auto';
+    const { panelX, panelY, isPanelMinimized } = getState();
+
+    if (panelX !== undefined && panelY !== undefined) {
+      container.style.left = `${panelX}px`;
+      container.style.top = `${panelY}px`;
+    } else {
+      // Default to bottom-right corner
+      const defaultX = window.innerWidth - container.offsetWidth - 16;
+      const defaultY = window.innerHeight - container.offsetHeight - 16;
+      container.style.left = `${defaultX}px`;
+      container.style.top = `${defaultY}px`;
+      setState({ panelX: defaultX, panelY: defaultY });
+    }
+
+    // Restore minimized state
+    if (isPanelMinimized) {
+      container.classList.add('minimized');
+    }
+    updateToggleArrow();
+  };
+
+  // Panel drag functionality
+  let isPanelDragging = false;
+  let panelDragStartX, panelDragStartY;
+  let panelInitialX, panelInitialY;
+
+  const constrainPanelPosition = (x, y) => {
+    const maxX = window.innerWidth - container.offsetWidth;
+    const maxY = window.innerHeight - container.offsetHeight;
+    return {
+      x: Math.max(0, Math.min(x, maxX)),
+      y: Math.max(0, Math.min(y, maxY))
+    };
+  };
+
+  const updatePanelPosition = (x, y) => {
+    const { x: constrainedX, y: constrainedY } = constrainPanelPosition(x, y);
+
+    // Reset conflicting CSS properties
+    container.style.right = 'auto';
+    container.style.bottom = 'auto';
+    container.style.left = `${constrainedX}px`;
+    container.style.top = `${constrainedY}px`;
+  };
+
+  container.addEventListener('mousedown', (e) => {
+    // Only allow dragging in custom mode
+    if (!container.classList.contains('draggable')) return;
+
+    // Don't start drag if clicking on interactive elements
+    const isInteractive = e.target.closest('select, button, option, input, a, .select, .button');
+    if (isInteractive) return;
+
+    // Prevent text selection while dragging
+    e.preventDefault();
+
+    isPanelDragging = true;
+    panelDragStartX = e.clientX;
+    panelDragStartY = e.clientY;
+    panelInitialX = container.offsetLeft;
+    panelInitialY = container.offsetTop;
+    container.classList.add('dragging');
+    container.style.cursor = 'grabbing';
+    container.style.userSelect = 'none';
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isPanelDragging) return;
+
+    const deltaX = e.clientX - panelDragStartX;
+    const deltaY = e.clientY - panelDragStartY;
+
+    const newX = panelInitialX + deltaX;
+    const newY = panelInitialY + deltaY;
+    const { x: constrainedX, y: constrainedY } = constrainPanelPosition(newX, newY);
+
+    // Update DOM directly — no setState during drag for responsiveness
+    container.style.left = `${constrainedX}px`;
+    container.style.top = `${constrainedY}px`;
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isPanelDragging) {
+      isPanelDragging = false;
+      container.classList.remove('dragging');
+      container.style.cursor = 'move';
+      container.style.userSelect = '';
+      // Save position only once at drag end
+      const finalX = parseInt(container.style.left, 10);
+      const finalY = parseInt(container.style.top, 10);
+      setState({ panelX: finalX, panelY: finalY });
+    }
+  });
+
+  // Message listener for position changes from modal
+  try {
+  chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
+    console.log('[VoiceToText] Received message:', request.action, request);
+
+    if (request.action === 'applyPanelPosition') {
+      console.log('[VoiceToText] Applying panel position:', request.position);
+      applyPanelPosition(request.position);
+      sendResponse({ success: true });
+    } else if (request.action === 'centerPanel') {
+      container.classList.add('position-custom', 'draggable');
+      // Reset conflicting CSS properties
+      container.style.right = 'auto';
+      container.style.bottom = 'auto';
+      // Center the panel
+      const centerX = window.innerWidth / 2 - container.offsetWidth / 2;
+      const centerY = window.innerHeight / 2 - container.offsetHeight / 2;
+      container.style.left = `${centerX}px`;
+      container.style.top = `${centerY}px`;
+      setState({ panelX: centerX, panelY: centerY });
+      sendResponse({ success: true });
+    } else if (request.action === 'centerMic') {
+      const centerX = window.innerWidth / 2 - floatingButtonContainer.offsetWidth / 2;
+      const centerY = window.innerHeight / 2 - floatingButtonContainer.offsetHeight / 2;
+      updateFloatingButtonPosition(centerX, centerY);
+      sendResponse({ success: true });
+    }
+    return true;
+  });
+  } catch (e) {
+    console.warn('[VoiceToText] Extension context invalidated, reloading page');
+    location.reload();
+  }
+
   let isDragging = false;
   let startX, startY;
 
@@ -102,18 +370,32 @@ const clearRecognizedText = () => {
     isDragging = true;
     startX = e.clientX - floatingButtonContainer.offsetLeft;
     startY = e.clientY - floatingButtonContainer.offsetTop;
+    floatingButtonContainer.style.willChange = 'transform';
   });
 
   document.addEventListener('mousemove', (e) => {
     if (isDragging) {
-      const x = e.clientX - startX;
-      const y = e.clientY - startY;
-      updateFloatingButtonPosition(x, y);
+      let x = e.clientX - startX;
+      let y = e.clientY - startY;
+      const maxX = window.innerWidth - floatingButtonContainer.offsetWidth;
+      const maxY = window.innerHeight - floatingButtonContainer.offsetHeight;
+      x = Math.max(0, Math.min(x, maxX));
+      y = Math.max(0, Math.min(y, maxY));
+      // Update DOM directly — no setState during drag for responsiveness
+      floatingButtonContainer.style.left = `${x}px`;
+      floatingButtonContainer.style.top = `${y}px`;
     }
   });
 
   document.addEventListener('mouseup', () => {
-    isDragging = false;
+    if (isDragging) {
+      isDragging = false;
+      floatingButtonContainer.style.willChange = 'auto';
+      // Save position only once at drag end
+      const finalX = parseInt(floatingButtonContainer.style.left, 10);
+      const finalY = parseInt(floatingButtonContainer.style.top, 10);
+      setState({ floatingButtonX: finalX, floatingButtonY: finalY });
+    }
   });
 
   const bindInputListenersIfNeeded = () => {
@@ -182,11 +464,25 @@ const clearRecognizedText = () => {
     if (recognition && state.recognitionLanguage) {
       recognition.lang = state.recognitionLanguage;
     }
+
+    // Sync minimized state
+    const shouldBeMinimized = state.isPanelMinimized;
+    const isCurrentlyMinimized = container.classList.contains('minimized');
+    if (shouldBeMinimized && !isCurrentlyMinimized) {
+      container.classList.add('minimized');
+      updateToggleArrow();
+    } else if (!shouldBeMinimized && isCurrentlyMinimized) {
+      container.classList.remove('minimized');
+      updateToggleArrow();
+    }
   });
 
   container.appendChild(languageSelector);
   container.appendChild(settingsButton);
   document.body.appendChild(container);
+
+  // Initialize panel position after it's in DOM
+  initPanel();
 
   const modal = createModal();
   const modalOverlay = createModalOverlay();
@@ -228,7 +524,7 @@ const clearRecognizedText = () => {
       recognition.stop();
       isRecognitionRunning = false;
       setState({isListening: false});
-      floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
+      floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
     } else {
       finalTranscript = inputField ? readInputValue() : '';
       interimTranscript = '';
@@ -236,7 +532,7 @@ const clearRecognizedText = () => {
       recognition.start();
       isRecognitionRunning = true;
       setState({isListening: true});
-      floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)`;
+      floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_ON.png')})`;
     }
   };
 
@@ -256,15 +552,24 @@ const clearRecognizedText = () => {
   };
 
   recognition.onerror = (event) => {
+    const nonCriticalErrors = ['no-speech', 'aborted'];
+
+    if (nonCriticalErrors.includes(event.error)) {
+      // Expected when user is silent or manually stops — no visual error state
+      console.log('[VoiceToText] Speech recognition:', event.error);
+      isRecognitionRunning = false;
+      return;
+    }
+
     console.error('Speech recognition error', event);
     isRecognitionRunning = false;
     shouldAutoRestart = false;
     setState({isListening: false});
-    floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ERR.png)`;
+    floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_ERR.png')})`;
 
     setTimeout(() => {
       if (!getState().isListening) {
-        floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
+        floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
       }
     }, 1000);
   };
@@ -274,9 +579,9 @@ const clearRecognizedText = () => {
     if (shouldAutoRestart) {
       recognition.start();
       isRecognitionRunning = true;
-      floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_ON.png)`;
+      floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_ON.png')})`;
     } else {
-      floatingMicButton.style.backgroundImage = `url(chrome-extension://${chrome.runtime.id}/img/mic_OFF.png)`;
+      floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
       setState({isListening: false});
     }
   };
@@ -366,7 +671,55 @@ const clearRecognizedText = () => {
     }
   };
 
-  const throttledCheckButtonPosition = throttleWithFinalCall(checkButtonPosition, 1000);
-  window.addEventListener('resize', throttledCheckButtonPosition);
+  const checkPanelPosition = () => {
+    const panelRect = container.getBoundingClientRect();
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    console.log('[VoiceToText] checkPanelPosition:', { left: panelRect.left, right: panelRect.right, top: panelRect.top, bottom: panelRect.bottom, w, h });
+
+    // Reset conflicting CSS properties
+    container.style.right = 'auto';
+    container.style.bottom = 'auto';
+
+    if (panelRect.right > w) {
+      console.log('[VoiceToText] Panel off-screen right, moving to', w - panelRect.width);
+      container.style.left = `${w - panelRect.width}px`;
+    }
+    if (panelRect.bottom > h) {
+      console.log('[VoiceToText] Panel off-screen bottom, moving to', h - panelRect.height);
+      container.style.top = `${h - panelRect.height}px`;
+    }
+    if (panelRect.left < 0) {
+      container.style.left = '0px';
+    }
+    if (panelRect.top < 0) {
+      container.style.top = '0px';
+    }
+  };
+
+  const throttledCheckButtonPosition = throttleWithFinalCall(checkButtonPosition, 100);
+
+  window.addEventListener('resize', () => {
+    checkPanelPosition();
+    throttledCheckButtonPosition();
+  });
+
+  // ResizeObserver on documentElement - catches all size changes
+  const resizeObserver = new ResizeObserver(() => {
+    checkPanelPosition();
+    throttledCheckButtonPosition();
+  });
+  resizeObserver.observe(document.documentElement);
+
+  // visualViewport resize - catches browser UI changes (address bar, etc.)
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+      checkPanelPosition();
+      throttledCheckButtonPosition();
+    });
+  }
+
   checkButtonPosition();
+  checkPanelPosition();
 })();

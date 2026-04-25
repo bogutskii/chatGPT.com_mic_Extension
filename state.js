@@ -6,6 +6,9 @@ let state = {
   contentWidth: 100,
   floatingButtonX: undefined,
   floatingButtonY: undefined,
+  panelX: undefined,
+  panelY: undefined,
+  isPanelMinimized: false,
 };
 
 const listeners = [];
@@ -32,9 +35,14 @@ let saveQueue = Promise.resolve();
 
 export const setState = (newState) => {
   state = {...state, ...newState};
-  
+
   saveQueue = saveQueue.then(() => {
     return new Promise((resolve) => {
+      if (!chrome.runtime?.id) {
+        // Extension context invalidated, skip saving
+        resolve();
+        return;
+      }
       chrome.storage.local.set(newState, () => {
         if (chrome.runtime.lastError) {
           console.error('Failed to save state:', chrome.runtime.lastError);
