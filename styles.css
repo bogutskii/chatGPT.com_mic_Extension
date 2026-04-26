@@ -236,6 +236,28 @@
 .hotkeys-icon {
     margin-left: 0;
     cursor: pointer;
+    position: relative;
+}
+
+.click-tooltip {
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 10002;
+}
+
+.click-tooltip.show {
+    opacity: 1;
 }
 
 .button-container {
@@ -307,7 +329,7 @@ input[type="range"]::-moz-range-thumb:hover {
 
 #floatingMicButtonContainer {
     position: fixed;
-    z-index: 9999;
+    z-index: 10001;
     padding: 8px 12px;
     cursor: move;
     display: flex;
@@ -372,11 +394,11 @@ input[type="range"]::-moz-range-thumb:hover {
     position: fixed;
     right: 16px;
     bottom: 16px;
-    z-index: 1000;
+    z-index: 10000;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 8px;
+    gap: 8px;
+    padding: 6px;
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -470,13 +492,21 @@ input[type="range"]::-moz-range-thumb:hover {
     color: #1a1a1a;
     background-color: #fff;
     border: 1px solid rgba(0, 0, 0, 0.15);
-    padding: 6px 8px;
+    padding: 4px 6px;
+    padding-right: 18px;
     border-radius: 10px;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    min-width: 0;
+    flex-shrink: 1;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
 }
 
 .select:hover {

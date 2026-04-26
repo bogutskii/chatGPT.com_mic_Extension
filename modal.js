@@ -140,7 +140,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   centerMicButton.style.marginTop = '8px';
   centerMicButton.style.marginBottom = '4px';
   centerMicButton.style.marginLeft = 'auto';
-  centerMicButton.style.marginRight = 'auto';
+  centerMicButton.style.marginRight = '8px';
   centerMicButton.addEventListener('click', () => {
     const centerX = window.innerWidth / 2 - floatingButtonContainer.offsetWidth / 2;
     const centerY = window.innerHeight / 2 - floatingButtonContainer.offsetHeight / 2;
@@ -221,7 +221,18 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const hotkeysIcon = document.createElement('div');
   hotkeysIcon.classList.add('hotkeys-icon');
   hotkeysIcon.textContent = 'ℹ️';
-  hotkeysIcon.title = 'Hotkeys: Control + M to start/stop microphone.';
+
+  // Click tooltip
+  const tooltip = document.createElement('div');
+  tooltip.classList.add('click-tooltip');
+  tooltip.textContent = 'Hotkeys: Control + M to start/stop microphone.';
+  hotkeysIcon.appendChild(tooltip);
+
+  hotkeysIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    tooltip.classList.toggle('show');
+    setTimeout(() => tooltip.classList.remove('show'), 2000);
+  });
 
   hotkeysInfoContainer.appendChild(hotkeysInfoTitle);
   hotkeysInfoContainer.appendChild(hotkeysInfo);

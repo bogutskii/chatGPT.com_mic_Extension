@@ -10,11 +10,10 @@ const isExtensionContextValid = () => {
   try {
     return !!chrome.runtime?.id;
   } catch {
-    return false;
   }
 };
 
-if (!isExtensionContextValid()) {
+if (!window.location.href.includes('chatgpt.com')) {
   location.reload();
   throw new Error('Extension context invalidated - reloading page');
 }
@@ -332,7 +331,7 @@ const clearRecognizedText = () => {
   // Message listener for position changes from modal
   try {
   chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
-    console.log('[VoiceToText] Received message:', request.action, request);
+    // console.log('[VoiceToText] Received message:', request.action, request);
 
     if (request.action === 'applyPanelPosition') {
       console.log('[VoiceToText] Applying panel position:', request.position);
@@ -536,6 +535,47 @@ const clearRecognizedText = () => {
     }
   };
 
+  // Push-to-Talk mode (walkie-talkie) — hold Insert to record, release to stop
+  let isPushToTalkActive = false;
+  let wasAlreadyListeningBeforePTT = false;
+
+  const startPushToTalk = () => {
+    if (isPushToTalkActive) return;
+    if (isRecognitionRunning) {
+      wasAlreadyListeningBeforePTT = true;
+      return;
+    }
+    wasAlreadyListeningBeforePTT = false;
+    isPushToTalkActive = true;
+    const inputField = getInputField();
+    finalTranscript = inputField ? readInputValue() : '';
+    interimTranscript = '';
+    shouldAutoRestart = false; // Don't auto-restart in PTT mode
+    recognition.start();
+    isRecognitionRunning = true;
+    setState({isListening: true});
+    floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_ON.png')})`;
+    floatingMicButton.style.filter = 'brightness(1.3) sepia(1) hue-rotate(-30deg) saturate(2)';
+  };
+
+  const stopPushToTalk = () => {
+    if (!isPushToTalkActive) {
+      wasAlreadyListeningBeforePTT = false;
+      return;
+    }
+    isPushToTalkActive = false;
+    if (wasAlreadyListeningBeforePTT) {
+      wasAlreadyListeningBeforePTT = false;
+      return; // Don't stop if mic was already on before PTT
+    }
+    shouldAutoRestart = false;
+    recognition.stop();
+    isRecognitionRunning = false;
+    setState({isListening: false});
+    floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
+    floatingMicButton.style.filter = '';
+  };
+
   recognition.onresult = (event) => {
     interimTranscript = '';
     let finalTranscriptFragment = '';
@@ -556,7 +596,7 @@ const clearRecognizedText = () => {
 
     if (nonCriticalErrors.includes(event.error)) {
       // Expected when user is silent or manually stops — no visual error state
-      console.log('[VoiceToText] Speech recognition:', event.error);
+      // console.log('[VoiceToText] Speech recognition:', event.error);
       isRecognitionRunning = false;
       return;
     }
@@ -676,7 +716,7 @@ const clearRecognizedText = () => {
     const w = window.innerWidth;
     const h = window.innerHeight;
 
-    console.log('[VoiceToText] checkPanelPosition:', { left: panelRect.left, right: panelRect.right, top: panelRect.top, bottom: panelRect.bottom, w, h });
+    // console.log('[VoiceToText] checkPanelPosition:', { left: panelRect.left, right: panelRect.right, top: panelRect.top, bottom: panelRect.bottom, w, h });
 
     // Reset conflicting CSS properties
     container.style.right = 'auto';
@@ -719,6 +759,21 @@ const clearRecognizedText = () => {
       throttledCheckButtonPosition();
     });
   }
+
+  // Push-to-Talk: hold Insert to record, release to stop
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Insert' && !e.repeat) {
+      e.preventDefault();
+      startPushToTalk();
+    }
+  });
+
+  document.addEventListener('keyup', (e) => {
+    if (e.key === 'Insert') {
+      e.preventDefault();
+      stopPushToTalk();
+    }
+  });
 
   checkButtonPosition();
   checkPanelPosition();
