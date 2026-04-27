@@ -35,6 +35,9 @@ const INPUT_SELECTOR = '#prompt-textarea';
 const SEND_BUTTON_SELECTOR = '[data-testid="send-button"]';
 const INPUT_BOUND_ATTR = 'data-voice-input-bound';
 const SEND_BOUND_ATTR = 'data-voice-send-bound';
+const AUTO_SEND_SILENCE_MIN_SEC = 2;
+const AUTO_SEND_SILENCE_MAX_SEC = 30;
+const AUTO_SEND_SILENCE_DEFAULT_SEC = 10;
 
 const getInputField = () => document.querySelector(INPUT_SELECTOR);
 
@@ -84,6 +87,240 @@ const clearRecognizedText = () => {
 
   await initializeState();
   let state = getState();
+  let silenceCountdownIntervalId = null;
+  let silenceDeadlineTimestamp = null;
+  let silenceTimerIndicator = null;
+  let silenceTimerProgress = null;
+  let silenceTimerValue = null;
+  let isTimerPaused = false;
+
+  const isAutoSendOnSilenceEnabled = () => Boolean(state.isAutoSendOnSilenceEnabled);
+
+  const getNormalizedAutoSendSilenceDelaySec = () => {
+    const parsedDelay = Number(state.autoSendSilenceDelaySec);
+    if (!Number.isFinite(parsedDelay)) {
+      return AUTO_SEND_SILENCE_DEFAULT_SEC;
+    }
+    return Math.min(AUTO_SEND_SILENCE_MAX_SEC, Math.max(AUTO_SEND_SILENCE_MIN_SEC, Math.round(parsedDelay)));
+  };
+
+  const hideSilenceTimerIndicator = () => {
+    if (silenceTimerIndicator) {
+      silenceTimerIndicator.classList.remove('show');
+    }
+  };
+
+  const removeSilenceTimerIndicator = () => {
+    if (silenceTimerIndicator?.isConnected) {
+      silenceTimerIndicator.remove();
+    }
+    silenceTimerIndicator = null;
+    silenceTimerProgress = null;
+    silenceTimerValue = null;
+  };
+
+  const ensureSilenceTimerIndicator = () => {
+    if (!silenceTimerIndicator) {
+      silenceTimerIndicator = document.createElement('div');
+      silenceTimerIndicator.classList.add('silence-send-timer');
+      silenceTimerIndicator.title = 'Click to pause/resume auto-send countdown';
+
+      silenceTimerProgress = document.createElement('div');
+      silenceTimerProgress.classList.add('silence-send-timer-progress');
+
+      silenceTimerValue = document.createElement('div');
+      silenceTimerValue.classList.add('silence-send-timer-value');
+      silenceTimerValue.textContent = '0';
+
+      silenceTimerIndicator.appendChild(silenceTimerProgress);
+      silenceTimerIndicator.appendChild(silenceTimerValue);
+      document.body.appendChild(silenceTimerIndicator);
+
+      silenceTimerIndicator.addEventListener('click', () => {
+        if (isTimerPaused) {
+          resumeSilenceCountdown();
+        } else {
+          pauseSilenceCountdown();
+        }
+      });
+    }
+
+    if (!silenceTimerIndicator.isConnected) {
+      document.body.appendChild(silenceTimerIndicator);
+    }
+  };
+
+  const renderSilenceTimer = () => {
+    if (!isAutoSendOnSilenceEnabled()) {
+      removeSilenceTimerIndicator();
+      return;
+    }
+
+    const sendButton = document.querySelector(SEND_BUTTON_SELECTOR);
+    if (!sendButton) {
+      removeSilenceTimerIndicator();
+      return;
+    }
+
+    ensureSilenceTimerIndicator();
+
+    if (isTimerPaused) {
+      silenceTimerIndicator.classList.add('paused');
+      const rect = sendButton.getBoundingClientRect();
+      silenceTimerIndicator.style.left = `${Math.round(rect.left - 78)}px`;
+      silenceTimerIndicator.style.top = `${Math.round(rect.top + (rect.height - 30) / 2)}px`;
+      silenceTimerIndicator.style.zIndex = '10000';
+      silenceTimerIndicator.classList.add('show');
+      return;
+    }
+
+    if (!silenceDeadlineTimestamp) {
+      removeSilenceTimerIndicator();
+      return;
+    }
+
+    silenceTimerIndicator.classList.remove('paused');
+
+    const delaySec = getNormalizedAutoSendSilenceDelaySec();
+    const remainingMs = Math.max(0, silenceDeadlineTimestamp - Date.now());
+    const remainingSec = Math.ceil(remainingMs / 1000);
+    const progress = Math.max(0, Math.min(1, remainingMs / (delaySec * 1000)));
+
+    silenceTimerValue.textContent = String(remainingSec);
+    silenceTimerProgress.style.setProperty('--silence-progress', String(progress));
+
+    const rect = sendButton.getBoundingClientRect();
+    silenceTimerIndicator.style.left = `${Math.round(rect.left - 78)}px`;
+    silenceTimerIndicator.style.top = `${Math.round(rect.top + (rect.height - 30) / 2)}px`;
+    silenceTimerIndicator.style.zIndex = '10000';
+    silenceTimerIndicator.classList.add('show');
+  };
+
+  const stopSilenceCountdown = () => {
+    if (silenceCountdownIntervalId) {
+      clearInterval(silenceCountdownIntervalId);
+      silenceCountdownIntervalId = null;
+    }
+    silenceDeadlineTimestamp = null;
+    isTimerPaused = false;
+    hideSilenceTimerIndicator();
+  };
+
+  const pauseSilenceCountdown = () => {
+    isTimerPaused = true;
+    silenceDeadlineTimestamp = null;
+    renderSilenceTimer();
+  };
+
+  const resumeSilenceCountdown = () => {
+    if (!isRecognitionRunning || !isAutoSendOnSilenceEnabled()) {
+      return;
+    }
+    isTimerPaused = false;
+    const delaySec = getNormalizedAutoSendSilenceDelaySec();
+    silenceDeadlineTimestamp = Date.now() + delaySec * 1000;
+    renderSilenceTimer();
+  };
+
+  let isAutoSending = false;
+
+  const attemptAutoSendOnSilence = () => {
+    if (isAutoSending) {
+      return;
+    }
+    if (!isAutoSendOnSilenceEnabled()) {
+      stopSilenceCountdown();
+      return;
+    }
+
+    const input = getInputField();
+    const inputValue = readInputValue().trim();
+
+    if (!input || !inputValue) {
+      stopSilenceCountdown();
+      return;
+    }
+
+    const sendButton = document.querySelector(SEND_BUTTON_SELECTOR);
+    if (!sendButton) {
+      stopSilenceCountdown();
+      return;
+    }
+
+    const isSendDisabled = sendButton.disabled || sendButton.getAttribute('aria-disabled') === 'true';
+    if (isSendDisabled) {
+      stopSilenceCountdown();
+      return;
+    }
+
+    isAutoSending = true;
+    stopSilenceCountdown();
+    input.focus();
+    const enterEvent = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      code: 'Enter',
+      keyCode: 13,
+      which: 13,
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+    });
+    input.dispatchEvent(enterEvent);
+
+    // Reset transcript state so next speech starts from a clean input
+    clearRecognizedText();
+
+    setTimeout(() => {
+      isAutoSending = false;
+    }, 500);
+  };
+
+  let lastSilenceCountdownRender = 0;
+
+  const startSilenceCountdown = () => {
+    if (!isRecognitionRunning || !isAutoSendOnSilenceEnabled()) {
+      stopSilenceCountdown();
+      return;
+    }
+
+    if (isTimerPaused) {
+      renderSilenceTimer();
+      return;
+    }
+
+    const delaySec = getNormalizedAutoSendSilenceDelaySec();
+    silenceDeadlineTimestamp = Date.now() + delaySec * 1000;
+
+    if (!silenceCountdownIntervalId) {
+      silenceCountdownIntervalId = setInterval(() => {
+        renderSilenceTimer();
+        if (silenceDeadlineTimestamp && Date.now() >= silenceDeadlineTimestamp) {
+          attemptAutoSendOnSilence();
+        }
+      }, 1000);
+    }
+
+    const now = Date.now();
+    if (now - lastSilenceCountdownRender > 300) {
+      lastSilenceCountdownRender = now;
+      renderSilenceTimer();
+    }
+  };
+
+  const syncSilenceCountdownWithState = () => {
+    if (!isAutoSendOnSilenceEnabled()) {
+      stopSilenceCountdown();
+      return;
+    }
+
+    if (silenceDeadlineTimestamp) {
+      const delaySec = getNormalizedAutoSendSilenceDelaySec();
+      silenceDeadlineTimestamp = Math.min(silenceDeadlineTimestamp, Date.now() + delaySec * 1000);
+    }
+
+    renderSilenceTimer();
+  };
+
   const container = createContainer();
   const floatingMicButton = createButton(micButtonImgOff);
   const floatingClearButton = createButton(floatingClearButtonImg);
@@ -421,6 +658,7 @@ const clearRecognizedText = () => {
 
     sendButton.setAttribute(SEND_BOUND_ATTR, 'true');
     sendButton.addEventListener('click', () => {
+      stopSilenceCountdown();
       setTimeout(() => {
         clearRecognizedText();
       }, 50);
@@ -460,6 +698,7 @@ const clearRecognizedText = () => {
   subscribe(() => {
     state = getState();
     updateLanguageSelector(state);
+    syncSilenceCountdownWithState();
     if (recognition && state.recognitionLanguage) {
       recognition.lang = state.recognitionLanguage;
     }
@@ -522,16 +761,19 @@ const clearRecognizedText = () => {
       shouldAutoRestart = false;
       recognition.stop();
       isRecognitionRunning = false;
+      stopSilenceCountdown();
       setState({isListening: false});
       floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
     } else {
       finalTranscript = inputField ? readInputValue() : '';
       interimTranscript = '';
       shouldAutoRestart = true;
+      isTimerPaused = false;
       recognition.start();
       isRecognitionRunning = true;
       setState({isListening: true});
       floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_ON.png')})`;
+      startSilenceCountdown();
     }
   };
 
@@ -551,11 +793,13 @@ const clearRecognizedText = () => {
     finalTranscript = inputField ? readInputValue() : '';
     interimTranscript = '';
     shouldAutoRestart = false; // Don't auto-restart in PTT mode
+    isTimerPaused = false;
     recognition.start();
     isRecognitionRunning = true;
     setState({isListening: true});
     floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_ON.png')})`;
     floatingMicButton.style.filter = 'brightness(1.3) sepia(1) hue-rotate(-30deg) saturate(2)';
+    startSilenceCountdown();
   };
 
   const stopPushToTalk = () => {
@@ -571,6 +815,7 @@ const clearRecognizedText = () => {
     shouldAutoRestart = false;
     recognition.stop();
     isRecognitionRunning = false;
+    stopSilenceCountdown();
     setState({isListening: false});
     floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
     floatingMicButton.style.filter = '';
@@ -589,6 +834,7 @@ const clearRecognizedText = () => {
     }
     finalTranscript += finalTranscriptFragment;
     applyTranscriptsToInput();
+    startSilenceCountdown();
   };
 
   recognition.onerror = (event) => {
@@ -598,12 +844,14 @@ const clearRecognizedText = () => {
       // Expected when user is silent or manually stops — no visual error state
       // console.log('[VoiceToText] Speech recognition:', event.error);
       isRecognitionRunning = false;
+      stopSilenceCountdown();
       return;
     }
 
     console.error('Speech recognition error', event);
     isRecognitionRunning = false;
     shouldAutoRestart = false;
+    stopSilenceCountdown();
     setState({isListening: false});
     floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_ERR.png')})`;
 
@@ -616,6 +864,7 @@ const clearRecognizedText = () => {
 
   recognition.onend = () => {
     isRecognitionRunning = false;
+    stopSilenceCountdown();
     if (shouldAutoRestart) {
       recognition.start();
       isRecognitionRunning = true;
@@ -656,6 +905,8 @@ const clearRecognizedText = () => {
 
   recognition.onstart = () => {
     shouldAutoRestart = true;
+    isTimerPaused = false;
+    startSilenceCountdown();
     if (pendingLanguageChange) {
       recognition.lang = pendingLanguageChange;
       pendingLanguageChange = null;
@@ -773,6 +1024,19 @@ const clearRecognizedText = () => {
       e.preventDefault();
       stopPushToTalk();
     }
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible' || !silenceDeadlineTimestamp) {
+      return;
+    }
+
+    if (Date.now() >= silenceDeadlineTimestamp) {
+      attemptAutoSendOnSilence();
+      return;
+    }
+
+    renderSilenceTimer();
   });
 
   checkButtonPosition();

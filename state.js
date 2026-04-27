@@ -3,6 +3,8 @@ let state = {
   recognitionLanguage: 'ru-RU',
   isListening: false,
   isAutoGenerationEnabled: true,
+  isAutoSendOnSilenceEnabled: false,
+  autoSendSilenceDelaySec: 10,
   contentWidth: 100,
   floatingButtonX: undefined,
   floatingButtonY: undefined,

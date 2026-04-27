@@ -126,6 +126,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   widthSliderLabel.textContent = 'Adjust Content Width:';
   const widthSlider = document.createElement('input');
   widthSlider.type = 'range';
+  widthSlider.id = 'contentWidthSlider';
   widthSlider.min = '50';
   widthSlider.max = '100';
   widthSlider.step = '5';
@@ -133,6 +134,90 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   widthSliderContainer.appendChild(widthSliderLabel);
   widthSliderContainer.appendChild(widthSlider);
   settingsContainer.appendChild(widthSliderContainer);
+
+  const autoSendOnSilenceContainer = document.createElement('div');
+  autoSendOnSilenceContainer.classList.add('silence-autosend-container');
+
+  const autoSendOnSilenceRow = document.createElement('div');
+  autoSendOnSilenceRow.classList.add('silence-autosend-row');
+
+  const autoSendOnSilenceInfo = document.createElement('label');
+  autoSendOnSilenceInfo.classList.add('autogeneration-info');
+  autoSendOnSilenceInfo.textContent = 'Auto-send on silence:';
+
+  const autoSendOnSilenceCheckbox = document.createElement('input');
+  autoSendOnSilenceCheckbox.type = 'checkbox';
+  autoSendOnSilenceCheckbox.id = 'autoSendOnSilenceCheckbox';
+  autoSendOnSilenceCheckbox.checked = Boolean(state.isAutoSendOnSilenceEnabled);
+  autoSendOnSilenceInfo.appendChild(autoSendOnSilenceCheckbox);
+
+  const autoSendOnSilenceDelayControl = document.createElement('div');
+  autoSendOnSilenceDelayControl.classList.add('silence-delay-control');
+
+  const autoSendOnSilenceDelaySlider = document.createElement('input');
+  autoSendOnSilenceDelaySlider.type = 'range';
+  autoSendOnSilenceDelaySlider.id = 'autoSendOnSilenceDelaySlider';
+  autoSendOnSilenceDelaySlider.min = '2';
+  autoSendOnSilenceDelaySlider.max = '30';
+  autoSendOnSilenceDelaySlider.step = '1';
+  autoSendOnSilenceDelaySlider.value = String(Number(state.autoSendSilenceDelaySec) || 10);
+
+  const autoSendOnSilenceDelayValue = document.createElement('span');
+  autoSendOnSilenceDelayValue.classList.add('silence-delay-value');
+
+  const autoSendOnSilenceWarning = document.createElement('div');
+  autoSendOnSilenceWarning.classList.add('silence-delay-warning');
+  autoSendOnSilenceWarning.textContent = 'At 20–30s, auto-send can be interrupted by sleep mode, tab suspension, or page reload.';
+
+  const autoSendOnSilenceBeta = document.createElement('div');
+  autoSendOnSilenceBeta.classList.add('silence-delay-beta');
+  autoSendOnSilenceBeta.textContent = 'Beta feature: we are collecting feedback on performance and limitations.';
+
+  const autoSendOnSilenceHint = document.createElement('div');
+  autoSendOnSilenceHint.classList.add('silence-delay-hint');
+  autoSendOnSilenceHint.textContent = 'Tip: click the countdown timer to pause or resume auto-send.';
+
+  const getNormalizedDelay = (rawDelay) => {
+    const parsedDelay = Number(rawDelay);
+    if (!Number.isFinite(parsedDelay)) {
+      return 10;
+    }
+    return Math.min(30, Math.max(2, Math.round(parsedDelay)));
+  };
+
+  const renderAutoSendOnSilenceDelay = () => {
+    const delaySec = getNormalizedDelay(autoSendOnSilenceDelaySlider.value);
+    autoSendOnSilenceDelaySlider.value = String(delaySec);
+    autoSendOnSilenceDelayValue.textContent = `${delaySec}s`;
+    const showWarning = autoSendOnSilenceCheckbox.checked && delaySec >= 20;
+    autoSendOnSilenceWarning.classList.toggle('show', showWarning);
+    autoSendOnSilenceBeta.classList.toggle('show', autoSendOnSilenceCheckbox.checked);
+    autoSendOnSilenceHint.classList.toggle('show', autoSendOnSilenceCheckbox.checked);
+    autoSendOnSilenceDelaySlider.disabled = !autoSendOnSilenceCheckbox.checked;
+    autoSendOnSilenceDelayValue.classList.toggle('disabled', !autoSendOnSilenceCheckbox.checked);
+  };
+
+  autoSendOnSilenceCheckbox.addEventListener('change', () => {
+    setState({isAutoSendOnSilenceEnabled: autoSendOnSilenceCheckbox.checked});
+    renderAutoSendOnSilenceDelay();
+  });
+
+  autoSendOnSilenceDelaySlider.addEventListener('input', () => {
+    const delaySec = getNormalizedDelay(autoSendOnSilenceDelaySlider.value);
+    setState({autoSendSilenceDelaySec: delaySec});
+    renderAutoSendOnSilenceDelay();
+  });
+
+  autoSendOnSilenceDelayControl.appendChild(autoSendOnSilenceDelaySlider);
+  autoSendOnSilenceDelayControl.appendChild(autoSendOnSilenceDelayValue);
+  autoSendOnSilenceRow.appendChild(autoSendOnSilenceInfo);
+  autoSendOnSilenceRow.appendChild(autoSendOnSilenceDelayControl);
+  autoSendOnSilenceContainer.appendChild(autoSendOnSilenceRow);
+  autoSendOnSilenceContainer.appendChild(autoSendOnSilenceWarning);
+  autoSendOnSilenceContainer.appendChild(autoSendOnSilenceBeta);
+  autoSendOnSilenceContainer.appendChild(autoSendOnSilenceHint);
+  settingsContainer.appendChild(autoSendOnSilenceContainer);
+  renderAutoSendOnSilenceDelay();
 
   const centerMicButton = document.createElement('button');
   centerMicButton.classList.add('center-mic-button');

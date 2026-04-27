@@ -1,5 +1,8 @@
 export const setupWidthAdjustment = (modal) => {
-  const widthSlider = modal.querySelector('input[type="range"]');
+  const widthSlider = modal.querySelector('#contentWidthSlider');
+  if (!widthSlider) {
+    return;
+  }
   let throttleTimeout;
 
   const adjustContentWidth = (width) => {
