@@ -219,6 +219,72 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   settingsContainer.appendChild(autoSendOnSilenceContainer);
   renderAutoSendOnSilenceDelay();
 
+  const pttContainer = document.createElement('div');
+  pttContainer.classList.add('silence-autosend-container', 'ptt-container');
+
+  const pttRow = document.createElement('div');
+  pttRow.classList.add('silence-autosend-row');
+
+  const pttInfo = document.createElement('label');
+  pttInfo.classList.add('autogeneration-info');
+  pttInfo.textContent = 'Push-to-Talk (walkie-talkie):';
+
+  const pttCheckbox = document.createElement('input');
+  pttCheckbox.type = 'checkbox';
+  pttCheckbox.id = 'pttCheckbox';
+  pttCheckbox.checked = Boolean(state.isPushToTalkEnabled);
+  pttInfo.appendChild(pttCheckbox);
+
+  const pttKeyControl = document.createElement('div');
+  pttKeyControl.classList.add('silence-delay-control');
+
+  const pttComboSelect = document.createElement('select');
+  pttComboSelect.classList.add('ptt-key-select');
+  const pttComboOptions = [
+    {value: 'Control+Shift', text: 'Ctrl+Shift'},
+    {value: 'Alt+Shift', text: 'Alt+Shift'},
+    {value: 'Control+Alt', text: 'Ctrl+Alt'},
+    {value: 'Shift+Alt', text: 'Shift+Alt'},
+  ];
+  pttComboOptions.forEach(opt => {
+    const option = document.createElement('option');
+    option.value = opt.value;
+    option.textContent = opt.text;
+    pttComboSelect.appendChild(option);
+  });
+  pttComboSelect.value = state.pushToTalkCombo || 'Control+Shift';
+  pttComboSelect.disabled = !pttCheckbox.checked;
+
+  pttKeyControl.appendChild(pttComboSelect);
+
+  const pttHint = document.createElement('div');
+  pttHint.classList.add('silence-delay-hint');
+  pttHint.textContent = 'Hold the selected key to record, release to stop. Works even while the microphone is off.';
+  pttHint.style.marginTop = '6px';
+  pttHint.style.color = '#4338ca';
+  pttHint.style.background = 'rgba(99, 102, 241, 0.08)';
+
+  const renderPttState = () => {
+    pttComboSelect.disabled = !pttCheckbox.checked;
+    pttHint.classList.toggle('show', pttCheckbox.checked);
+  };
+
+  pttCheckbox.addEventListener('change', () => {
+    setState({isPushToTalkEnabled: pttCheckbox.checked});
+    renderPttState();
+  });
+
+  pttComboSelect.addEventListener('change', () => {
+    setState({pushToTalkCombo: pttComboSelect.value});
+  });
+
+  pttRow.appendChild(pttInfo);
+  pttRow.appendChild(pttKeyControl);
+  pttContainer.appendChild(pttRow);
+  pttContainer.appendChild(pttHint);
+  settingsContainer.appendChild(pttContainer);
+  renderPttState();
+
   const centerMicButton = document.createElement('button');
   centerMicButton.classList.add('center-mic-button');
   centerMicButton.textContent = 'Center Mic';

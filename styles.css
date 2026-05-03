@@ -356,6 +356,21 @@ input[type="range"]::-moz-range-thumb:hover {
     margin: 0;
 }
 
+.silence-delay-control select {
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    font-size: 13px;
+    background: #fff;
+    cursor: pointer;
+    accent-color: #8b5cf6;
+}
+
+.silence-delay-control select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .silence-delay-value {
     min-width: 46px;
     text-align: right;

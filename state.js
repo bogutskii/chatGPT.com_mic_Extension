@@ -5,6 +5,8 @@ let state = {
   isAutoGenerationEnabled: true,
   isAutoSendOnSilenceEnabled: false,
   autoSendSilenceDelaySec: 10,
+  isPushToTalkEnabled: false,
+  pushToTalkCombo: 'Control+Shift',
   contentWidth: 100,
   floatingButtonX: undefined,
   floatingButtonY: undefined,

@@ -1,5 +1,6 @@
 let finalTranscript = '';
 let interimTranscript = '';
+let baseTranscript = '';
 let isRecognitionRunning = false;
 let recognition;
 let shouldAutoRestart = false;
@@ -67,13 +68,20 @@ const writeInputValue = (value) => {
 };
 
 const applyTranscriptsToInput = () => {
-  writeInputValue(`${finalTranscript}${interimTranscript}`);
+  writeInputValue(`${baseTranscript}${finalTranscript}${interimTranscript}`);
 };
 
 const clearRecognizedText = () => {
+  baseTranscript = '';
   finalTranscript = '';
   interimTranscript = '';
   applyTranscriptsToInput();
+};
+
+const resetTranscriptState = () => {
+  baseTranscript = '';
+  finalTranscript = '';
+  interimTranscript = '';
 };
 
 (async () => {
@@ -659,9 +667,7 @@ const clearRecognizedText = () => {
     sendButton.setAttribute(SEND_BOUND_ATTR, 'true');
     sendButton.addEventListener('click', () => {
       stopSilenceCountdown();
-      setTimeout(() => {
-        clearRecognizedText();
-      }, 50);
+      resetTranscriptState();
     });
   };
 
@@ -765,7 +771,8 @@ const clearRecognizedText = () => {
       setState({isListening: false});
       floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
     } else {
-      finalTranscript = inputField ? readInputValue() : '';
+      baseTranscript = inputField ? readInputValue() : '';
+      finalTranscript = '';
       interimTranscript = '';
       shouldAutoRestart = true;
       isTimerPaused = false;
@@ -790,7 +797,8 @@ const clearRecognizedText = () => {
     wasAlreadyListeningBeforePTT = false;
     isPushToTalkActive = true;
     const inputField = getInputField();
-    finalTranscript = inputField ? readInputValue() : '';
+    baseTranscript = inputField ? readInputValue() : '';
+    finalTranscript = '';
     interimTranscript = '';
     shouldAutoRestart = false; // Don't auto-restart in PTT mode
     isTimerPaused = false;
@@ -829,7 +837,7 @@ const clearRecognizedText = () => {
       if (event.results[i].isFinal) {
         finalTranscriptFragment += transcript + ' ';
       } else {
-        interimTranscript += transcript;
+        interimTranscript = transcript;
       }
     }
     finalTranscript += finalTranscriptFragment;
@@ -1011,16 +1019,41 @@ const clearRecognizedText = () => {
     });
   }
 
-  // Push-to-Talk: hold Insert to record, release to stop
+  // Push-to-Talk: hold configured combo to record, release to stop
+  const parseCombo = (comboStr) => comboStr.split('+').map(s => s.trim());
+  const isComboSatisfied = (e, parts) => {
+    const needsCtrl = parts.includes('Control');
+    const needsShift = parts.includes('Shift');
+    const needsAlt = parts.includes('Alt');
+    const needsMeta = parts.includes('Meta');
+    if (needsCtrl !== e.ctrlKey) return false;
+    if (needsShift !== e.shiftKey) return false;
+    if (needsAlt !== e.altKey) return false;
+    if (needsMeta !== e.metaKey) return false;
+    const nonModifier = parts.find(p => !['Control','Shift','Alt','Meta'].includes(p));
+    if (nonModifier && e.key.toLowerCase() !== nonModifier.toLowerCase()) return false;
+    return true;
+  };
+  const isComboReleased = (e, parts) => {
+    const key = e.key;
+    if (['Control','Shift','Alt','Meta'].includes(key) && parts.includes(key)) return true;
+    const nonModifier = parts.find(p => !['Control','Shift','Alt','Meta'].includes(p));
+    if (nonModifier && key.toLowerCase() === nonModifier.toLowerCase()) return true;
+    return false;
+  };
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Insert' && !e.repeat) {
+    if (!getState().isPushToTalkEnabled) return;
+    const parts = parseCombo(getState().pushToTalkCombo || 'Control+Shift');
+    if (isComboSatisfied(e, parts) && !e.repeat) {
       e.preventDefault();
       startPushToTalk();
     }
   });
 
   document.addEventListener('keyup', (e) => {
-    if (e.key === 'Insert') {
+    if (!getState().isPushToTalkEnabled) return;
+    const parts = parseCombo(getState().pushToTalkCombo || 'Control+Shift');
+    if (isComboReleased(e, parts)) {
       e.preventDefault();
       stopPushToTalk();
     }
