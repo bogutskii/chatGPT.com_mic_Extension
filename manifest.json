@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Voice to Text for ChatGPT",
+  "name": "__MSG_extensionName__",
   "version": "2.2",
-  "description": "Adds a voice-to-text button to ChatGPT input field.",
+  "description": "__MSG_extensionDescription__",
+  "default_locale": "en",
   "author": "Petr Bogutskii",
   "permissions": [
     "storage",
@@ -48,7 +49,8 @@
         "micPosition.js",
         "autoGeneration.js",
         "widthAdjustment.js",
-        "clearButton.js"
+        "clearButton.js",
+        "i18n.js"
       ],
       "matches": [
         "<all_urls>"

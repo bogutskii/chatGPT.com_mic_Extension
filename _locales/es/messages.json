@@ -1,0 +1,114 @@
+{
+  "extensionName": {
+    "message": "Dictado por voz para ChatGPT",
+    "description": "Nombre de la extensión en la barra de Chrome y la Web Store."
+  },
+  "extensionDescription": {
+    "message": "Habla en vez de escribir. Envío automático tras silencio, modo walkie-talkie, micrófono flotante y más.",
+    "description": "Descripción corta para la Chrome Web Store y la página de gestión de extensiones."
+  },
+  "popupTitle": {
+    "message": "Dictado por voz",
+    "description": "Título del popup de la extensión."
+  },
+  "centerMic": {
+    "message": "Centrar micrófono",
+    "description": "Etiqueta del botón para centrar el micrófono flotante."
+  },
+  "centerPanel": {
+    "message": "Centrar panel",
+    "description": "Etiqueta del botón para centrar el panel de ajustes."
+  },
+  "reloadPageAlert": {
+    "message": "Recarga la página de ChatGPT para usar esta función.",
+    "description": "Alerta cuando el content script no está cargado."
+  },
+  "contextMenuCenterMic": {
+    "message": "Centrar micrófono",
+    "description": "Título del elemento del menú contextual."
+  },
+  "contextMenuCenterPanel": {
+    "message": "Centrar panel",
+    "description": "Título del elemento del menú contextual."
+  },
+  "selectFavoriteLanguages": {
+    "message": "Seleccionar idiomas favoritos:",
+    "description": "Etiqueta de la lista de selección de idiomas en ajustes."
+  },
+  "selectAll": {
+    "message": "Seleccionar todos",
+    "description": "Botón para seleccionar todos los idiomas."
+  },
+  "deselectAll": {
+    "message": "Deseleccionar todos",
+    "description": "Botón para deseleccionar todos los idiomas."
+  },
+  "autoContinueGenerate": {
+    "message": "Continuar generando respuestas automáticamente:",
+    "description": "Etiqueta del checkbox de continuación automática."
+  },
+  "autoContinueTooltip": {
+    "message": "Continuar generando respuestas automáticamente con un retardo de 2 segundos",
+    "description": "Tooltip del icono de información de continuación automática."
+  },
+  "adjustContentWidth": {
+    "message": "Ancho del contenido:",
+    "description": "Etiqueta del deslizador de ancho de contenido."
+  },
+  "autoSendOnSilence": {
+    "message": "Enviar automáticamente tras silencio:",
+    "description": "Etiqueta del checkbox de envío automático."
+  },
+  "autoSendWarning": {
+    "message": "Con 20–30 s de espera, el envío automático puede interrumpirse por modo suspensión, cierre de pestaña o recarga de página.",
+    "description": "Advertencia sobre retardos largos de envío automático."
+  },
+  "autoSendBeta": {
+    "message": "Función beta: estamos recopilando opiniones sobre rendimiento y limitaciones.",
+    "description": "Aviso de estado beta del envío automático."
+  },
+  "autoSendHint": {
+    "message": "Consejo: haz clic en el temporizador para pausar o reanudar el envío automático.",
+    "description": "Consejo sobre la interacción con el temporizador."
+  },
+  "pushToTalk": {
+    "message": "Push-to-Talk (walkie-talkie):",
+    "description": "Etiqueta del checkbox de walkie-talkie."
+  },
+  "pushToTalkHint": {
+    "message": "Mantén pulsada la tecla elegida para hablar; suéltala para detener la grabación. Funciona incluso con el micrófono apagado.",
+    "description": "Consejo que explica el funcionamiento del walkie-talkie."
+  },
+  "donate": {
+    "message": "Apoyar",
+    "description": "Texto del enlace de donación."
+  },
+  "hotkeys": {
+    "message": "Atajos de teclado:",
+    "description": "Etiqueta de la sección de atajos."
+  },
+  "hotkeysInfo": {
+    "message": "Control + M",
+    "description": "Atajo principal mostrado en ajustes."
+  },
+  "hotkeysTooltip": {
+    "message": "Atajos: Control + M para activar/desactivar el micrófono.",
+    "description": "Tooltip que explica el atajo principal."
+  },
+  "ok": {
+    "message": "Aceptar",
+    "description": "Texto del botón de cerrar el modal de ajustes."
+  },
+  "timerTitle": {
+    "message": "Haz clic para pausar/reanudar la cuenta atrás del envío automático",
+    "description": "Tooltip del temporizador de silencio."
+  },
+  "expandPanel": {
+    "message": "Expandir panel",
+    "description": "Tooltip del botón de expandir panel."
+  },
+  "collapsePanel": {
+    "message": "Colapsar panel",
+    "description": "Tooltip del botón de colapsar panel."
+  }
+}

@@ -50,12 +50,15 @@
 @media (min-width: 768px) {
     .columns {
         flex-direction: row;
+        align-items: stretch;
     }
 }
 
 .column {
     flex: 1;
     margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
 @media (min-width: 768px) {
@@ -77,10 +80,13 @@
 .donation-container {
     background-color: #f7f7f8;
     padding: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
     border-radius: 12px;
     margin-bottom: 12px;
     border: 1px solid rgba(0, 0, 0, 0.06);
     transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .language-container:hover,
@@ -99,18 +105,23 @@
     margin-bottom: 8px;
 }
 
+.language-actions-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
 .select-all-button,
 .deselect-all-button,
 .cancel-button {
     background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
     color: #fff;
     border: none;
-    padding: 10px 20px;
+    padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;
-    margin: 0 6px;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 12px;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25);
 }
@@ -140,12 +151,13 @@
 
 .language-list {
     width: 100%;
-    height: 200px;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 60vh;
     overflow-y: auto;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    margin-top: 12px;
     background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
     padding: 4px;
 }
 
@@ -513,14 +525,22 @@ input[type="range"]::-moz-range-thumb:hover {
     transform: translateY(-2px);
 }
 
+.center-buttons-row {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
 .center-mic-button {
     background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
     color: white;
-    padding: 12px 20px;
+    padding: 8px 14px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
     font-weight: 500;
+    font-size: 13px;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25);
 }

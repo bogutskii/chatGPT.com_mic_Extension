@@ -1,4 +1,5 @@
 import {getState, setState} from './state.js';
+import {t} from './i18n.js';
 
 const loadCSS = (url) => {
   const existingLink = document.querySelector(`link[href="${url}"]`);
@@ -37,16 +38,22 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   languageContainer.classList.add('column', 'language-container');
 
   const languageListInfo = document.createElement('div');
-  languageListInfo.textContent = 'Select Favorite Languages:';
+  languageListInfo.textContent = t('selectFavoriteLanguages');
   languageListInfo.classList.add('language-list-info');
 
+  const languageActionsRow = document.createElement('div');
+  languageActionsRow.classList.add('language-actions-row');
+
   const selectAllButton = document.createElement('button');
-  selectAllButton.textContent = 'Select All';
+  selectAllButton.textContent = t('selectAll');
   selectAllButton.classList.add('select-all-button');
 
   const deselectAllButton = document.createElement('button');
-  deselectAllButton.textContent = 'Deselect All';
+  deselectAllButton.textContent = t('deselectAll');
   deselectAllButton.classList.add('deselect-all-button');
+
+  languageActionsRow.appendChild(selectAllButton);
+  languageActionsRow.appendChild(deselectAllButton);
 
   const languageList = document.createElement('div');
   languageList.classList.add('language-list');
@@ -73,8 +80,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   });
 
   languageContainer.appendChild(languageListInfo);
-  languageContainer.appendChild(selectAllButton);
-  languageContainer.appendChild(deselectAllButton);
+  languageContainer.appendChild(languageActionsRow);
   languageContainer.appendChild(languageList);
 
   selectAllButton.addEventListener('click', () => {
@@ -102,7 +108,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const autogenerationInfo = document.createElement('label');
   autogenerationInfo.classList.add('autogeneration-info');
-  autogenerationInfo.textContent = 'Auto continue generate responses:';
+  autogenerationInfo.textContent = t('autoContinueGenerate');
 
   const autogenerationCheckbox = document.createElement('input');
   autogenerationCheckbox.type = 'checkbox';
@@ -112,7 +118,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const autogenerationIcon = document.createElement('span');
   autogenerationIcon.textContent = 'ℹ️';
   autogenerationIcon.classList.add('hotkeys-icon');
-  autogenerationIcon.title = 'Auto continue generate responses if enabled 2 second delay';
+  autogenerationIcon.title = t('autoContinueTooltip');
   autogenerationInfo.appendChild(autogenerationCheckbox);
   autogenerationInfo.appendChild(autogenerationIcon);
   autogenerationContainer.appendChild(autogenerationInfo);
@@ -123,7 +129,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const widthSliderLabel = document.createElement('label');
   widthSliderLabel.classList.add('width-slider-label');
-  widthSliderLabel.textContent = 'Adjust Content Width:';
+  widthSliderLabel.textContent = t('adjustContentWidth');
   const widthSlider = document.createElement('input');
   widthSlider.type = 'range';
   widthSlider.id = 'contentWidthSlider';
@@ -143,7 +149,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const autoSendOnSilenceInfo = document.createElement('label');
   autoSendOnSilenceInfo.classList.add('autogeneration-info');
-  autoSendOnSilenceInfo.textContent = 'Auto-send on silence:';
+  autoSendOnSilenceInfo.textContent = t('autoSendOnSilence');
 
   const autoSendOnSilenceCheckbox = document.createElement('input');
   autoSendOnSilenceCheckbox.type = 'checkbox';
@@ -167,15 +173,15 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const autoSendOnSilenceWarning = document.createElement('div');
   autoSendOnSilenceWarning.classList.add('silence-delay-warning');
-  autoSendOnSilenceWarning.textContent = 'At 20–30s, auto-send can be interrupted by sleep mode, tab suspension, or page reload.';
+  autoSendOnSilenceWarning.textContent = t('autoSendWarning');
 
   const autoSendOnSilenceBeta = document.createElement('div');
   autoSendOnSilenceBeta.classList.add('silence-delay-beta');
-  autoSendOnSilenceBeta.textContent = 'Beta feature: we are collecting feedback on performance and limitations.';
+  autoSendOnSilenceBeta.textContent = t('autoSendBeta');
 
   const autoSendOnSilenceHint = document.createElement('div');
   autoSendOnSilenceHint.classList.add('silence-delay-hint');
-  autoSendOnSilenceHint.textContent = 'Tip: click the countdown timer to pause or resume auto-send.';
+  autoSendOnSilenceHint.textContent = t('autoSendHint');
 
   const getNormalizedDelay = (rawDelay) => {
     const parsedDelay = Number(rawDelay);
@@ -227,7 +233,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const pttInfo = document.createElement('label');
   pttInfo.classList.add('autogeneration-info');
-  pttInfo.textContent = 'Push-to-Talk (walkie-talkie):';
+  pttInfo.textContent = t('pushToTalk');
 
   const pttCheckbox = document.createElement('input');
   pttCheckbox.type = 'checkbox';
@@ -267,7 +273,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const pttHint = document.createElement('div');
   pttHint.classList.add('silence-delay-hint');
-  pttHint.textContent = 'Hold the selected key to record, release to stop. Works even while the microphone is off.';
+  pttHint.textContent = t('pushToTalkHint');
   pttHint.style.marginTop = '6px';
   pttHint.style.color = '#4338ca';
   pttHint.style.background = 'rgba(99, 102, 241, 0.08)';
@@ -293,31 +299,22 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   settingsContainer.appendChild(pttContainer);
   renderPttState();
 
+  const centerButtonsRow = document.createElement('div');
+  centerButtonsRow.classList.add('center-buttons-row');
+
   const centerMicButton = document.createElement('button');
   centerMicButton.classList.add('center-mic-button');
-  centerMicButton.textContent = 'Center Mic';
-  centerMicButton.style.marginTop = '8px';
-  centerMicButton.style.marginBottom = '4px';
-  centerMicButton.style.marginLeft = 'auto';
-  centerMicButton.style.marginRight = '8px';
+  centerMicButton.textContent = t('centerMic');
   centerMicButton.addEventListener('click', () => {
     const centerX = window.innerWidth / 2 - floatingButtonContainer.offsetWidth / 2;
     const centerY = window.innerHeight / 2 - floatingButtonContainer.offsetHeight / 2;
     updateFloatingButtonPosition(centerX, centerY);
   });
 
-  settingsContainer.appendChild(centerMicButton);
-
-  // Center panel button
   const centerPanelButton = document.createElement('button');
   centerPanelButton.classList.add('center-mic-button');
-  centerPanelButton.textContent = 'Center Panel';
-  centerPanelButton.style.marginTop = '8px';
-  centerPanelButton.style.marginLeft = 'auto';
-  centerPanelButton.style.marginRight = 'auto';
-
+  centerPanelButton.textContent = t('centerPanel');
   centerPanelButton.addEventListener('click', () => {
-    // Reset conflicting CSS properties
     container.style.right = 'auto';
     container.style.bottom = 'auto';
     const centerX = window.innerWidth / 2 - container.offsetWidth / 2;
@@ -327,7 +324,9 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
     setState({ panelX: centerX, panelY: centerY });
   });
 
-  settingsContainer.appendChild(centerPanelButton);
+  centerButtonsRow.appendChild(centerMicButton);
+  centerButtonsRow.appendChild(centerPanelButton);
+  settingsContainer.appendChild(centerButtonsRow);
 
   columnsContainer.appendChild(settingsContainer);
   modal.appendChild(columnsContainer);
@@ -341,7 +340,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const donationLink = document.createElement('a');
   donationLink.href = 'https://buymeacoffee.com/bogutskii';
   donationLink.classList.add('donation-link');
-  donationLink.textContent = 'Donate';
+  donationLink.textContent = t('donate');
 
   const LinkedInLink = document.createElement('a');
   LinkedInLink.href = 'https://www.linkedin.com/in/petr-bogutskii/';
@@ -372,10 +371,10 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const hotkeysInfoTitle = document.createElement('div');
   hotkeysInfoTitle.classList.add('hotkeys-info-title');
-  hotkeysInfoTitle.textContent = 'Hotkeys:';
+  hotkeysInfoTitle.textContent = t('hotkeys');
 
   const hotkeysInfo = document.createElement('div');
-  hotkeysInfo.innerHTML = '<b> Control + M</b>';
+  hotkeysInfo.innerHTML = `<b> ${t('hotkeysInfo')}</b>`;
 
   const hotkeysIcon = document.createElement('div');
   hotkeysIcon.classList.add('hotkeys-icon');
@@ -384,7 +383,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   // Click tooltip
   const tooltip = document.createElement('div');
   tooltip.classList.add('click-tooltip');
-  tooltip.textContent = 'Hotkeys: Control + M to start/stop microphone.';
+  tooltip.textContent = t('hotkeysTooltip');
   hotkeysIcon.appendChild(tooltip);
 
   hotkeysIcon.addEventListener('click', (e) => {
@@ -403,7 +402,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const cancelButton = document.createElement('button');
   cancelButton.classList.add('cancel-button');
-  cancelButton.textContent = 'Ok';
+  cancelButton.textContent = t('ok');
 
   cancelButton.addEventListener('click', () => {
     modal.style.display = 'none';

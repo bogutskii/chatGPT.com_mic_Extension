@@ -1,6 +1,7 @@
 let finalTranscript = '';
 let interimTranscript = '';
 let baseTranscript = '';
+let lastFinalResultIndex = -1;
 let isRecognitionRunning = false;
 let recognition;
 let shouldAutoRestart = false;
@@ -75,6 +76,7 @@ const clearRecognizedText = () => {
   baseTranscript = '';
   finalTranscript = '';
   interimTranscript = '';
+  lastFinalResultIndex = -1;
   applyTranscriptsToInput();
 };
 
@@ -82,9 +84,11 @@ const resetTranscriptState = () => {
   baseTranscript = '';
   finalTranscript = '';
   interimTranscript = '';
+  lastFinalResultIndex = -1;
 };
 
 (async () => {
+  const {t} = await import(chrome.runtime.getURL('i18n.js'));
   const {languages} = await import(chrome.runtime.getURL('languages.js'));
   const {createContainer, createButton, createSelect} = await import(chrome.runtime.getURL('ui.js'));
   const {initializeState, getState, setState, subscribe} = await import(chrome.runtime.getURL('state.js'));
@@ -131,7 +135,7 @@ const resetTranscriptState = () => {
     if (!silenceTimerIndicator) {
       silenceTimerIndicator = document.createElement('div');
       silenceTimerIndicator.classList.add('silence-send-timer');
-      silenceTimerIndicator.title = 'Click to pause/resume auto-send countdown';
+      silenceTimerIndicator.title = t('timerTitle');
 
       silenceTimerProgress = document.createElement('div');
       silenceTimerProgress.classList.add('silence-send-timer-progress');
@@ -262,25 +266,15 @@ const resetTranscriptState = () => {
     }
 
     isAutoSending = true;
+    silenceDeadlineTimestamp = null;
     stopSilenceCountdown();
-    input.focus();
-    const enterEvent = new KeyboardEvent('keydown', {
-      key: 'Enter',
-      code: 'Enter',
-      keyCode: 13,
-      which: 13,
-      bubbles: true,
-      cancelable: true,
-      composed: true,
-    });
-    input.dispatchEvent(enterEvent);
+    sendButton.click();
 
-    // Reset transcript state so next speech starts from a clean input
-    clearRecognizedText();
-
+    // Reset transcript state after React processes the send
     setTimeout(() => {
+      clearRecognizedText();
       isAutoSending = false;
-    }, 500);
+    }, 80);
   };
 
   let lastSilenceCountdownRender = 0;
@@ -348,7 +342,7 @@ const resetTranscriptState = () => {
   const updateToggleArrow = () => {
     const isMinimized = container.classList.contains('minimized');
     collapseToggle.textContent = isMinimized ? '<' : '>';
-    collapseToggle.title = isMinimized ? 'Expand panel' : 'Collapse panel';
+    collapseToggle.title = isMinimized ? t('expandPanel') : t('collapsePanel');
   };
 
   const toggleMinimize = () => {
@@ -642,22 +636,6 @@ const resetTranscriptState = () => {
     }
   });
 
-  const bindInputListenersIfNeeded = () => {
-    const inputField = getInputField();
-    if (!inputField || inputField.hasAttribute(INPUT_BOUND_ATTR)) {
-      return;
-    }
-
-    inputField.setAttribute(INPUT_BOUND_ATTR, 'true');
-    inputField.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        const sendButton = document.querySelector(SEND_BUTTON_SELECTOR);
-        sendButton?.click();
-      }
-    });
-  };
-
   const bindSendButtonClearIfNeeded = () => {
     const sendButton = document.querySelector(SEND_BUTTON_SELECTOR);
     if (!sendButton || sendButton.hasAttribute(SEND_BOUND_ATTR)) {
@@ -671,15 +649,30 @@ const resetTranscriptState = () => {
     });
   };
 
+  const bindInputEnterIfNeeded = () => {
+    const input = getInputField();
+    if (!input || input.hasAttribute(INPUT_BOUND_ATTR)) {
+      return;
+    }
+
+    input.setAttribute(INPUT_BOUND_ATTR, 'true');
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+        stopSilenceCountdown();
+        resetTranscriptState();
+      }
+    });
+  };
+
   const mutationObserver = new MutationObserver(() => {
-    bindInputListenersIfNeeded();
     bindSendButtonClearIfNeeded();
+    bindInputEnterIfNeeded();
   });
 
   mutationObserver.observe(document.body, {childList: true, subtree: true});
 
-  bindInputListenersIfNeeded();
   bindSendButtonClearIfNeeded();
+  bindInputEnterIfNeeded();
 
   floatingClearButton.addEventListener('click', () => {
     clearRecognizedText();
@@ -832,10 +825,12 @@ const resetTranscriptState = () => {
   recognition.onresult = (event) => {
     let finalTranscriptFragment = '';
     let newInterimTranscript = '';
-    for (let i = event.resultIndex; i < event.results.length; ++i) {
+    const startIndex = Math.max(event.resultIndex, lastFinalResultIndex + 1);
+    for (let i = startIndex; i < event.results.length; ++i) {
       const transcript = event.results[i][0].transcript;
       if (event.results[i].isFinal) {
         finalTranscriptFragment += transcript + ' ';
+        lastFinalResultIndex = Math.max(lastFinalResultIndex, i);
       } else {
         newInterimTranscript += transcript;
       }
@@ -919,6 +914,7 @@ const resetTranscriptState = () => {
     baseTranscript = inputField ? readInputValue() : '';
     finalTranscript = '';
     interimTranscript = '';
+    lastFinalResultIndex = -1;
     startSilenceCountdown();
     if (pendingLanguageChange) {
       recognition.lang = pendingLanguageChange;
@@ -1073,6 +1069,9 @@ const resetTranscriptState = () => {
       return;
     }
 
+    if (isAutoSending) {
+      return;
+    }
     if (Date.now() >= silenceDeadlineTimestamp) {
       attemptAutoSendOnSilence();
       return;

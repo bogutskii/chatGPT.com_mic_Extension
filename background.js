@@ -4,13 +4,13 @@ chrome.runtime.onInstalled.addListener(async () => {
   // Create context menu items
   chrome.contextMenus.create({
     id: 'centerMic',
-    title: 'Center Microphone',
+    title: chrome.i18n.getMessage('contextMenuCenterMic'),
     contexts: ['action'],
   });
 
   chrome.contextMenus.create({
     id: 'centerPanel',
-    title: 'Center Panel',
+    title: chrome.i18n.getMessage('contextMenuCenterPanel'),
     contexts: ['action'],
   });
 });

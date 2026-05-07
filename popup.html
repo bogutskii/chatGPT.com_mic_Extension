@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Voice to Text</title>
+  <title data-i18n="extensionName">Voice to Text</title>
   <style>
     body {
       margin: 0;
@@ -56,12 +56,12 @@
 </head>
 <body>
   <div class="popup-container">
-    <h3 class="popup-title">Voice to Text <span id="version" style="font-size: 11px; font-weight: 400; color: #888;"></span></h3>
+    <h3 class="popup-title" data-i18n="popupTitle">Voice to Text <span id="version" style="font-size: 11px; font-weight: 400; color: #888;"></span></h3>
     <div class="popup-actions" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;">
-      <button id="centerMic" class="popup-link" style="border: none; cursor: pointer; width: 100%; justify-content: center;">
+      <button id="centerMic" class="popup-link" data-i18n="centerMic" style="border: none; cursor: pointer; width: 100%; justify-content: center;">
         Center Mic
       </button>
-      <button id="centerPanel" class="popup-link" style="border: none; cursor: pointer; width: 100%; justify-content: center;">
+      <button id="centerPanel" class="popup-link" data-i18n="centerPanel" style="border: none; cursor: pointer; width: 100%; justify-content: center;">
         Center Panel
       </button>
     </div>
@@ -77,6 +77,6 @@
     </div>
     <div style="text-align: center; font-size: 11px; color: #888; margin-top: 10px;">by Petr Bogutskii</div>
   </div>
-  <script src="popup.js"></script>
+  <script type="module" src="popup.js"></script>
 </body>
 </html>
