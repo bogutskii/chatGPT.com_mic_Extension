@@ -830,17 +830,18 @@ const resetTranscriptState = () => {
   };
 
   recognition.onresult = (event) => {
-    interimTranscript = '';
     let finalTranscriptFragment = '';
+    let newInterimTranscript = '';
     for (let i = event.resultIndex; i < event.results.length; ++i) {
       const transcript = event.results[i][0].transcript;
       if (event.results[i].isFinal) {
         finalTranscriptFragment += transcript + ' ';
       } else {
-        interimTranscript = transcript;
+        newInterimTranscript += transcript;
       }
     }
     finalTranscript += finalTranscriptFragment;
+    interimTranscript = newInterimTranscript;
     applyTranscriptsToInput();
     startSilenceCountdown();
   };
@@ -914,6 +915,10 @@ const resetTranscriptState = () => {
   recognition.onstart = () => {
     shouldAutoRestart = true;
     isTimerPaused = false;
+    const inputField = getInputField();
+    baseTranscript = inputField ? readInputValue() : '';
+    finalTranscript = '';
+    interimTranscript = '';
     startSilenceCountdown();
     if (pendingLanguageChange) {
       recognition.lang = pendingLanguageChange;
@@ -1030,16 +1035,20 @@ const resetTranscriptState = () => {
     if (needsShift !== e.shiftKey) return false;
     if (needsAlt !== e.altKey) return false;
     if (needsMeta !== e.metaKey) return false;
-    const nonModifier = parts.find(p => !['Control','Shift','Alt','Meta'].includes(p));
-    if (nonModifier && e.key.toLowerCase() !== nonModifier.toLowerCase()) return false;
-    return true;
+    const nonModifiers = parts.filter(p => !['Control','Shift','Alt','Meta'].includes(p));
+    if (nonModifiers.length > 0) {
+      return nonModifiers.some(nm => nm.toLowerCase() === e.key.toLowerCase());
+    }
+    return parts.some(p => p === e.key);
   };
   const isComboReleased = (e, parts) => {
     const key = e.key;
-    if (['Control','Shift','Alt','Meta'].includes(key) && parts.includes(key)) return true;
-    const nonModifier = parts.find(p => !['Control','Shift','Alt','Meta'].includes(p));
-    if (nonModifier && key.toLowerCase() === nonModifier.toLowerCase()) return true;
-    return false;
+    const nonModifiers = parts.filter(p => !['Control','Shift','Alt','Meta'].includes(p));
+    if (nonModifiers.length > 0) {
+      return nonModifiers.some(nm => nm.toLowerCase() === key.toLowerCase()) ||
+             parts.some(p => ['Control','Shift','Alt','Meta'].includes(key) && p === key);
+    }
+    return parts.some(p => p === key);
   };
   document.addEventListener('keydown', (e) => {
     if (!getState().isPushToTalkEnabled) return;

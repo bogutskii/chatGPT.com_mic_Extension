@@ -240,11 +240,19 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const pttComboSelect = document.createElement('select');
   pttComboSelect.classList.add('ptt-key-select');
+  const isMac = () => {
+    const pf = navigator.platform || '';
+    const ua = navigator.userAgent || '';
+    return pf.toUpperCase().includes('MAC') || ua.toUpperCase().includes('MAC');
+  };
+  const altLabel = isMac() ? 'Option' : 'Alt';
   const pttComboOptions = [
     {value: 'Control+Shift', text: 'Ctrl+Shift'},
-    {value: 'Alt+Shift', text: 'Alt+Shift'},
-    {value: 'Control+Alt', text: 'Ctrl+Alt'},
-    {value: 'Shift+Alt', text: 'Shift+Alt'},
+    {value: 'Alt+Shift', text: `${altLabel}+Shift`},
+    {value: 'Control+Alt', text: `Ctrl+${altLabel}`},
+    {value: 'Shift+Alt', text: `Shift+${altLabel}`},
+    {value: 'Alt', text: altLabel},
+    {value: 'Control', text: 'Ctrl'},
   ];
   pttComboOptions.forEach(opt => {
     const option = document.createElement('option');
