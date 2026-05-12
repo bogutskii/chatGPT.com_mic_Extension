@@ -35,3 +35,26 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   }
 });
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message?.action === 'voice-get-tab-id') {
+    sendResponse({ tabId: sender?.tab?.id ?? null });
+    return true;
+  }
+
+  if (message?.action === 'voice-stop-other-tabs') {
+    const currentTabId = Number(message.currentTabId);
+    chrome.tabs.query({ url: '*://chatgpt.com/*' }, (tabs) => {
+      tabs.forEach((tab) => {
+        if (!tab?.id || tab.id === currentTabId) {
+          return;
+        }
+        chrome.tabs.sendMessage(tab.id, { action: 'stopRecognitionIfActive' }, () => {
+          void chrome.runtime.lastError;
+        });
+      });
+      sendResponse({ success: true });
+    });
+    return true;
+  }
+});
+

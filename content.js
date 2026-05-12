@@ -6,6 +6,7 @@ let isRecognitionRunning = false;
 let recognition;
 let shouldAutoRestart = false;
 let pendingLanguageChange = null;
+let currentTabId = null;
 
 // Check if extension context is valid, reload page if not
 const isExtensionContextValid = () => {
@@ -51,6 +52,9 @@ const readInputValue = () => {
   if ('value' in input) {
     return input.value;
   }
+  if (input.isContentEditable) {
+    return (input.innerText || '').replace(/\n\n+/g, '\n');
+  }
   return input.textContent || '';
 };
 
@@ -61,15 +65,24 @@ const writeInputValue = (value) => {
   }
   if ('value' in input) {
     input.value = value;
+    input.setSelectionRange(value.length, value.length);
+    const event = new Event('input', {bubbles: true});
+    input.dispatchEvent(event);
+  } else if (input.isContentEditable) {
+    input.focus();
+    document.execCommand('selectAll', false);
+    document.execCommand('delete', false);
+    document.execCommand('insertText', false, value);
   } else {
     input.textContent = value;
+    const event = new Event('input', {bubbles: true});
+    input.dispatchEvent(event);
   }
-  const event = new Event('input', {bubbles: true});
-  input.dispatchEvent(event);
 };
 
 const applyTranscriptsToInput = () => {
-  writeInputValue(`${baseTranscript}${finalTranscript}${interimTranscript}`);
+  const text = [baseTranscript, finalTranscript, interimTranscript].filter(Boolean).join(' ');
+  writeInputValue(text);
 };
 
 const clearRecognizedText = () => {
@@ -87,17 +100,58 @@ const resetTranscriptState = () => {
   lastFinalResultIndex = -1;
 };
 
+const rebaseTranscriptsFromCurrentInput = () => {
+  baseTranscript = readInputValue();
+  finalTranscript = '';
+  interimTranscript = '';
+};
+
+const resolveCurrentTabId = async () => {
+  if (typeof currentTabId === 'number') {
+    return currentTabId;
+  }
+  try {
+    const response = await chrome.runtime.sendMessage({action: 'voice-get-tab-id'});
+    if (typeof response?.tabId === 'number') {
+      currentTabId = response.tabId;
+    }
+  } catch (error) {
+    console.warn('Failed to resolve current tab id:', error);
+  }
+  return currentTabId;
+};
+
 (async () => {
-  const {t} = await import(chrome.runtime.getURL('i18n.js'));
-  const {languages} = await import(chrome.runtime.getURL('languages.js'));
-  const {createContainer, createButton, createSelect} = await import(chrome.runtime.getURL('ui.js'));
-  const {initializeState, getState, setState, subscribe} = await import(chrome.runtime.getURL('state.js'));
-  const {initializeSpeechRecognition} = await import(chrome.runtime.getURL('speech.js'));
-  const {createModal, createModalOverlay, setupModal} = await import(chrome.runtime.getURL('modal.js'));
-  const {setupAutoGeneration} = await import(chrome.runtime.getURL('autoGeneration.js'));
-  const {setupWidthAdjustment} = await import(chrome.runtime.getURL('widthAdjustment.js'));
+  if (!isExtensionContextValid()) {
+    location.reload();
+    return;
+  }
+
+  let t;
+  let languages;
+  let createContainer, createButton, createSelect;
+  let initializeState, getState, setState, subscribe;
+  let initializeSpeechRecognition;
+  let createModal, createModalOverlay, setupModal;
+  let setupAutoGeneration;
+  let setupWidthAdjustment;
+
+  try {
+    ({t} = await import(chrome.runtime.getURL('i18n.js')));
+    ({languages} = await import(chrome.runtime.getURL('languages.js')));
+    ({createContainer, createButton, createSelect} = await import(chrome.runtime.getURL('ui.js')));
+    ({initializeState, getState, setState, subscribe} = await import(chrome.runtime.getURL('state.js')));
+    ({initializeSpeechRecognition} = await import(chrome.runtime.getURL('speech.js')));
+    ({createModal, createModalOverlay, setupModal} = await import(chrome.runtime.getURL('modal.js')));
+    ({setupAutoGeneration} = await import(chrome.runtime.getURL('autoGeneration.js')));
+    ({setupWidthAdjustment} = await import(chrome.runtime.getURL('widthAdjustment.js')));
+  } catch {
+    location.reload();
+    return;
+  }
 
   await initializeState();
+  await resolveCurrentTabId();
   let state = getState();
   let silenceCountdownIntervalId = null;
   let silenceDeadlineTimestamp = null;
@@ -216,6 +270,17 @@ const resetTranscriptState = () => {
     silenceDeadlineTimestamp = null;
     isTimerPaused = false;
     hideSilenceTimerIndicator();
+  };
+
+  const stopRecognitionLocally = () => {
+    if (!isRecognitionRunning || !recognition) {
+      return;
+    }
+    shouldAutoRestart = false;
+    recognition.stop();
+    isRecognitionRunning = false;
+    stopSilenceCountdown();
+    setState({isListening: false});
   };
 
   const pauseSilenceCountdown = () => {
@@ -593,6 +658,10 @@ const resetTranscriptState = () => {
       const centerY = window.innerHeight / 2 - floatingButtonContainer.offsetHeight / 2;
       updateFloatingButtonPosition(centerX, centerY);
       sendResponse({ success: true });
+    } else if (request.action === 'stopRecognitionIfActive') {
+      stopRecognitionLocally();
+      floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
+      sendResponse({ success: true });
     }
     return true;
   });
@@ -644,6 +713,10 @@ const resetTranscriptState = () => {
 
     sendButton.setAttribute(SEND_BOUND_ATTR, 'true');
     sendButton.addEventListener('click', () => {
+      if (isRecognitionRunning) {
+        stopRecognitionLocally();
+        floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
+      }
       stopSilenceCountdown();
       resetTranscriptState();
     });
@@ -658,8 +731,15 @@ const resetTranscriptState = () => {
     input.setAttribute(INPUT_BOUND_ATTR, 'true');
     input.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+        if (isRecognitionRunning) {
+          stopRecognitionLocally();
+          floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
+        }
         stopSilenceCountdown();
         resetTranscriptState();
+      }
+      if (event.key === 'Enter' && event.shiftKey && !event.isComposing && isRecognitionRunning) {
+        setTimeout(() => rebaseTranscriptsFromCurrentInput(), 0);
       }
     });
   };
@@ -676,6 +756,21 @@ const resetTranscriptState = () => {
 
   floatingClearButton.addEventListener('click', () => {
     clearRecognizedText();
+    const input = getInputField();
+    if (!input) {
+      return;
+    }
+    input.focus();
+    if ('value' in input) {
+      input.setSelectionRange(input.value.length, input.value.length);
+    } else {
+      const range = document.createRange();
+      range.selectNodeContents(input);
+      range.collapse(false);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
   });
 
   const updateLanguageSelector = (currentState) => {
@@ -757,11 +852,7 @@ const resetTranscriptState = () => {
   const toggleRecognition = () => {
     const inputField = getInputField();
     if (isRecognitionRunning) {
-      shouldAutoRestart = false;
-      recognition.stop();
-      isRecognitionRunning = false;
-      stopSilenceCountdown();
-      setState({isListening: false});
+      stopRecognitionLocally();
       floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
     } else {
       baseTranscript = inputField ? readInputValue() : '';
@@ -769,6 +860,11 @@ const resetTranscriptState = () => {
       interimTranscript = '';
       shouldAutoRestart = true;
       isTimerPaused = false;
+      if (typeof currentTabId === 'number') {
+        chrome.runtime.sendMessage({action: 'voice-stop-other-tabs', currentTabId}, () => {
+          void chrome.runtime.lastError;
+        });
+      }
       recognition.start();
       isRecognitionRunning = true;
       setState({isListening: true});
@@ -827,28 +923,42 @@ const resetTranscriptState = () => {
     let newInterimTranscript = '';
     const startIndex = Math.max(event.resultIndex, lastFinalResultIndex + 1);
     for (let i = startIndex; i < event.results.length; ++i) {
-      const transcript = event.results[i][0].transcript;
+      const transcript = event.results[i][0].transcript.trim();
       if (event.results[i].isFinal) {
-        finalTranscriptFragment += transcript + ' ';
+        finalTranscriptFragment += (finalTranscriptFragment ? ' ' : '') + transcript;
         lastFinalResultIndex = Math.max(lastFinalResultIndex, i);
       } else {
         newInterimTranscript += transcript;
       }
     }
     finalTranscript += finalTranscriptFragment;
-    interimTranscript = newInterimTranscript;
+    interimTranscript = newInterimTranscript.trim();
     applyTranscriptsToInput();
     startSilenceCountdown();
   };
 
   recognition.onerror = (event) => {
     const nonCriticalErrors = ['no-speech', 'aborted'];
+    const permissionErrors = ['audio-capture', 'not-allowed', 'service-not-allowed'];
 
     if (nonCriticalErrors.includes(event.error)) {
       // Expected when user is silent or manually stops — no visual error state
       // console.log('[VoiceToText] Speech recognition:', event.error);
       isRecognitionRunning = false;
       stopSilenceCountdown();
+      return;
+    }
+
+    if (permissionErrors.includes(event.error)) {
+      console.warn('Microphone permission/device error:', event.error);
+      isRecognitionRunning = false;
+      shouldAutoRestart = false;
+      stopSilenceCountdown();
+      setState({isListening: false});
+      floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_ERR.png')})`;
+      setTimeout(() => {
+        floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
+      }, 1200);
       return;
     }
 
