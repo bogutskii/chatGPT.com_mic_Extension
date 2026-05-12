@@ -1,90 +1,90 @@
 {
   "extensionName": {
-    "message": "Voice to Text for ChatGPT",
+    "message": "ChatGPT 语音输入",
     "description": "Extension name shown in Chrome toolbar and Web Store."
   },
   "extensionDescription": {
-    "message": "Speak instead of typing. Auto-send on silence, push-to-talk, floating mic panel, and more.",
+    "message": "说话代替打字。静音自动发送、一键通、浮动麦克风面板等。",
     "description": "Short description for Chrome Web Store and extension management page."
   },
   "popupTitle": {
-    "message": "Voice to Text",
+    "message": "语音转文字",
     "description": "Title shown in the extension popup."
   },
   "centerMic": {
-    "message": "Center Mic",
+    "message": "居中麦克风",
     "description": "Button label to center the floating microphone."
   },
   "centerPanel": {
-    "message": "Center Panel",
+    "message": "居中面板",
     "description": "Button label to center the settings panel."
   },
   "reloadPageAlert": {
-    "message": "Please reload the ChatGPT page to use this feature.",
+    "message": "请重新加载 ChatGPT 页面以使用此功能。",
     "description": "Alert shown when the content script is not loaded."
   },
   "contextMenuCenterMic": {
-    "message": "Center Microphone",
+    "message": "居中麦克风",
     "description": "Context menu item title."
   },
   "contextMenuCenterPanel": {
-    "message": "Center Panel",
+    "message": "居中面板",
     "description": "Context menu item title."
   },
   "selectFavoriteLanguages": {
-    "message": "Select Favorite Languages:",
+    "message": "选择常用语言：",
     "description": "Label for the language selection list in settings."
   },
   "selectAll": {
-    "message": "Select All",
+    "message": "全选",
     "description": "Button to select all languages."
   },
   "deselectAll": {
-    "message": "Deselect All",
+    "message": "取消全选",
     "description": "Button to deselect all languages."
   },
   "autoContinueGenerate": {
-    "message": "Auto continue generate responses:",
+    "message": "自动继续生成回复：",
     "description": "Label for the auto-continue checkbox."
   },
   "autoContinueTooltip": {
-    "message": "Auto continue generate responses if enabled 2 second delay",
+    "message": "如果启用，2秒延迟后自动继续生成回复",
     "description": "Tooltip for the auto-continue info icon."
   },
   "adjustContentWidth": {
-    "message": "Adjust Content Width:",
+    "message": "调整内容宽度：",
     "description": "Label for the content width slider."
   },
   "autoSendOnSilence": {
-    "message": "Auto-send on silence:",
+    "message": "静音时自动发送：",
     "description": "Label for the auto-send checkbox."
   },
   "autoSendWarning": {
-    "message": "At 20–30s, auto-send can be interrupted by sleep mode, tab suspension, or page reload.",
+    "message": "20-30秒时，自动发送可能会被睡眠模式、标签页挂起或页面刷新中断。",
     "description": "Warning about long auto-send delays."
   },
   "autoSendBeta": {
-    "message": "Beta feature: we are collecting feedback on performance and limitations.",
+    "message": "测试功能：我们正在收集有关性能和限制的反馈。",
     "description": "Beta notice for the auto-send feature."
   },
   "autoSendHint": {
-    "message": "Tip: click the countdown timer to pause or resume auto-send.",
+    "message": "提示：点击倒计时器可暂停或恢复自动发送。",
     "description": "Hint about timer interaction."
   },
   "pushToTalk": {
-    "message": "Push-to-Talk (walkie-talkie):",
+    "message": "一键通（对讲机）：",
     "description": "Label for the PTT checkbox."
   },
   "pushToTalkHint": {
-    "message": "Hold the selected key to record, release to stop. Works even while the microphone is off.",
+    "message": "按住所选按键录音，松开停止。即使麦克风关闭时也能工作。",
     "description": "Hint explaining how PTT works."
   },
   "donate": {
-    "message": "Donate",
+    "message": "捐赠",
     "description": "Link text for donation."
   },
   "hotkeys": {
-    "message": "Hotkeys:",
+    "message": "快捷键：",
     "description": "Label for the hotkeys section."
   },
   "hotkeysInfo": {
@@ -92,27 +92,27 @@
     "description": "Main keyboard shortcut displayed in settings."
   },
   "hotkeysTooltip": {
-    "message": "Hotkeys: Control + M to start/stop microphone.",
+    "message": "快捷键：Control + M 启动/停止麦克风。",
     "description": "Tooltip explaining the main hotkey."
   },
   "ok": {
-    "message": "Ok",
+    "message": "确定",
     "description": "Close button text for the settings modal."
   },
   "timerTitle": {
-    "message": "Click to pause/resume auto-send countdown",
+    "message": "点击暂停/恢复自动发送倒计时",
     "description": "Tooltip for the silence countdown timer."
   },
   "expandPanel": {
-    "message": "Expand panel",
+    "message": "展开面板",
     "description": "Tooltip for the panel expand button."
   },
   "collapsePanel": {
-    "message": "Collapse panel",
+    "message": "收起面板",
     "description": "Tooltip for the panel collapse button."
   },
   "version": {
-    "message": "Version",
+    "message": "版本",
     "description": "Label for the current extension version in the settings modal."
   }
 }

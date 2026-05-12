@@ -110,5 +110,9 @@
   "collapsePanel": {
     "message": "Colapsar panel",
     "description": "Tooltip del botón de colapsar panel."
+  },
+  "version": {
+    "message": "Versión",
+    "description": "Etiqueta de la versión actual de la extensión en el modal de ajustes."
   }
 }

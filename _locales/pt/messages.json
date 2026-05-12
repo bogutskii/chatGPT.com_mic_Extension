@@ -1,90 +1,90 @@
 {
   "extensionName": {
-    "message": "Voice to Text for ChatGPT",
+    "message": "Ditado por voz para ChatGPT",
     "description": "Extension name shown in Chrome toolbar and Web Store."
   },
   "extensionDescription": {
-    "message": "Speak instead of typing. Auto-send on silence, push-to-talk, floating mic panel, and more.",
+    "message": "Fale em vez de digitar. Envio automático em silêncio, push-to-talk, painel flutuante de microfone e muito mais.",
     "description": "Short description for Chrome Web Store and extension management page."
   },
   "popupTitle": {
-    "message": "Voice to Text",
+    "message": "Voz para Texto",
     "description": "Title shown in the extension popup."
   },
   "centerMic": {
-    "message": "Center Mic",
+    "message": "Centralizar microfone",
     "description": "Button label to center the floating microphone."
   },
   "centerPanel": {
-    "message": "Center Panel",
+    "message": "Centralizar painel",
     "description": "Button label to center the settings panel."
   },
   "reloadPageAlert": {
-    "message": "Please reload the ChatGPT page to use this feature.",
+    "message": "Recarregue a página do ChatGPT para usar este recurso.",
     "description": "Alert shown when the content script is not loaded."
   },
   "contextMenuCenterMic": {
-    "message": "Center Microphone",
+    "message": "Centralizar microfone",
     "description": "Context menu item title."
   },
   "contextMenuCenterPanel": {
-    "message": "Center Panel",
+    "message": "Centralizar painel",
     "description": "Context menu item title."
   },
   "selectFavoriteLanguages": {
-    "message": "Select Favorite Languages:",
+    "message": "Selecionar idiomas favoritos:",
     "description": "Label for the language selection list in settings."
   },
   "selectAll": {
-    "message": "Select All",
+    "message": "Selecionar tudo",
     "description": "Button to select all languages."
   },
   "deselectAll": {
-    "message": "Deselect All",
+    "message": "Desmarcar tudo",
     "description": "Button to deselect all languages."
   },
   "autoContinueGenerate": {
-    "message": "Auto continue generate responses:",
+    "message": "Continuar geração automaticamente:",
     "description": "Label for the auto-continue checkbox."
   },
   "autoContinueTooltip": {
-    "message": "Auto continue generate responses if enabled 2 second delay",
+    "message": "Se habilitado, atraso de 2 segundos antes de continuar automaticamente",
     "description": "Tooltip for the auto-continue info icon."
   },
   "adjustContentWidth": {
-    "message": "Adjust Content Width:",
+    "message": "Ajustar largura do conteúdo:",
     "description": "Label for the content width slider."
   },
   "autoSendOnSilence": {
-    "message": "Auto-send on silence:",
+    "message": "Enviar automaticamente em silêncio:",
     "description": "Label for the auto-send checkbox."
   },
   "autoSendWarning": {
-    "message": "At 20–30s, auto-send can be interrupted by sleep mode, tab suspension, or page reload.",
+    "message": "Em 20-30s, o envio automático pode ser interrompido pelo modo de suspensão, suspensão da guia ou recarregamento da página.",
     "description": "Warning about long auto-send delays."
   },
   "autoSendBeta": {
-    "message": "Beta feature: we are collecting feedback on performance and limitations.",
+    "message": "Recurso beta: estamos coletando feedback sobre desempenho e limitações.",
     "description": "Beta notice for the auto-send feature."
   },
   "autoSendHint": {
-    "message": "Tip: click the countdown timer to pause or resume auto-send.",
+    "message": "Dica: clique no temporizador para pausar ou retomar o envio automático.",
     "description": "Hint about timer interaction."
   },
   "pushToTalk": {
-    "message": "Push-to-Talk (walkie-talkie):",
+    "message": "Push-to-Talk (rádio):",
     "description": "Label for the PTT checkbox."
   },
   "pushToTalkHint": {
-    "message": "Hold the selected key to record, release to stop. Works even while the microphone is off.",
+    "message": "Segure a tecla selecionada para gravar, solte para parar. Funciona mesmo quando o microfone está desligado.",
     "description": "Hint explaining how PTT works."
   },
   "donate": {
-    "message": "Donate",
+    "message": "Doar",
     "description": "Link text for donation."
   },
   "hotkeys": {
-    "message": "Hotkeys:",
+    "message": "Atalhos:",
     "description": "Label for the hotkeys section."
   },
   "hotkeysInfo": {
@@ -92,27 +92,27 @@
     "description": "Main keyboard shortcut displayed in settings."
   },
   "hotkeysTooltip": {
-    "message": "Hotkeys: Control + M to start/stop microphone.",
+    "message": "Atalho: Control + M para ligar/desligar o microfone.",
     "description": "Tooltip explaining the main hotkey."
   },
   "ok": {
-    "message": "Ok",
+    "message": "OK",
     "description": "Close button text for the settings modal."
   },
   "timerTitle": {
-    "message": "Click to pause/resume auto-send countdown",
+    "message": "Clique para pausar/retomar a contagem regressiva",
     "description": "Tooltip for the silence countdown timer."
   },
   "expandPanel": {
-    "message": "Expand panel",
+    "message": "Expandir painel",
     "description": "Tooltip for the panel expand button."
   },
   "collapsePanel": {
-    "message": "Collapse panel",
+    "message": "Recolher painel",
     "description": "Tooltip for the panel collapse button."
   },
   "version": {
-    "message": "Version",
+    "message": "Versão",
     "description": "Label for the current extension version in the settings modal."
   }
 }

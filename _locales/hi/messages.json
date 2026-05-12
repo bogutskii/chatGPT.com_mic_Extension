@@ -1,0 +1,118 @@
+{
+  "extensionName": {
+    "message": "ChatGPT के लिए वॉइस टू टेक्स्ट",
+    "description": "Extension name shown in Chrome toolbar and Web Store."
+  },
+  "extensionDescription": {
+    "message": "टाइपिंग के बजाय बोलें। शांति पर ऑटो-सेंड, पुश-टू-टॉक, फ्लोटिंग माइक पैनल और बहुत कुछ।",
+    "description": "Short description for Chrome Web Store and extension management page."
+  },
+  "popupTitle": {
+    "message": "वॉइस टू टेक्स्ट",
+    "description": "Title shown in the extension popup."
+  },
+  "centerMic": {
+    "message": "माइक्रोफ़ोन केंद्रित करें",
+    "description": "Button label to center the floating microphone."
+  },
+  "centerPanel": {
+    "message": "पैनल केंद्रित करें",
+    "description": "Button label to center the settings panel."
+  },
+  "reloadPageAlert": {
+    "message": "इस सुविधा का उपयोग करने के लिए कृपया ChatGPT पेज को रीलोड करें।",
+    "description": "Alert shown when the content script is not loaded."
+  },
+  "contextMenuCenterMic": {
+    "message": "माइक्रोफ़ोन केंद्रित करें",
+    "description": "Context menu item title."
+  },
+  "contextMenuCenterPanel": {
+    "message": "पैनल केंद्रित करें",
+    "description": "Context menu item title."
+  },
+  "selectFavoriteLanguages": {
+    "message": "पसंदीदा भाषाएँ चुनें:",
+    "description": "Label for the language selection list in settings."
+  },
+  "selectAll": {
+    "message": "सभी चुनें",
+    "description": "Button to select all languages."
+  },
+  "deselectAll": {
+    "message": "सभी अचयनित करें",
+    "description": "Button to deselect all languages."
+  },
+  "autoContinueGenerate": {
+    "message": "स्वचालित रूप से जवाब जारी रखें:",
+    "description": "Label for the auto-continue checkbox."
+  },
+  "autoContinueTooltip": {
+    "message": "यदि सक्षम, स्वचालित रूप से जारी रखने से पहले 2 सेकंड का विलंब",
+    "description": "Tooltip for the auto-continue info icon."
+  },
+  "adjustContentWidth": {
+    "message": "सामग्री की चौड़ाई समायोजित करें:",
+    "description": "Label for the content width slider."
+  },
+  "autoSendOnSilence": {
+    "message": "शांति पर ऑटो-सेंड:",
+    "description": "Label for the auto-send checkbox."
+  },
+  "autoSendWarning": {
+    "message": "20-30 सेकंड पर, स्लीप मोड, टैब सस्पेंशन या पेज रीलोड द्वारा ऑटो-सेंड बाधित हो सकता है।",
+    "description": "Warning about long auto-send delays."
+  },
+  "autoSendBeta": {
+    "message": "बीटा सुविधा: हम प्रदर्शन और सीमाओं पर फीडबैक एकत्र कर रहे हैं।",
+    "description": "Beta notice for the auto-send feature."
+  },
+  "autoSendHint": {
+    "message": "टिप: ऑटो-सेंड को रोकने या फिर से शुरू करने के लिए काउंटडाउन टाइमर पर क्लिक करें।",
+    "description": "Hint about timer interaction."
+  },
+  "pushToTalk": {
+    "message": "पुश-टू-टॉक (वॉकी-टॉकी):",
+    "description": "Label for the PTT checkbox."
+  },
+  "pushToTalkHint": {
+    "message": "रिकॉर्डिंग के लिए चयनित कुंजी को दबाए रखें, रोकने के लिए छोड़ दें। माइक्रोफ़ोन बंद होने पर भी काम करता है।",
+    "description": "Hint explaining how PTT works."
+  },
+  "donate": {
+    "message": "दान करें",
+    "description": "Link text for donation."
+  },
+  "hotkeys": {
+    "message": "शॉर्टकट:",
+    "description": "Label for the hotkeys section."
+  },
+  "hotkeysInfo": {
+    "message": "Control + M",
+    "description": "Main keyboard shortcut displayed in settings."
+  },
+  "hotkeysTooltip": {
+    "message": "शॉर्टकट: माइक्रोफ़ोन शुरू/बंद करने के लिए Control + M।",
+    "description": "Tooltip explaining the main hotkey."
+  },
+  "ok": {
+    "message": "ठीक है",
+    "description": "Close button text for the settings modal."
+  },
+  "timerTitle": {
+    "message": "ऑटो-सेंड काउंटडाउन रोकने/फिर से शुरू करने के लिए क्लिक करें",
+    "description": "Tooltip for the silence countdown timer."
+  },
+  "expandPanel": {
+    "message": "पैनल विस्तारित करें",
+    "description": "Tooltip for the panel expand button."
+  },
+  "collapsePanel": {
+    "message": "पैनल संक्षिप्त करें",
+    "description": "Tooltip for the panel collapse button."
+  },
+  "version": {
+    "message": "संस्करण",
+    "description": "Label for the current extension version in the settings modal."
+  }
+}

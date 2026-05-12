@@ -1,90 +1,90 @@
 {
   "extensionName": {
-    "message": "Voice to Text for ChatGPT",
+    "message": "ChatGPT 음성 입력",
     "description": "Extension name shown in Chrome toolbar and Web Store."
   },
   "extensionDescription": {
-    "message": "Speak instead of typing. Auto-send on silence, push-to-talk, floating mic panel, and more.",
+    "message": "타이핑 대신 말하세요. 침묵 시 자동 전송, 푸시 투 토크, 플로팅 마이크 패널 등.",
     "description": "Short description for Chrome Web Store and extension management page."
   },
   "popupTitle": {
-    "message": "Voice to Text",
+    "message": "음성 텍스트 변환",
     "description": "Title shown in the extension popup."
   },
   "centerMic": {
-    "message": "Center Mic",
+    "message": "마이크 중앙 정렬",
     "description": "Button label to center the floating microphone."
   },
   "centerPanel": {
-    "message": "Center Panel",
+    "message": "패널 중앙 정렬",
     "description": "Button label to center the settings panel."
   },
   "reloadPageAlert": {
-    "message": "Please reload the ChatGPT page to use this feature.",
+    "message": "이 기능을 사용하려면 ChatGPT 페이지를 새로고침하세요.",
     "description": "Alert shown when the content script is not loaded."
   },
   "contextMenuCenterMic": {
-    "message": "Center Microphone",
+    "message": "마이크 중앙 정렬",
     "description": "Context menu item title."
   },
   "contextMenuCenterPanel": {
-    "message": "Center Panel",
+    "message": "패널 중앙 정렬",
     "description": "Context menu item title."
   },
   "selectFavoriteLanguages": {
-    "message": "Select Favorite Languages:",
+    "message": "즐겨 찾는 언어 선택:",
     "description": "Label for the language selection list in settings."
   },
   "selectAll": {
-    "message": "Select All",
+    "message": "모두 선택",
     "description": "Button to select all languages."
   },
   "deselectAll": {
-    "message": "Deselect All",
+    "message": "모두 선택 해제",
     "description": "Button to deselect all languages."
   },
   "autoContinueGenerate": {
-    "message": "Auto continue generate responses:",
+    "message": "자동 계속 생성:",
     "description": "Label for the auto-continue checkbox."
   },
   "autoContinueTooltip": {
-    "message": "Auto continue generate responses if enabled 2 second delay",
+    "message": "활성화하면 2초 지연 후 자동 계속 생성",
     "description": "Tooltip for the auto-continue info icon."
   },
   "adjustContentWidth": {
-    "message": "Adjust Content Width:",
+    "message": "콘텐츠 너비 조정:",
     "description": "Label for the content width slider."
   },
   "autoSendOnSilence": {
-    "message": "Auto-send on silence:",
+    "message": "침묵 시 자동 전송:",
     "description": "Label for the auto-send checkbox."
   },
   "autoSendWarning": {
-    "message": "At 20–30s, auto-send can be interrupted by sleep mode, tab suspension, or page reload.",
+    "message": "20-30초 시, 자동 전송은 절전 모드, 탭 일시 중단 또는 페이지 새로고침으로 중단될 수 있습니다.",
     "description": "Warning about long auto-send delays."
   },
   "autoSendBeta": {
-    "message": "Beta feature: we are collecting feedback on performance and limitations.",
+    "message": "베타 기능: 성능 및 제한에 대한 피드백을 수집 중입니다.",
     "description": "Beta notice for the auto-send feature."
   },
   "autoSendHint": {
-    "message": "Tip: click the countdown timer to pause or resume auto-send.",
+    "message": "팁: 카운트다운 타이머를 클릭하여 자동 전송을 일시 중지 또는 재개하세요.",
     "description": "Hint about timer interaction."
   },
   "pushToTalk": {
-    "message": "Push-to-Talk (walkie-talkie):",
+    "message": "푸시 투 토크(무전기):",
     "description": "Label for the PTT checkbox."
   },
   "pushToTalkHint": {
-    "message": "Hold the selected key to record, release to stop. Works even while the microphone is off.",
+    "message": "선택한 키를 누르고 있으면 녹음, 놓으면 중지. 마이크가 꺼져 있어도 작동합니다.",
     "description": "Hint explaining how PTT works."
   },
   "donate": {
-    "message": "Donate",
+    "message": "기부",
     "description": "Link text for donation."
   },
   "hotkeys": {
-    "message": "Hotkeys:",
+    "message": "단축키:",
     "description": "Label for the hotkeys section."
   },
   "hotkeysInfo": {
@@ -92,27 +92,27 @@
     "description": "Main keyboard shortcut displayed in settings."
   },
   "hotkeysTooltip": {
-    "message": "Hotkeys: Control + M to start/stop microphone.",
+    "message": "단축키: Control + M으로 마이크 시작/중지.",
     "description": "Tooltip explaining the main hotkey."
   },
   "ok": {
-    "message": "Ok",
+    "message": "확인",
     "description": "Close button text for the settings modal."
   },
   "timerTitle": {
-    "message": "Click to pause/resume auto-send countdown",
+    "message": "자동 전송 카운트다운 일시 중지/재개를 위해 클릭",
     "description": "Tooltip for the silence countdown timer."
   },
   "expandPanel": {
-    "message": "Expand panel",
+    "message": "패널 펼치기",
     "description": "Tooltip for the panel expand button."
   },
   "collapsePanel": {
-    "message": "Collapse panel",
+    "message": "패널 접기",
     "description": "Tooltip for the panel collapse button."
   },
   "version": {
-    "message": "Version",
+    "message": "버전",
     "description": "Label for the current extension version in the settings modal."
   }
 }

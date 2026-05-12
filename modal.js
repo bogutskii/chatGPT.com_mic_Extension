@@ -1,5 +1,6 @@
 import {getState, setState} from './state.js';
 import {t} from './i18n.js';
+import {getChangelog, CURRENT_VERSION} from './changelog.js';
 
 const loadCSS = (url) => {
   const existingLink = document.querySelector(`link[href="${url}"]`);
@@ -299,6 +300,37 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   settingsContainer.appendChild(pttContainer);
   renderPttState();
 
+  // Hotkeys info below Push-to-Talk, above Center buttons
+  const hotkeysInfoContainer = document.createElement('div');
+  hotkeysInfoContainer.classList.add('hotkeys-info-container');
+
+  const hotkeysInfoTitle = document.createElement('div');
+  hotkeysInfoTitle.classList.add('hotkeys-info-title');
+  hotkeysInfoTitle.textContent = t('hotkeys');
+
+  const hotkeysInfo = document.createElement('div');
+  hotkeysInfo.innerHTML = `<b> ${t('hotkeysInfo')}</b>`;
+
+  const hotkeysIcon = document.createElement('div');
+  hotkeysIcon.classList.add('hotkeys-icon');
+  hotkeysIcon.textContent = 'ℹ️';
+
+  const tooltip = document.createElement('div');
+  tooltip.classList.add('click-tooltip');
+  tooltip.textContent = t('hotkeysTooltip');
+  hotkeysIcon.appendChild(tooltip);
+
+  hotkeysIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    tooltip.classList.toggle('show');
+    setTimeout(() => tooltip.classList.remove('show'), 2000);
+  });
+
+  hotkeysInfoContainer.appendChild(hotkeysInfoTitle);
+  hotkeysInfoContainer.appendChild(hotkeysInfo);
+  hotkeysInfoContainer.appendChild(hotkeysIcon);
+  settingsContainer.appendChild(hotkeysInfoContainer);
+
   const centerButtonsRow = document.createElement('div');
   centerButtonsRow.classList.add('center-buttons-row');
 
@@ -327,6 +359,43 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   centerButtonsRow.appendChild(centerMicButton);
   centerButtonsRow.appendChild(centerPanelButton);
   settingsContainer.appendChild(centerButtonsRow);
+
+  // Changelog badge + tooltip
+  const changelogBadge = document.createElement('button');
+  changelogBadge.classList.add('changelog-badge');
+  changelogBadge.textContent = `v${CURRENT_VERSION}`;
+  changelogBadge.setAttribute('aria-label', 'What\'s new');
+
+  const changelogTooltip = document.createElement('div');
+  changelogTooltip.classList.add('changelog-tooltip');
+
+  const userLocale = (() => {
+    try {
+      const uiLang = chrome.i18n?.getUILanguage?.();
+      if (uiLang) return uiLang.split('-')[0];
+    } catch {}
+    return (navigator.language || 'en').split('-')[0];
+  })();
+
+  const changes = getChangelog(CURRENT_VERSION, userLocale);
+  changes.forEach((change) => {
+    const p = document.createElement('p');
+    p.textContent = change;
+    changelogTooltip.appendChild(p);
+  });
+
+  changelogBadge.appendChild(changelogTooltip);
+
+  changelogBadge.addEventListener('click', (e) => {
+    e.stopPropagation();
+    changelogTooltip.classList.toggle('show');
+  });
+
+  document.addEventListener('click', () => {
+    changelogTooltip.classList.remove('show');
+  });
+
+  settingsContainer.appendChild(changelogBadge);
 
   columnsContainer.appendChild(settingsContainer);
   modal.appendChild(columnsContainer);
@@ -366,49 +435,14 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   modal.appendChild(donationContainer);
 
-  const hotkeysInfoContainer = document.createElement('div');
-  hotkeysInfoContainer.classList.add('hotkeys-info-container');
-
-  const hotkeysInfoTitle = document.createElement('div');
-  hotkeysInfoTitle.classList.add('hotkeys-info-title');
-  hotkeysInfoTitle.textContent = t('hotkeys');
-
-  const hotkeysInfo = document.createElement('div');
-  hotkeysInfo.innerHTML = `<b> ${t('hotkeysInfo')}</b>`;
-
-  const hotkeysIcon = document.createElement('div');
-  hotkeysIcon.classList.add('hotkeys-icon');
-  hotkeysIcon.textContent = 'ℹ️';
-
-  // Click tooltip
-  const tooltip = document.createElement('div');
-  tooltip.classList.add('click-tooltip');
-  tooltip.textContent = t('hotkeysTooltip');
-  hotkeysIcon.appendChild(tooltip);
-
-  hotkeysIcon.addEventListener('click', (e) => {
-    e.stopPropagation();
-    tooltip.classList.toggle('show');
-    setTimeout(() => tooltip.classList.remove('show'), 2000);
-  });
-
-  hotkeysInfoContainer.appendChild(hotkeysInfoTitle);
-  hotkeysInfoContainer.appendChild(hotkeysInfo);
-  hotkeysInfoContainer.appendChild(hotkeysIcon);
-  modal.appendChild(hotkeysInfoContainer);
-
-  const buttonContainer = document.createElement('div');
-  buttonContainer.classList.add('button-container');
-
-  const cancelButton = document.createElement('button');
-  cancelButton.classList.add('cancel-button');
-  cancelButton.textContent = t('ok');
-
-  cancelButton.addEventListener('click', () => {
+  // Close button (X) in top-right corner of modal
+  const closeButton = document.createElement('button');
+  closeButton.classList.add('modal-close-btn');
+  closeButton.innerHTML = '&times;';
+  closeButton.setAttribute('aria-label', 'Close');
+  closeButton.addEventListener('click', () => {
     modal.style.display = 'none';
     document.querySelector('.modal-overlay').style.display = 'none';
   });
-
-  buttonContainer.appendChild(cancelButton);
-  modal.appendChild(buttonContainer);
+  modal.appendChild(closeButton);
 };
