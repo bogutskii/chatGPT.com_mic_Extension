@@ -919,6 +919,13 @@ const resolveCurrentTabId = async () => {
   };
 
   recognition.onresult = (event) => {
+    // Pick up manual edits made between speech results
+    const currentValue = readInputValue();
+    const expectedValue = [baseTranscript, finalTranscript, interimTranscript].filter(Boolean).join(' ');
+    if (currentValue !== expectedValue && isRecognitionRunning) {
+      rebaseTranscriptsFromCurrentInput();
+    }
+
     let finalTranscriptFragment = '';
     let newInterimTranscript = '';
     const startIndex = Math.max(event.resultIndex, lastFinalResultIndex + 1);
