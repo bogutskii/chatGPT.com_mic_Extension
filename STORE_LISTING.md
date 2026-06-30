@@ -30,6 +30,11 @@ Your voice data never leaves your device. All processing happens inside the brow
 
 **What’s New**
 
+**Version 2.4**  
+- Settings modal visually refreshed with a modern header, card-based layout, two-column language grid, and a compact footer.
+- Smoother interim speech recognition spacing — spaces appear as words are recognized instead of only after finalization.
+- Security and reliability improvements: reduced extension resource exposure and fixed message handler leaks.
+
 **Version 2.3**  
 - Line break support during dictation — press Shift+Enter while the microphone is on to insert a new line and continue dictating on the next line.
 - Note: for best results, pause briefly before inserting a line break to let the current text finalize. After the line break, you can continue dictating normally.
@@ -81,6 +86,11 @@ Version 2.0
 Ваши голосовые данные не покидают устройство. Вся обработка происходит в браузере через встроенный Web Speech API.
 
 **Что нового**
+
+**Версия 2.4**  
+- Окно настроек обновлено внешне: современный заголовок, карточки, двухколоночная сетка языков и компактный подвал.
+- Более плавное распознавание речи — пробелы между словами появляются сразу, а не после финализации.
+- Улучшения безопасности и надёжности: ограничен доступ к ресурсам расширения, исправлены утечки обработчиков сообщений.
 
 **Версия 2.3**  
 - Поддержка переноса строки во время диктовки — нажмите Shift+Enter, пока микрофон включён, чтобы вставить новую строку и продолжить диктовать на следующей строке.
@@ -134,6 +144,11 @@ Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza
 
 **Novedades**
 
+**Versión 2.4**  
+- Modal de ajustes renovado visualmente: encabezado moderno, diseño de tarjetas, cuadrícula de idiomas en dos columnas y pie compacto.
+- Espaciado más fluido de los resultados intermedios de reconocimiento de voz: los espacios aparecen a medida que se reconocen las palabras, en lugar de solo después de la finalización.
+- Mayor seguridad y fiabilidad: reducida la exposición de recursos y corregidas fugas de manejadores de mensajes.
+
 **Versión 2.3**  
 - Soporte para saltos de línea durante la dictado — pulsa Shift+Enter mientras el micrófono está activo para insertar una nueva línea y continuar dictando en la siguiente línea.
 - Nota: para obtener mejores resultados, haz una breve pausa antes de insertar un salto de línea para que el texto actual se aplique. Después del salto de línea puedes continuar dictando normalmente.
@@ -185,6 +200,11 @@ Versión 2.0
 Ваші голосові дані не залишають пристрій. Уся обробка відбувається в браузері через вбудований Web Speech API.
 
 **Що нового**
+
+**Версія 2.4**  
+- Вікно налаштувань оновлено візуально: сучасний заголовок, картковий макет, двоколонкова сітка мов і компактний підвал.
+- Більш плавне розпізнавання мови — пробіли між словами з’являються одразу, а не після фіналізації.
+- Покращення безпеки та надійності: обмежено доступ до ресурсів розширення, виправлено витоки обробників повідомлень.
 
 **Версія 2.3**  
 - Підтримка перенесення рядка під час диктування — натисніть Shift+Enter, поки мікрофон увімкнено, щоб вставити новий рядок і продовжити диктувати на наступному рядку.
@@ -238,6 +258,11 @@ ChatGPT 语音输入
 
 **更新内容**
 
+**版本 2.4**  
+- 设置窗口视觉升级：现代标题、卡片布局、双列语言网格、紧凑页脚。
+- 更流畅的临时语音识别间距 — 空格会在识别单词时立即出现，而不是等到最终确定后才显示。
+- 安全性与可靠性增强：收紧资源暴露范围，并修复消息处理程序泄漏。
+
 **版本 2.3**  
 - 口述时支持换行 — 麦克风开启时按 Shift+Enter 插入新行并继续在下一段口述。
 - 提示：插入换行前请先短暂暂停，让当前文本生效。换行后可以正常继续口述。
@@ -289,6 +314,11 @@ ChatGPT에서 음성을 텍스트로 변환하세요.
 음성 데이터는 절대 기기를 떠나지 않습니다. 모든 처리는 내장된 Web Speech API를 사용하여 브라우저 내부에서 이루어집니다.
 
 **업데이트 내용**
+
+**버전 2.4**  
+- 설정 모달 UI 개선: 현대적인 헤더, 카드 레이아웃, 2열 언어 그리드, 컴팩트한 푸터.
+- 더 부드러운 중간 음성 인식 간격 — 단어가 인식되는 즉시 공백이 표시되어 최종 변환 후에만 나타나지 않습니다.
+- 보안 및 안정성 강화: 리소스 노출을 줄이고 메시지 핸들러 누수를 수정했습니다.
 
 **버전 2.3**  
 - 받아쓰기 중 줄 바꿈 지원 — 마이크가 켜져 있을 때 Shift+Enter를 눌러 새 줄을 삽입하고 다음 줄에서 받아쓰기를 계속하세요.
@@ -342,6 +372,11 @@ Vos données vocales ne quittent jamais votre appareil. Tout le traitement s'eff
 
 **Nouveautés**
 
+**Version 2.4**  
+- Modal des paramètres rafraîchi visuellement : en-tête moderne, disposition en cartes, grille de langues sur deux colonnes et pied de page compact.
+- Espacement plus fluide des résultats intermédiaires de reconnaissance vocale — les espaces apparaissent au fur et à mesure que les mots sont reconnus, au lieu de n'apparaître qu'après finalisation.
+- Renforcement de la sécurité et de la fiabilité : exposition des ressources réduite et fuites de gestionnaires de messages corrigées.
+
 **Version 2.3**  
 - Prise en charge des sauts de ligne pendant la dictée — appuyez sur Shift+Entrée pendant que le micro est allumé pour insérer une nouvelle ligne et continuer à dicter sur la ligne suivante.
 - Conseil : faites une courte pause avant d'insérer un saut de ligne pour que le texte actuel soit appliqué. Après le saut de ligne, vous pouvez continuer à dicter normalement.
@@ -394,6 +429,11 @@ Seus dados de voz nunca saem do seu dispositivo. Todo o processamento ocorre den
 
 **Novidades**
 
+**Versão 2.4**  
+- Modal de configurações renovado visualmente: cabeçalho moderno, layout em cartões, grade de idiomas em duas colunas e rodapé compacto.
+- Espaçamento mais suave dos resultados intermediários de reconhecimento de voz — os espaços aparecem à medida que as palavras são reconhecidas, em vez de só após a finalização.
+- Endurecimento de segurança e confiabilidade: exposição de recursos reduzida e vazamentos de manipuladores de mensagens corrigidos.
+
 **Versão 2.3**  
 - Suporte a quebra de linha durante o ditado — pressione Shift+Enter enquanto o microfone está ligado para inserir uma nova linha e continuar ditando na próxima linha.
 - Dica: faça uma breve pausa antes de inserir uma quebra de linha para que o texto atual seja aplicado. Após a quebra de linha, você pode continuar ditando normalmente.
@@ -445,6 +485,11 @@ ChatGPT के लिए वॉइस टू टेक्स्ट
 आपकी आवाज़ का डेटा कभी भी आपके डिवाइस को नहीं छोड़ता। सारी प्रोसेसिंग बिल्ट-इन Web Speech API के माध्यम से ब्राउज़र के अंदर होती है।
 
 **नया क्या है**
+
+**संस्करण 2.4**  
+- सेटिंग्स मोडल को दिखने में नया रूप दिया गया: आधुनिक हेडर, कार्ड लेआउट, दो-कॉलम भाषा ग्रिड और कॉम्पैक्ट फुटर।
+- अंतरिम भाषण पहचान में अधिक सहज जगह — शब्द पहचानते ही स्पेस दिखाई देते हैं, अंतिम रूप देने के बाद नहीं।
+- सुरक्षा और विश्वसनीयता में सुधार: संसाधन एक्सपोज़र कड़ा किया गया और संदेश हैंडलर लीक ठीक किए गए।
 
 **संस्करण 2.3**  
 - डिक्टेशन के दौरान लाइन ब्रेक सहायता — माइक्रोफ़ोन चालू होने पर नई लाइन डालने और अगली लाइन पर डिक्टेट करना जारी रखने के लिए Shift+Enter दबाएँ।
