@@ -1,6 +1,9 @@
 chrome.runtime.onInstalled.addListener(async () => {
   console.log('Extension installed');
 
+  // Avoid duplicate menu items after extension updates
+  await chrome.contextMenus.removeAll();
+
   // Create context menu items
   chrome.contextMenus.create({
     id: 'centerMic',
@@ -56,5 +59,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
     return true;
   }
+
+  return false;
 });
 

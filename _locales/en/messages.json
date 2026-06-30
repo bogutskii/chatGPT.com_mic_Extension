@@ -7,6 +7,10 @@
     "message": "Speak instead of typing. Auto-send on silence, push-to-talk, floating mic panel, and more.",
     "description": "Short description for Chrome Web Store and extension management page."
   },
+  "settingsTitle": {
+    "message": "Settings",
+    "description": "Title of the settings modal."
+  },
   "popupTitle": {
     "message": "Voice to Text",
     "description": "Title shown in the extension popup."

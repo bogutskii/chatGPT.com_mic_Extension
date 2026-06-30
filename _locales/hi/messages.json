@@ -7,6 +7,10 @@
     "message": "टाइपिंग के बजाय बोलें। शांति पर ऑटो-सेंड, पुश-टू-टॉक, फ्लोटिंग माइक पैनल और बहुत कुछ।",
     "description": "Short description for Chrome Web Store and extension management page."
   },
+  "settingsTitle": {
+    "message": "सेटिंग्स",
+    "description": "Title of the settings modal."
+  },
   "popupTitle": {
     "message": "वॉइस टू टेक्स्ट",
     "description": "Title shown in the extension popup."

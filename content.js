@@ -16,11 +16,6 @@ const isExtensionContextValid = () => {
   }
 };
 
-if (!window.location.href.includes('chatgpt.com')) {
-  location.reload();
-  throw new Error('Extension context invalidated - reloading page');
-}
-
 // Safe wrapper for chrome.runtime.id
 const getExtensionUrl = (path) => {
   if (!isExtensionContextValid()) {
@@ -634,37 +629,44 @@ const resolveCurrentTabId = async () => {
 
   // Message listener for position changes from modal
   try {
-  chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
-    // console.log('[VoiceToText] Received message:', request.action, request);
+    chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
+      // console.log('[VoiceToText] Received message:', request.action, request);
 
-    if (request.action === 'applyPanelPosition') {
-      console.log('[VoiceToText] Applying panel position:', request.position);
-      applyPanelPosition(request.position);
-      sendResponse({ success: true });
-    } else if (request.action === 'centerPanel') {
-      container.classList.add('position-custom', 'draggable');
-      // Reset conflicting CSS properties
-      container.style.right = 'auto';
-      container.style.bottom = 'auto';
-      // Center the panel
-      const centerX = window.innerWidth / 2 - container.offsetWidth / 2;
-      const centerY = window.innerHeight / 2 - container.offsetHeight / 2;
-      container.style.left = `${centerX}px`;
-      container.style.top = `${centerY}px`;
-      setState({ panelX: centerX, panelY: centerY });
-      sendResponse({ success: true });
-    } else if (request.action === 'centerMic') {
-      const centerX = window.innerWidth / 2 - floatingButtonContainer.offsetWidth / 2;
-      const centerY = window.innerHeight / 2 - floatingButtonContainer.offsetHeight / 2;
-      updateFloatingButtonPosition(centerX, centerY);
-      sendResponse({ success: true });
-    } else if (request.action === 'stopRecognitionIfActive') {
-      stopRecognitionLocally();
-      floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
-      sendResponse({ success: true });
-    }
-    return true;
-  });
+      switch (request.action) {
+        case 'applyPanelPosition':
+          console.log('[VoiceToText] Applying panel position:', request.position);
+          applyPanelPosition(request.position);
+          sendResponse({ success: true });
+          return true;
+        case 'centerPanel':
+          container.classList.add('position-custom', 'draggable');
+          // Reset conflicting CSS properties
+          container.style.right = 'auto';
+          container.style.bottom = 'auto';
+          // Center the panel
+          const centerX = window.innerWidth / 2 - container.offsetWidth / 2;
+          const centerY = window.innerHeight / 2 - container.offsetHeight / 2;
+          container.style.left = `${centerX}px`;
+          container.style.top = `${centerY}px`;
+          setState({ panelX: centerX, panelY: centerY });
+          sendResponse({ success: true });
+          return true;
+        case 'centerMic': {
+          const micCenterX = window.innerWidth / 2 - floatingButtonContainer.offsetWidth / 2;
+          const micCenterY = window.innerHeight / 2 - floatingButtonContainer.offsetHeight / 2;
+          updateFloatingButtonPosition(micCenterX, micCenterY);
+          sendResponse({ success: true });
+          return true;
+        }
+        case 'stopRecognitionIfActive':
+          stopRecognitionLocally();
+          floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
+          sendResponse({ success: true });
+          return true;
+        default:
+          return false;
+      }
+    });
   } catch (e) {
     console.warn('[VoiceToText] Extension context invalidated, reloading page');
     location.reload();
@@ -926,20 +928,30 @@ const resolveCurrentTabId = async () => {
       rebaseTranscriptsFromCurrentInput();
     }
 
+    const appendWithSpace = (existing, fragment) => {
+      if (!existing) {
+        return fragment;
+      }
+      if (!fragment) {
+        return existing;
+      }
+      return `${existing} ${fragment}`;
+    };
+
     let finalTranscriptFragment = '';
     let newInterimTranscript = '';
     const startIndex = Math.max(event.resultIndex, lastFinalResultIndex + 1);
     for (let i = startIndex; i < event.results.length; ++i) {
       const transcript = event.results[i][0].transcript.trim();
       if (event.results[i].isFinal) {
-        finalTranscriptFragment += (finalTranscriptFragment ? ' ' : '') + transcript;
+        finalTranscriptFragment = appendWithSpace(finalTranscriptFragment, transcript);
         lastFinalResultIndex = Math.max(lastFinalResultIndex, i);
       } else {
-        newInterimTranscript += transcript;
+        newInterimTranscript = appendWithSpace(newInterimTranscript, transcript);
       }
     }
-    finalTranscript += finalTranscriptFragment;
-    interimTranscript = newInterimTranscript.trim();
+    finalTranscript = appendWithSpace(finalTranscript, finalTranscriptFragment);
+    interimTranscript = newInterimTranscript;
     applyTranscriptsToInput();
     startSilenceCountdown();
   };
@@ -1002,7 +1014,7 @@ const resolveCurrentTabId = async () => {
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.ctrlKey && event.key === 'm') {
+    if (event.ctrlKey && !event.repeat && (event.key === 'm' || event.code === 'KeyM')) {
       event.stopPropagation();
       toggleRecognition();
     }

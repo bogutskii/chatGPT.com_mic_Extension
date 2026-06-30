@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "__MSG_extensionName__",
-  "version": "2.3",
+  "version": "2.4",
   "description": "__MSG_extensionDescription__",
   "default_locale": "en",
   "author": "Petr Bogutskii",
@@ -46,15 +46,13 @@
         "state.js",
         "speech.js",
         "modal.js",
-        "micPosition.js",
         "autoGeneration.js",
         "widthAdjustment.js",
-        "clearButton.js",
         "i18n.js",
         "changelog.js"
       ],
       "matches": [
-        "<all_urls>"
+        "*://chatgpt.com/*"
       ]
     }
   ]

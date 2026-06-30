@@ -1,5 +1,52 @@
 // Changelog data per version and locale
 const CHANGELOG_DATA = {
+  '2.4': {
+    en: [
+      'Smoother interim speech recognition spacing — spaces appear as words are recognized instead of after finalization.',
+      'Security and reliability hardening: tightened resource exposure and fixed message handler leaks.',
+      'Settings modal visually refreshed: modern header, card layout, two-column language grid, and compact footer.',
+    ],
+    ru: [
+      'Более плавное распознавание речи — пробелы между словами появляются сразу, а не после финализации.',
+      'Улучшения безопасности и надёжности: ограничен доступ к ресурсам расширения, исправлены утечки обработчиков сообщений.',
+      'Окно настроек обновлено внешне: современный заголовок, карточки, двухколоночная сетка языков и компактный подвал.',
+    ],
+    es: [
+      'Espaciado más fluido de los resultados intermedios de reconocimiento de voz: los espacios aparecen a medida que se reconocen las palabras, en lugar de después de la finalización.',
+      'Mayor seguridad y fiabilidad: reducida la exposición de recursos y corregidas fugas de manejadores de mensajes.',
+      'Modal de ajustes renovado visualmente: encabezado moderno, diseño de tarjetas, cuadrícula de idiomas en dos columnas y pie compacto.',
+    ],
+    fr: [
+      "Espacement plus fluide des résultats intermédiaires de reconnaissance vocale — les espaces apparaissent au fur et à mesure que les mots sont reconnus, au lieu d'apparaître après finalisation.",
+      "Renforcement de la sécurité et de la fiabilité : exposition des ressources réduite et fuites de gestionnaires de messages corrigées.",
+      "Modal des paramètres rafraîchi visuellement : en-tête moderne, disposition en cartes, grille de langues sur deux colonnes et pied de page compact.",
+    ],
+    hi: [
+      'अंतरिम भाषण पहचान में अधिक सहज जगह — शब्द पहचानते ही स्पेस दिखाई देते हैं, अंतिम रूप देने के बाद नहीं।',
+      'सुरक्षा और विश्वसनीयता में सुधार: संसाधन एक्सपोज़र कड़ा किया गया और संदेश हैंडलर लीक ठीक किए गए।',
+      'सेटिंग्स मोडल को दिखने में नया रूप दिया गया: आधुनिक हेडर, कार्ड लेआउट, दो-कॉलम भाषा ग्रिड और कॉम्पैक्ट फुटर।',
+    ],
+    ko: [
+      '더 부드러운 중간 음성 인식 간격 — 단어가 인식되는 즉시 공백이 표시되어 최종 변환 후에만 나타나지 않습니다.',
+      '보안 및 안정성 강화: 리소스 노출을 줄이고 메시지 핸들러 누수를 수정했습니다.',
+      '설정 모달 UI 개선: 현대적인 헤더, 카드 레이아웃, 2열 언어 그리드, 컴팩트한 푸터.',
+    ],
+    pt: [
+      'Espaçamento mais suave dos resultados intermediários de reconhecimento de voz — os espaços aparecem à medida que as palavras são reconhecidas, em vez de só após a finalização.',
+      'Endurecimento de segurança e confiabilidade: exposição de recursos reduzida e vazamentos de manipuladores de mensagens corrigidos.',
+      'Modal de configurações renovado visualmente: cabeçalho moderno, layout em cartões, grade de idiomas em duas colunas e rodapé compacto.',
+    ],
+    uk: [
+      'Більш плавне розпізнавання мови — пробіли між словами з’являються одразу, а не після фіналізації.',
+      'Покращення безпеки та надійності: обмежено доступ до ресурсів розширення, виправлено витоки обробників повідомлень.',
+      'Вікно налаштувань оновлено візуально: сучасний заголовок, картковий макет, двоколонкова сітка мов і компактний підвал.',
+    ],
+    zh: [
+      '更流畅的临时语音识别间距 — 空格会在识别单词时立即出现，而不是等到最终确定后才显示。',
+      '安全性与可靠性增强：收紧资源暴露范围，并修复消息处理程序泄漏。',
+      '设置窗口视觉升级：现代标题、卡片布局、双列语言网格、紧凑页脚。',
+    ],
+  },
   '2.3': {
     en: [
       'Line break support during dictation — press Shift+Enter while the microphone is on.',
@@ -123,7 +170,7 @@ const CHANGELOG_DATA = {
   },
 };
 
-export const CURRENT_VERSION = '2.3';
+export const CURRENT_VERSION = '2.4';
 
 export const getChangelog = (version, locale) => {
   const data = CHANGELOG_DATA[version];

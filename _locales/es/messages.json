@@ -7,6 +7,10 @@
     "message": "Habla en vez de escribir. Envío automático tras silencio, modo walkie-talkie, micrófono flotante y más.",
     "description": "Descripción corta para la Chrome Web Store y la página de gestión de extensiones."
   },
+  "settingsTitle": {
+    "message": "Ajustes",
+    "description": "Título del modal de ajustes."
+  },
   "popupTitle": {
     "message": "Dictado por voz",
     "description": "Título del popup de la extensión."

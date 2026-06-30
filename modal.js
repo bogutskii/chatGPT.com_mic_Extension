@@ -36,7 +36,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   // first column
   const languageContainer = document.createElement('div');
-  languageContainer.classList.add('column', 'language-container');
+  languageContainer.classList.add('column', 'language-container', 'settings-card');
 
   const languageListInfo = document.createElement('div');
   languageListInfo.textContent = t('selectFavoriteLanguages');
@@ -67,9 +67,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const {languages} = await import(chrome.runtime.getURL('languages.js'));
   languages.forEach(lang => {
     const label = document.createElement('label');
-    label.style.display = 'block';
-    label.style.padding = '5px';
-    label.style.cursor = 'pointer';
+    label.classList.add('language-item');
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.value = lang.code;
@@ -105,7 +103,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   settingsContainer.classList.add('column');
 
   const autogenerationContainer = document.createElement('div');
-  autogenerationContainer.classList.add('autogeneration-container');
+  autogenerationContainer.classList.add('autogeneration-container', 'settings-card');
 
   const autogenerationInfo = document.createElement('label');
   autogenerationInfo.classList.add('autogeneration-info');
@@ -120,13 +118,16 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   autogenerationIcon.textContent = 'ℹ️';
   autogenerationIcon.classList.add('hotkeys-icon');
   autogenerationIcon.title = t('autoContinueTooltip');
-  autogenerationInfo.appendChild(autogenerationCheckbox);
-  autogenerationInfo.appendChild(autogenerationIcon);
+  const autogenerationControl = document.createElement('span');
+  autogenerationControl.classList.add('control-group');
+  autogenerationControl.appendChild(autogenerationCheckbox);
+  autogenerationControl.appendChild(autogenerationIcon);
+  autogenerationInfo.appendChild(autogenerationControl);
   autogenerationContainer.appendChild(autogenerationInfo);
   settingsContainer.appendChild(autogenerationContainer);
 
   const widthSliderContainer = document.createElement('div');
-  widthSliderContainer.classList.add('width-slider-container');
+  widthSliderContainer.classList.add('width-slider-container', 'settings-card');
 
   const widthSliderLabel = document.createElement('label');
   widthSliderLabel.classList.add('width-slider-label');
@@ -143,7 +144,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   settingsContainer.appendChild(widthSliderContainer);
 
   const autoSendOnSilenceContainer = document.createElement('div');
-  autoSendOnSilenceContainer.classList.add('silence-autosend-container');
+  autoSendOnSilenceContainer.classList.add('silence-autosend-container', 'settings-card');
 
   const autoSendOnSilenceRow = document.createElement('div');
   autoSendOnSilenceRow.classList.add('silence-autosend-row');
@@ -156,7 +157,10 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   autoSendOnSilenceCheckbox.type = 'checkbox';
   autoSendOnSilenceCheckbox.id = 'autoSendOnSilenceCheckbox';
   autoSendOnSilenceCheckbox.checked = Boolean(state.isAutoSendOnSilenceEnabled);
-  autoSendOnSilenceInfo.appendChild(autoSendOnSilenceCheckbox);
+  const autoSendControl = document.createElement('span');
+  autoSendControl.classList.add('control-group');
+  autoSendControl.appendChild(autoSendOnSilenceCheckbox);
+  autoSendOnSilenceInfo.appendChild(autoSendControl);
 
   const autoSendOnSilenceDelayControl = document.createElement('div');
   autoSendOnSilenceDelayControl.classList.add('silence-delay-control');
@@ -173,15 +177,15 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   autoSendOnSilenceDelayValue.classList.add('silence-delay-value');
 
   const autoSendOnSilenceWarning = document.createElement('div');
-  autoSendOnSilenceWarning.classList.add('silence-delay-warning');
+  autoSendOnSilenceWarning.classList.add('silence-delay-warning', 'setting-hint', 'warning');
   autoSendOnSilenceWarning.textContent = t('autoSendWarning');
 
   const autoSendOnSilenceBeta = document.createElement('div');
-  autoSendOnSilenceBeta.classList.add('silence-delay-beta');
+  autoSendOnSilenceBeta.classList.add('silence-delay-beta', 'setting-hint', 'beta');
   autoSendOnSilenceBeta.textContent = t('autoSendBeta');
 
   const autoSendOnSilenceHint = document.createElement('div');
-  autoSendOnSilenceHint.classList.add('silence-delay-hint');
+  autoSendOnSilenceHint.classList.add('silence-delay-hint', 'setting-hint');
   autoSendOnSilenceHint.textContent = t('autoSendHint');
 
   const getNormalizedDelay = (rawDelay) => {
@@ -227,7 +231,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   renderAutoSendOnSilenceDelay();
 
   const pttContainer = document.createElement('div');
-  pttContainer.classList.add('silence-autosend-container', 'ptt-container');
+  pttContainer.classList.add('silence-autosend-container', 'ptt-container', 'settings-card');
 
   const pttRow = document.createElement('div');
   pttRow.classList.add('silence-autosend-row');
@@ -240,7 +244,10 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   pttCheckbox.type = 'checkbox';
   pttCheckbox.id = 'pttCheckbox';
   pttCheckbox.checked = Boolean(state.isPushToTalkEnabled);
-  pttInfo.appendChild(pttCheckbox);
+  const pttControl = document.createElement('span');
+  pttControl.classList.add('control-group');
+  pttControl.appendChild(pttCheckbox);
+  pttInfo.appendChild(pttControl);
 
   const pttKeyControl = document.createElement('div');
   pttKeyControl.classList.add('silence-delay-control');
@@ -273,11 +280,8 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   pttKeyControl.appendChild(pttComboSelect);
 
   const pttHint = document.createElement('div');
-  pttHint.classList.add('silence-delay-hint');
+  pttHint.classList.add('silence-delay-hint', 'setting-hint', 'info');
   pttHint.textContent = t('pushToTalkHint');
-  pttHint.style.marginTop = '6px';
-  pttHint.style.color = '#4338ca';
-  pttHint.style.background = 'rgba(99, 102, 241, 0.08)';
 
   const renderPttState = () => {
     pttComboSelect.disabled = !pttCheckbox.checked;
@@ -309,7 +313,9 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   hotkeysInfoTitle.textContent = t('hotkeys');
 
   const hotkeysInfo = document.createElement('div');
-  hotkeysInfo.innerHTML = `<b> ${t('hotkeysInfo')}</b>`;
+  const hotkeysInfoBold = document.createElement('b');
+  hotkeysInfoBold.textContent = t('hotkeysInfo');
+  hotkeysInfo.appendChild(hotkeysInfoBold);
 
   const hotkeysIcon = document.createElement('div');
   hotkeysIcon.classList.add('hotkeys-icon');
@@ -395,10 +401,43 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
     changelogTooltip.classList.remove('show');
   });
 
-  settingsContainer.appendChild(changelogBadge);
+  const closeModal = () => {
+    modal.style.display = 'none';
+    const overlay = document.querySelector('.modal-overlay');
+    if (overlay) overlay.style.display = 'none';
+  };
 
+  // Header
+  const modalHeader = document.createElement('div');
+  modalHeader.classList.add('modal-header');
+
+  const modalTitle = document.createElement('h2');
+  modalTitle.classList.add('modal-title');
+  modalTitle.textContent = t('settingsTitle') || 'Settings';
+
+  const headerActions = document.createElement('div');
+  headerActions.classList.add('modal-header-actions');
+  headerActions.appendChild(changelogBadge);
+
+  const closeButton = document.createElement('button');
+  closeButton.classList.add('modal-close-btn');
+  closeButton.textContent = '×';
+  closeButton.setAttribute('aria-label', 'Close');
+  closeButton.addEventListener('click', closeModal);
+  headerActions.appendChild(closeButton);
+
+  modalHeader.appendChild(modalTitle);
+  modalHeader.appendChild(headerActions);
+
+  // Body
+  const modalBody = document.createElement('div');
+  modalBody.classList.add('modal-body');
   columnsContainer.appendChild(settingsContainer);
-  modal.appendChild(columnsContainer);
+  modalBody.appendChild(columnsContainer);
+
+  // Footer
+  const modalFooter = document.createElement('div');
+  modalFooter.classList.add('modal-footer');
 
   const donationContainer = document.createElement('div');
   donationContainer.classList.add('donation-container');
@@ -432,17 +471,16 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   author.textContent = '@Petr Bogutskii';
 
   donationContainer.appendChild(author);
+  modalFooter.appendChild(donationContainer);
 
-  modal.appendChild(donationContainer);
+  modal.appendChild(modalHeader);
+  modal.appendChild(modalBody);
+  modal.appendChild(modalFooter);
 
-  // Close button (X) in top-right corner of modal
-  const closeButton = document.createElement('button');
-  closeButton.classList.add('modal-close-btn');
-  closeButton.innerHTML = '&times;';
-  closeButton.setAttribute('aria-label', 'Close');
-  closeButton.addEventListener('click', () => {
-    modal.style.display = 'none';
-    document.querySelector('.modal-overlay').style.display = 'none';
+  // Close modal on Escape
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal.style.display === 'block') {
+      closeModal();
+    }
   });
-  modal.appendChild(closeButton);
 };

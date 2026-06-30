@@ -7,6 +7,10 @@
     "message": "Parlez au lieu de taper. Envoi automatique en cas de silence, mode talkie-walkie, panneau micro flottant et plus encore.",
     "description": "Short description for Chrome Web Store and extension management page."
   },
+  "settingsTitle": {
+    "message": "Paramètres",
+    "description": "Title of the settings modal."
+  },
   "popupTitle": {
     "message": "Voix vers Texte",
     "description": "Title shown in the extension popup."
