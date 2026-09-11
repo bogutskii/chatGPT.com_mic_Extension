@@ -5,6 +5,7 @@ let state = {
   isAutoGenerationEnabled: true,
   isAutoSendOnSilenceEnabled: false,
   autoSendSilenceDelaySec: 10,
+  keepMicOnAfterAutoSend: false,
   isPushToTalkEnabled: false,
   pushToTalkCombo: 'Control+Shift',
   contentWidth: 100,
@@ -40,6 +41,10 @@ let saveQueue = Promise.resolve();
 export const setState = (newState) => {
   state = {...state, ...newState};
 
+  // Notify listeners immediately for instant UI feedback (optimistic update).
+  // Storage persistence happens in the background and must not block the UI.
+  listeners.forEach(listener => listener());
+
   saveQueue = saveQueue.then(() => {
     return new Promise((resolve) => {
       if (!chrome.runtime?.id) {
@@ -54,8 +59,6 @@ export const setState = (newState) => {
         resolve();
       });
     });
-  }).then(() => {
-    listeners.forEach(listener => listener());
   });
 };
 

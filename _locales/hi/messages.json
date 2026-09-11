@@ -1,6 +1,6 @@
 {
   "extensionName": {
-    "message": "ChatGPT के लिए वॉइस टू टेक्स्ट",
+    "message": "ChatGPT के लिए वॉइस टाइपिंग",
     "description": "Extension name shown in Chrome toolbar and Web Store."
   },
   "extensionDescription": {
@@ -39,6 +39,10 @@
     "message": "पसंदीदा भाषाएँ चुनें:",
     "description": "Label for the language selection list in settings."
   },
+  "searchLanguages": {
+    "message": "भाषाएँ खोजें...",
+    "description": "Settings में भाषा खोज क्षेत्र के लिए प्लेसहोल्डर।"
+  },
   "selectAll": {
     "message": "सभी चुनें",
     "description": "Button to select all languages."
@@ -59,6 +63,10 @@
     "message": "सामग्री की चौड़ाई समायोजित करें:",
     "description": "Label for the content width slider."
   },
+  "contentWidthHint": {
+    "message": "ChatGPT के उत्तर क्षेत्र को चौड़ा या संकरा बनाएं। 100% डिफ़ॉल्ट चौड़ाई है, 90% थोड़ा संकरा, 175% सबसे चौड़ी।",
+    "description": "सामग्री चौड़ाई स्लाइडर की व्याख्या करने वाली संकेत।"
+  },
   "autoSendOnSilence": {
     "message": "शांति पर ऑटो-सेंड:",
     "description": "Label for the auto-send checkbox."
@@ -74,6 +82,14 @@
   "autoSendHint": {
     "message": "टिप: ऑटो-सेंड को रोकने या फिर से शुरू करने के लिए काउंटडाउन टाइमर पर क्लिक करें।",
     "description": "Hint about timer interaction."
+  },
+  "keepMicOnAfterAutoSend": {
+    "message": "ऑटो-सेंड के बाद माइक्रोफ़ोन चालू रखें",
+    "description": "विकल्प: मौन पर ऑटो-सेंड के बाद माइक्रोफ़ोन चालू रहता है।"
+  },
+  "keepMicOnAfterAutoSendHint": {
+    "message": "सक्षम होने पर, भेजने के बाद माइक्रोफ़ोन बंद नहीं होता — आप बिना दोबारा क्लिक किए बोलना जारी रख सकते हैं।",
+    "description": "माइक्रोफ़ोन चालू रखने विकल्प के लिए संकेत।"
   },
   "pushToTalk": {
     "message": "पुश-टू-टॉक (वॉकी-टॉकी):",
@@ -118,5 +134,25 @@
   "version": {
     "message": "संस्करण",
     "description": "Label for the current extension version in the settings modal."
+  },
+  "micButtonLabel": {
+    "message": "Voice to Text माइक्रोफ़ोन",
+    "description": "Accessibility label for the floating microphone button."
+  },
+  "clearButtonLabel": {
+    "message": "इनपुट साफ़ करें",
+    "description": "Accessibility label for the clear button."
+  },
+  "settingsButtonLabel": {
+    "message": "सेटिंग्स खोलें",
+    "description": "Accessibility label for the settings button."
+  },
+  "languageSelectorLabel": {
+    "message": "पहचान भाषा",
+    "description": "Accessibility label for the language selector."
+  },
+  "modalLabel": {
+    "message": "सेटिंग्स संवाद",
+    "description": "Accessibility label for the settings modal."
   }
 }

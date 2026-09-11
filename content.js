@@ -29,6 +29,12 @@ const micButtonImgOff = getExtensionUrl('/img/mic_OFF.png');
 const floatingClearButtonImg = getExtensionUrl('/img/clear.png');
 const settingsButtonImg = getExtensionUrl('/img/options.png');
 
+// Pre-built CSS url() strings for hot paths — avoids calling getExtensionUrl()
+// (which checks chrome.runtime.id) on every recognition start/stop/error.
+const MIC_IMG_OFF_URL = `url(${micButtonImgOff})`;
+const MIC_IMG_ON_URL = `url(${getExtensionUrl('/img/mic_ON.png')})`;
+const MIC_IMG_ERR_URL = `url(${getExtensionUrl('/img/mic_ERR.png')})`;
+
 const INPUT_SELECTOR = '#prompt-textarea';
 const SEND_BUTTON_SELECTOR = '[data-testid="send-button"]';
 const INPUT_BOUND_ATTR = 'data-voice-input-bound';
@@ -37,7 +43,23 @@ const AUTO_SEND_SILENCE_MIN_SEC = 2;
 const AUTO_SEND_SILENCE_MAX_SEC = 30;
 const AUTO_SEND_SILENCE_DEFAULT_SEC = 10;
 
-const getInputField = () => document.querySelector(INPUT_SELECTOR);
+// Cached input field — querySelector is expensive in hot paths (onresult fires
+// several times per second). Invalidated when ChatGPT re-renders the textarea.
+let cachedInputField = null;
+let cachedInputFieldValid = false;
+
+const getInputField = () => {
+  if (cachedInputFieldValid && cachedInputField && document.contains(cachedInputField)) {
+    return cachedInputField;
+  }
+  cachedInputField = document.querySelector(INPUT_SELECTOR);
+  cachedInputFieldValid = true;
+  return cachedInputField;
+};
+
+const invalidateInputFieldCache = () => {
+  cachedInputFieldValid = false;
+};
 
 const readInputValue = () => {
   const input = getInputField();
@@ -64,10 +86,19 @@ const writeInputValue = (value) => {
     const event = new Event('input', {bubbles: true});
     input.dispatchEvent(event);
   } else if (input.isContentEditable) {
+    // Avoid deprecated execCommand (selectAll/delete/insertText) which forces
+    // a layout reflow on every speech result. Instead, set the text content
+    // directly and dispatch an input event that ChatGPT's editor listens to.
     input.focus();
-    document.execCommand('selectAll', false);
-    document.execCommand('delete', false);
-    document.execCommand('insertText', false, value);
+    input.textContent = value;
+    // Place caret at the end so subsequent typing appends correctly.
+    const range = document.createRange();
+    range.selectNodeContents(input);
+    range.collapse(false);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    input.dispatchEvent(new InputEvent('input', {bubbles: true, data: value, inputType: 'insertText'}));
   } else {
     input.textContent = value;
     const event = new Event('input', {bubbles: true});
@@ -132,14 +163,35 @@ const resolveCurrentTabId = async () => {
   let setupWidthAdjustment;
 
   try {
-    ({t} = await import(chrome.runtime.getURL('i18n.js')));
-    ({languages} = await import(chrome.runtime.getURL('languages.js')));
-    ({createContainer, createButton, createSelect} = await import(chrome.runtime.getURL('ui.js')));
-    ({initializeState, getState, setState, subscribe} = await import(chrome.runtime.getURL('state.js')));
-    ({initializeSpeechRecognition} = await import(chrome.runtime.getURL('speech.js')));
-    ({createModal, createModalOverlay, setupModal} = await import(chrome.runtime.getURL('modal.js')));
-    ({setupAutoGeneration} = await import(chrome.runtime.getURL('autoGeneration.js')));
-    ({setupWidthAdjustment} = await import(chrome.runtime.getURL('widthAdjustment.js')));
+    // Load all modules in parallel to minimize startup latency.
+    const [
+      i18nModule,
+      languagesModule,
+      uiModule,
+      stateModule,
+      speechModule,
+      modalModule,
+      autoGenModule,
+      widthModule,
+    ] = await Promise.all([
+      import(chrome.runtime.getURL('i18n.js')),
+      import(chrome.runtime.getURL('languages.js')),
+      import(chrome.runtime.getURL('ui.js')),
+      import(chrome.runtime.getURL('state.js')),
+      import(chrome.runtime.getURL('speech.js')),
+      import(chrome.runtime.getURL('modal.js')),
+      import(chrome.runtime.getURL('autoGeneration.js')),
+      import(chrome.runtime.getURL('widthAdjustment.js')),
+    ]);
+
+    ({t} = i18nModule);
+    ({languages} = languagesModule);
+    ({createContainer, createButton, createSelect} = uiModule);
+    ({initializeState, getState, setState, subscribe} = stateModule);
+    ({initializeSpeechRecognition} = speechModule);
+    ({createModal, createModalOverlay, setupModal} = modalModule);
+    ({setupAutoGeneration} = autoGenModule);
+    ({setupWidthAdjustment} = widthModule);
   } catch {
     location.reload();
     return;
@@ -185,6 +237,10 @@ const resolveCurrentTabId = async () => {
       silenceTimerIndicator = document.createElement('div');
       silenceTimerIndicator.classList.add('silence-send-timer');
       silenceTimerIndicator.title = t('timerTitle');
+      // Base position at origin — actual offset is applied via transform.
+      silenceTimerIndicator.style.left = '0px';
+      silenceTimerIndicator.style.top = '0px';
+      silenceTimerIndicator.style.zIndex = '10000';
 
       silenceTimerProgress = document.createElement('div');
       silenceTimerProgress.classList.add('silence-send-timer-progress');
@@ -211,13 +267,29 @@ const resolveCurrentTabId = async () => {
     }
   };
 
+  // Cached send button reference — avoids querySelector on every second tick.
+  // Invalidated when ChatGPT re-renders the form (detected via scheduleRebind).
+  let cachedSendButton = null;
+
+  const getSendButton = () => {
+    if (cachedSendButton && document.contains(cachedSendButton)) {
+      return cachedSendButton;
+    }
+    cachedSendButton = document.querySelector(SEND_BUTTON_SELECTOR);
+    return cachedSendButton;
+  };
+
+  const invalidateSendButtonCache = () => {
+    cachedSendButton = null;
+  };
+
   const renderSilenceTimer = () => {
     if (!isAutoSendOnSilenceEnabled()) {
       removeSilenceTimerIndicator();
       return;
     }
 
-    const sendButton = document.querySelector(SEND_BUTTON_SELECTOR);
+    const sendButton = getSendButton();
     if (!sendButton) {
       removeSilenceTimerIndicator();
       return;
@@ -225,12 +297,16 @@ const resolveCurrentTabId = async () => {
 
     ensureSilenceTimerIndicator();
 
+    // Position the timer next to the send button. We use a single
+    // getBoundingClientRect call and apply via transform (GPU-friendly) so
+    // the countdown does not trigger layout reflow every second.
+    const rect = sendButton.getBoundingClientRect();
+    const targetX = Math.round(rect.left - 78);
+    const targetY = Math.round(rect.top + (rect.height - 30) / 2);
+    silenceTimerIndicator.style.transform = `translate3d(${targetX}px, ${targetY}px, 0)`;
+
     if (isTimerPaused) {
       silenceTimerIndicator.classList.add('paused');
-      const rect = sendButton.getBoundingClientRect();
-      silenceTimerIndicator.style.left = `${Math.round(rect.left - 78)}px`;
-      silenceTimerIndicator.style.top = `${Math.round(rect.top + (rect.height - 30) / 2)}px`;
-      silenceTimerIndicator.style.zIndex = '10000';
       silenceTimerIndicator.classList.add('show');
       return;
     }
@@ -249,11 +325,6 @@ const resolveCurrentTabId = async () => {
 
     silenceTimerValue.textContent = String(remainingSec);
     silenceTimerProgress.style.setProperty('--silence-progress', String(progress));
-
-    const rect = sendButton.getBoundingClientRect();
-    silenceTimerIndicator.style.left = `${Math.round(rect.left - 78)}px`;
-    silenceTimerIndicator.style.top = `${Math.round(rect.top + (rect.height - 30) / 2)}px`;
-    silenceTimerIndicator.style.zIndex = '10000';
     silenceTimerIndicator.classList.add('show');
   };
 
@@ -313,7 +384,7 @@ const resolveCurrentTabId = async () => {
       return;
     }
 
-    const sendButton = document.querySelector(SEND_BUTTON_SELECTOR);
+    const sendButton = getSendButton();
     if (!sendButton) {
       stopSilenceCountdown();
       return;
@@ -330,10 +401,15 @@ const resolveCurrentTabId = async () => {
     stopSilenceCountdown();
     sendButton.click();
 
-    // Reset transcript state after React processes the send
+    // Reset transcript state after React processes the send.
+    // If keepMicOnAfterAutoSend is enabled, restart the silence countdown
+    // so the user can continue dictating without re-clicking the mic.
     setTimeout(() => {
       clearRecognizedText();
       isAutoSending = false;
+      if (isRecognitionRunning && Boolean(getState().keepMicOnAfterAutoSend)) {
+        startSilenceCountdown();
+      }
     }, 80);
   };
 
@@ -385,10 +461,17 @@ const resolveCurrentTabId = async () => {
 
   const container = createContainer();
   const floatingMicButton = createButton(micButtonImgOff);
+  floatingMicButton.setAttribute('aria-label', t('micButtonLabel'));
+  floatingMicButton.setAttribute('role', 'button');
   const floatingClearButton = createButton(floatingClearButtonImg);
+  floatingClearButton.setAttribute('aria-label', t('clearButtonLabel'));
+  floatingClearButton.setAttribute('role', 'button');
   const settingsButton = createButton(settingsButtonImg);
+  settingsButton.setAttribute('aria-label', t('settingsButtonLabel'));
+  settingsButton.setAttribute('role', 'button');
   const languageOptions = languages.map(lang => ({value: lang.code, text: lang.name}));
   const languageSelector = createSelect(languageOptions);
+  languageSelector.setAttribute('aria-label', t('languageSelectorLabel'));
 
   // Add drag handle to container
   const dragHandle = document.createElement('div');
@@ -478,55 +561,6 @@ const resolveCurrentTabId = async () => {
 
   initFloatingButtonPosition();
 
-  // Panel positioning and drag functionality
-  const applyPanelPosition = (mode) => {
-    // Remove all position classes
-    container.classList.remove(
-      'position-bottom-right',
-      'position-bottom-left',
-      'position-top-right',
-      'position-top-left',
-      'position-top',
-      'position-bottom',
-      'position-left',
-      'position-right',
-      'position-center',
-      'position-custom',
-      'draggable'
-    );
-
-    // Reset all positioning styles
-    container.style.left = '';
-    container.style.top = '';
-    container.style.right = '';
-    container.style.bottom = '';
-    container.style.transform = '';
-
-    if (mode === 'custom') {
-      container.classList.add('position-custom', 'draggable');
-      const { panelX, panelY } = getState();
-
-      if (panelX !== undefined && panelY !== undefined) {
-        container.style.left = `${panelX}px`;
-        container.style.top = `${panelY}px`;
-      } else {
-        // Default to bottom-right corner
-        const defaultX = window.innerWidth - container.offsetWidth - 16;
-        const defaultY = window.innerHeight - container.offsetHeight - 16;
-        container.style.left = `${defaultX}px`;
-        container.style.top = `${defaultY}px`;
-        setState({ panelX: defaultX, panelY: defaultY });
-      }
-    } else {
-      container.classList.add(`position-${mode}`);
-    }
-
-    // Force reflow to ensure styles are applied immediately
-    void container.offsetHeight;
-
-    console.log('[VoiceToText] Position applied:', mode, container.className);
-  };
-
   // Always use custom mode - allow dragging to any position
   const initPanel = () => {
     container.classList.add('position-custom', 'draggable');
@@ -558,6 +592,8 @@ const resolveCurrentTabId = async () => {
   let isPanelDragging = false;
   let panelDragStartX, panelDragStartY;
   let panelInitialX, panelInitialY;
+  let panelDragDeltaX = 0;
+  let panelDragDeltaY = 0;
 
   const constrainPanelPosition = (x, y) => {
     const maxX = window.innerWidth - container.offsetWidth;
@@ -594,6 +630,8 @@ const resolveCurrentTabId = async () => {
     panelDragStartY = e.clientY;
     panelInitialX = container.offsetLeft;
     panelInitialY = container.offsetTop;
+    panelDragDeltaX = 0;
+    panelDragDeltaY = 0;
     container.classList.add('dragging');
     container.style.cursor = 'grabbing';
     container.style.userSelect = 'none';
@@ -602,28 +640,41 @@ const resolveCurrentTabId = async () => {
   document.addEventListener('mousemove', (e) => {
     if (!isPanelDragging) return;
 
-    const deltaX = e.clientX - panelDragStartX;
-    const deltaY = e.clientY - panelDragStartY;
+    panelDragDeltaX = e.clientX - panelDragStartX;
+    panelDragDeltaY = e.clientY - panelDragStartY;
 
-    const newX = panelInitialX + deltaX;
-    const newY = panelInitialY + deltaY;
-    const { x: constrainedX, y: constrainedY } = constrainPanelPosition(newX, newY);
-
-    // Update DOM directly — no setState during drag for responsiveness
-    container.style.left = `${constrainedX}px`;
-    container.style.top = `${constrainedY}px`;
+    // Use transform for GPU-accelerated movement (no layout reflow per frame).
+    // Final left/top is committed only once on mouseup.
+    container.style.transform = `translate3d(${panelDragDeltaX}px, ${panelDragDeltaY}px, 0)`;
   });
 
   document.addEventListener('mouseup', () => {
     if (isPanelDragging) {
       isPanelDragging = false;
+
+      // Commit final position: base + delta, clamped to viewport.
+      const finalX = panelInitialX + panelDragDeltaX;
+      const finalY = panelInitialY + panelDragDeltaY;
+      const { x: constrainedX, y: constrainedY } = constrainPanelPosition(finalX, finalY);
+
+      // Reset transform BEFORE removing .dragging class so the reset
+      // happens with transition disabled (no "snap-back" animation).
+      container.style.transform = '';
+      container.style.right = 'auto';
+      container.style.bottom = 'auto';
+      container.style.left = `${constrainedX}px`;
+      container.style.top = `${constrainedY}px`;
+      // Force reflow so the transform reset is committed without transition
+      void container.offsetHeight;
       container.classList.remove('dragging');
       container.style.cursor = 'move';
       container.style.userSelect = '';
+
       // Save position only once at drag end
-      const finalX = parseInt(container.style.left, 10);
-      const finalY = parseInt(container.style.top, 10);
-      setState({ panelX: finalX, panelY: finalY });
+      setState({ panelX: constrainedX, panelY: constrainedY });
+
+      panelDragDeltaX = 0;
+      panelDragDeltaY = 0;
     }
   });
 
@@ -633,11 +684,6 @@ const resolveCurrentTabId = async () => {
       // console.log('[VoiceToText] Received message:', request.action, request);
 
       switch (request.action) {
-        case 'applyPanelPosition':
-          console.log('[VoiceToText] Applying panel position:', request.position);
-          applyPanelPosition(request.position);
-          sendResponse({ success: true });
-          return true;
         case 'centerPanel':
           container.classList.add('position-custom', 'draggable');
           // Reset conflicting CSS properties
@@ -660,7 +706,7 @@ const resolveCurrentTabId = async () => {
         }
         case 'stopRecognitionIfActive':
           stopRecognitionLocally();
-          floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
+          floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
           sendResponse({ success: true });
           return true;
         default:
@@ -674,50 +720,75 @@ const resolveCurrentTabId = async () => {
 
   let isDragging = false;
   let startX, startY;
+  let dragInitialLeft, dragInitialTop;
+  let dragDeltaX = 0;
+  let dragDeltaY = 0;
 
   floatingButtonContainer.addEventListener('mousedown', (e) => {
     isDragging = true;
-    startX = e.clientX - floatingButtonContainer.offsetLeft;
-    startY = e.clientY - floatingButtonContainer.offsetTop;
+    startX = e.clientX;
+    startY = e.clientY;
+    dragInitialLeft = floatingButtonContainer.offsetLeft;
+    dragInitialTop = floatingButtonContainer.offsetTop;
+    dragDeltaX = 0;
+    dragDeltaY = 0;
+    floatingButtonContainer.classList.add('dragging');
     floatingButtonContainer.style.willChange = 'transform';
   });
 
   document.addEventListener('mousemove', (e) => {
-    if (isDragging) {
-      let x = e.clientX - startX;
-      let y = e.clientY - startY;
-      const maxX = window.innerWidth - floatingButtonContainer.offsetWidth;
-      const maxY = window.innerHeight - floatingButtonContainer.offsetHeight;
-      x = Math.max(0, Math.min(x, maxX));
-      y = Math.max(0, Math.min(y, maxY));
-      // Update DOM directly — no setState during drag for responsiveness
-      floatingButtonContainer.style.left = `${x}px`;
-      floatingButtonContainer.style.top = `${y}px`;
-    }
+    if (!isDragging) return;
+    dragDeltaX = e.clientX - startX;
+    dragDeltaY = e.clientY - startY;
+    // GPU-accelerated movement via transform (no layout reflow per frame).
+    floatingButtonContainer.style.transform = `translate3d(${dragDeltaX}px, ${dragDeltaY}px, 0)`;
   });
 
   document.addEventListener('mouseup', () => {
     if (isDragging) {
       isDragging = false;
+
+      // Commit final position: base + delta, clamped to viewport.
+      const finalX = dragInitialLeft + dragDeltaX;
+      const finalY = dragInitialTop + dragDeltaY;
+      const maxX = window.innerWidth - floatingButtonContainer.offsetWidth;
+      const maxY = window.innerHeight - floatingButtonContainer.offsetHeight;
+      const clampedX = Math.max(0, Math.min(finalX, maxX));
+      const clampedY = Math.max(0, Math.min(finalY, maxY));
+
+      // Reset transform BEFORE removing .dragging class so the reset
+      // happens with transition disabled (no "snap-back" animation).
+      floatingButtonContainer.style.transform = '';
+      floatingButtonContainer.style.left = `${clampedX}px`;
+      floatingButtonContainer.style.top = `${clampedY}px`;
+      // Force reflow so the transform reset is committed without transition
+      void floatingButtonContainer.offsetHeight;
+      floatingButtonContainer.classList.remove('dragging');
       floatingButtonContainer.style.willChange = 'auto';
+
       // Save position only once at drag end
-      const finalX = parseInt(floatingButtonContainer.style.left, 10);
-      const finalY = parseInt(floatingButtonContainer.style.top, 10);
-      setState({ floatingButtonX: finalX, floatingButtonY: finalY });
+      setState({ floatingButtonX: clampedX, floatingButtonY: clampedY });
+
+      dragDeltaX = 0;
+      dragDeltaY = 0;
     }
   });
 
   const bindSendButtonClearIfNeeded = () => {
-    const sendButton = document.querySelector(SEND_BUTTON_SELECTOR);
+    const sendButton = getSendButton();
     if (!sendButton || sendButton.hasAttribute(SEND_BOUND_ATTR)) {
       return;
     }
 
     sendButton.setAttribute(SEND_BOUND_ATTR, 'true');
     sendButton.addEventListener('click', () => {
+      // Keep microphone on after auto-send if the option is enabled.
       if (isRecognitionRunning) {
-        stopRecognitionLocally();
-        floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
+        const keepMicOn = isAutoSending && Boolean(getState().keepMicOnAfterAutoSend);
+        if (!keepMicOn) {
+          stopRecognitionLocally();
+          floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
+        }
       }
       stopSilenceCountdown();
       resetTranscriptState();
@@ -735,7 +806,7 @@ const resolveCurrentTabId = async () => {
       if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
         if (isRecognitionRunning) {
           stopRecognitionLocally();
-          floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
+          floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
         }
         stopSilenceCountdown();
         resetTranscriptState();
@@ -746,12 +817,30 @@ const resolveCurrentTabId = async () => {
     });
   };
 
-  const mutationObserver = new MutationObserver(() => {
-    bindSendButtonClearIfNeeded();
-    bindInputEnterIfNeeded();
-  });
+  // Debounced rebinding of send button and input listeners.
+  // ChatGPT is a heavy SPA — DOM mutates constantly, so we batch checks
+  // instead of running querySelector on every mutation event.
+  let rebindScheduled = false;
+  const scheduleRebind = () => {
+    if (rebindScheduled) return;
+    rebindScheduled = true;
+    requestAnimationFrame(() => {
+      rebindScheduled = false;
+      // Invalidate cached elements — ChatGPT may have replaced the textarea/form.
+      invalidateInputFieldCache();
+      invalidateSendButtonCache();
+      bindSendButtonClearIfNeeded();
+      bindInputEnterIfNeeded();
+    });
+  };
 
-  mutationObserver.observe(document.body, {childList: true, subtree: true});
+  // Observe the main content area (not the entire body) for re-renders of the
+  // textarea and send button. ChatGPT streams responses and mutates body
+  // constantly — observing only <main> avoids firing on unrelated DOM changes
+  // (modals, overlays, streaming tokens, etc.).
+  const mutationObserver = new MutationObserver(scheduleRebind);
+  const observeTarget = document.querySelector('main') || document.body;
+  mutationObserver.observe(observeTarget, {childList: true, subtree: true});
 
   bindSendButtonClearIfNeeded();
   bindInputEnterIfNeeded();
@@ -775,18 +864,32 @@ const resolveCurrentTabId = async () => {
     }
   });
 
+  let lastFavoriteLanguages = null;
+  let lastRecognitionLanguage = null;
+
   const updateLanguageSelector = (currentState) => {
-    languageSelector.innerHTML = '';
-    currentState.favoriteLanguages.forEach(langCode => {
-      const lang = languages.find(l => l.code === langCode);
-      if (lang) {
-        const option = document.createElement('option');
-        option.value = lang.code;
-        option.textContent = lang.name;
-        languageSelector.appendChild(option);
-      }
-    });
-    languageSelector.value = currentState.recognitionLanguage;
+    // Only rebuild the <option> list when the favorite languages actually
+    // changed — avoids recreating DOM nodes on every unrelated setState call.
+    const favoritesChanged = lastFavoriteLanguages !== currentState.favoriteLanguages;
+    if (favoritesChanged) {
+      languageSelector.innerHTML = '';
+      currentState.favoriteLanguages.forEach(langCode => {
+        const lang = languages.find(l => l.code === langCode);
+        if (lang) {
+          const option = document.createElement('option');
+          option.value = lang.code;
+          option.textContent = lang.name;
+          languageSelector.appendChild(option);
+        }
+      });
+      lastFavoriteLanguages = currentState.favoriteLanguages;
+    }
+
+    // Only update the selected value when it actually changed.
+    if (lastRecognitionLanguage !== currentState.recognitionLanguage) {
+      languageSelector.value = currentState.recognitionLanguage;
+      lastRecognitionLanguage = currentState.recognitionLanguage;
+    }
   };
 
   updateLanguageSelector(state);
@@ -824,14 +927,56 @@ const resolveCurrentTabId = async () => {
   document.body.appendChild(modal);
   document.body.appendChild(modalOverlay);
 
-  settingsButton.addEventListener('click', () => {
+  // Focus-trap helpers for the settings modal (a11y).
+  const FOCUSABLE_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+  let lastFocusedBeforeModal = null;
+
+  const openModal = () => {
+    lastFocusedBeforeModal = document.activeElement;
     modal.style.display = 'block';
     modalOverlay.style.display = 'block';
-  });
+    // Trigger entrance animation on the next frame so display:block applies first.
+    requestAnimationFrame(() => modal.classList.add('modal-open'));
+    // Move focus into the modal for screen-reader users.
+    const firstFocusable = modal.querySelector(FOCUSABLE_SELECTOR);
+    if (firstFocusable) firstFocusable.focus();
+  };
 
-  modalOverlay.addEventListener('click', () => {
-    modal.style.display = 'none';
-    modalOverlay.style.display = 'none';
+  const closeModalFn = () => {
+    modal.classList.remove('modal-open');
+    const overlay = modalOverlay;
+    // Wait for the fade-out transition before hiding completely.
+    const finish = () => {
+      modal.style.display = 'none';
+      overlay.style.display = 'none';
+      modal.removeEventListener('transitionend', finish);
+    };
+    modal.addEventListener('transitionend', finish);
+    // Fallback in case transitionend does not fire (e.g. reduced motion).
+    setTimeout(finish, 220);
+    if (lastFocusedBeforeModal && typeof lastFocusedBeforeModal.focus === 'function') {
+      lastFocusedBeforeModal.focus();
+    }
+  };
+
+  settingsButton.addEventListener('click', openModal);
+  modalOverlay.addEventListener('click', closeModalFn);
+
+  // Trap Tab/Shift+Tab inside the modal while it is open.
+  modal.addEventListener('keydown', (event) => {
+    if (event.key !== 'Tab' || modal.style.display !== 'block') return;
+    const focusables = Array.from(modal.querySelectorAll(FOCUSABLE_SELECTOR))
+      .filter((el) => el.offsetParent !== null);
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   });
 
   await setupModal(modal, state.favoriteLanguages, (newFavoriteLanguages) => {
@@ -855,7 +1000,7 @@ const resolveCurrentTabId = async () => {
     const inputField = getInputField();
     if (isRecognitionRunning) {
       stopRecognitionLocally();
-      floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
+      floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
     } else {
       baseTranscript = inputField ? readInputValue() : '';
       finalTranscript = '';
@@ -863,15 +1008,26 @@ const resolveCurrentTabId = async () => {
       shouldAutoRestart = true;
       isTimerPaused = false;
       if (typeof currentTabId === 'number') {
-        chrome.runtime.sendMessage({action: 'voice-stop-other-tabs', currentTabId}, () => {
-          void chrome.runtime.lastError;
-        });
+        try {
+          chrome.runtime.sendMessage({action: 'voice-stop-other-tabs', currentTabId}, () => {
+            void chrome.runtime.lastError;
+          });
+        } catch (error) {
+          console.warn('Failed to send voice-stop-other-tabs:', error);
+        }
       }
-      recognition.start();
-      isRecognitionRunning = true;
-      setState({isListening: true});
-      floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_ON.png')})`;
-      startSilenceCountdown();
+      try {
+        recognition.start();
+        isRecognitionRunning = true;
+        setState({isListening: true});
+        floatingMicButton.style.backgroundImage = MIC_IMG_ON_URL;
+        startSilenceCountdown();
+      } catch (error) {
+        console.warn('Failed to start recognition:', error);
+        isRecognitionRunning = false;
+        shouldAutoRestart = false;
+        setState({isListening: false});
+      }
     }
   };
 
@@ -893,12 +1049,19 @@ const resolveCurrentTabId = async () => {
     interimTranscript = '';
     shouldAutoRestart = false; // Don't auto-restart in PTT mode
     isTimerPaused = false;
-    recognition.start();
-    isRecognitionRunning = true;
-    setState({isListening: true});
-    floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_ON.png')})`;
-    floatingMicButton.style.filter = 'brightness(1.3) sepia(1) hue-rotate(-30deg) saturate(2)';
-    startSilenceCountdown();
+    try {
+      recognition.start();
+      isRecognitionRunning = true;
+      setState({isListening: true});
+      floatingMicButton.style.backgroundImage = MIC_IMG_ON_URL;
+      floatingMicButton.classList.add('ptt-active');
+      startSilenceCountdown();
+    } catch (error) {
+      console.warn('Failed to start PTT recognition:', error);
+      isPushToTalkActive = false;
+      isRecognitionRunning = false;
+      setState({isListening: false});
+    }
   };
 
   const stopPushToTalk = () => {
@@ -916,8 +1079,8 @@ const resolveCurrentTabId = async () => {
     isRecognitionRunning = false;
     stopSilenceCountdown();
     setState({isListening: false});
-    floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
-    floatingMicButton.style.filter = '';
+    floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
+    floatingMicButton.classList.remove('ptt-active');
   };
 
   recognition.onresult = (event) => {
@@ -974,9 +1137,9 @@ const resolveCurrentTabId = async () => {
       shouldAutoRestart = false;
       stopSilenceCountdown();
       setState({isListening: false});
-      floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_ERR.png')})`;
+      floatingMicButton.style.backgroundImage = MIC_IMG_ERR_URL;
       setTimeout(() => {
-        floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
+        floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
       }, 1200);
       return;
     }
@@ -986,11 +1149,11 @@ const resolveCurrentTabId = async () => {
     shouldAutoRestart = false;
     stopSilenceCountdown();
     setState({isListening: false});
-    floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_ERR.png')})`;
+    floatingMicButton.style.backgroundImage = MIC_IMG_ERR_URL;
 
     setTimeout(() => {
       if (!getState().isListening) {
-        floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
+        floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
       }
     }, 1000);
   };
@@ -999,11 +1162,19 @@ const resolveCurrentTabId = async () => {
     isRecognitionRunning = false;
     stopSilenceCountdown();
     if (shouldAutoRestart) {
-      recognition.start();
-      isRecognitionRunning = true;
-      floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_ON.png')})`;
+      try {
+        recognition.start();
+        isRecognitionRunning = true;
+        floatingMicButton.style.backgroundImage = MIC_IMG_ON_URL;
+      } catch (error) {
+        console.warn('Failed to restart recognition:', error);
+        isRecognitionRunning = false;
+        shouldAutoRestart = false;
+        floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
+        setState({isListening: false});
+      }
     } else {
-      floatingMicButton.style.backgroundImage = `url(${getExtensionUrl('/img/mic_OFF.png')})`;
+      floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
       setState({isListening: false});
     }
   };
@@ -1011,13 +1182,6 @@ const resolveCurrentTabId = async () => {
   floatingMicButton.addEventListener('click', (event) => {
     event.preventDefault();
     toggleRecognition();
-  });
-
-  document.addEventListener('keydown', (event) => {
-    if (event.ctrlKey && !event.repeat && (event.key === 'm' || event.code === 'KeyM')) {
-      event.stopPropagation();
-      toggleRecognition();
-    }
   });
 
   languageSelector.addEventListener('change', async (event) => {
@@ -1051,33 +1215,31 @@ const resolveCurrentTabId = async () => {
     }
   };
 
+  // Throttle: runs `func` at most once per `limit` ms, with a trailing call
+  // so the final state is always applied. Uses rAF for smooth, frame-aligned
+  // execution instead of nested setTimeout chains.
   const throttleWithFinalCall = (func, limit) => {
-    let inThrottle;
-    let lastFunc;
-    let lastRan;
+    let lastRun = 0;
+    let trailingTimer = null;
 
-    return function() {
-      const args = arguments;
+    return function (...args) {
       const context = this;
+      const now = Date.now();
+      const remaining = limit - (now - lastRun);
 
-      if (!inThrottle) {
+      if (remaining <= 0) {
+        if (trailingTimer) {
+          clearTimeout(trailingTimer);
+          trailingTimer = null;
+        }
         func.apply(context, args);
-        lastRan = Date.now();
-        inThrottle = true;
-        setTimeout(() => {
-          inThrottle = false;
-          if (lastFunc) {
-            lastFunc.apply(context, args);
-            lastFunc = null;
-          }
-        }, limit);
-      } else {
-        lastFunc = function() {
-          if (Date.now() - lastRan >= limit) {
-            func.apply(context, args);
-            lastRan = Date.now();
-          }
-        };
+        lastRun = now;
+      } else if (!trailingTimer) {
+        trailingTimer = setTimeout(() => {
+          func.apply(context, args);
+          lastRun = Date.now();
+          trailingTimer = null;
+        }, remaining);
       }
     };
   };
@@ -1105,18 +1267,14 @@ const resolveCurrentTabId = async () => {
     const w = window.innerWidth;
     const h = window.innerHeight;
 
-    // console.log('[VoiceToText] checkPanelPosition:', { left: panelRect.left, right: panelRect.right, top: panelRect.top, bottom: panelRect.bottom, w, h });
-
     // Reset conflicting CSS properties
     container.style.right = 'auto';
     container.style.bottom = 'auto';
 
     if (panelRect.right > w) {
-      console.log('[VoiceToText] Panel off-screen right, moving to', w - panelRect.width);
       container.style.left = `${w - panelRect.width}px`;
     }
     if (panelRect.bottom > h) {
-      console.log('[VoiceToText] Panel off-screen bottom, moving to', h - panelRect.height);
       container.style.top = `${h - panelRect.height}px`;
     }
     if (panelRect.left < 0) {
@@ -1129,28 +1287,40 @@ const resolveCurrentTabId = async () => {
 
   const throttledCheckButtonPosition = throttleWithFinalCall(checkButtonPosition, 100);
 
-  window.addEventListener('resize', () => {
+  // Resize handling — keep panel and floating button within the viewport.
+  // We deliberately avoid ResizeObserver on documentElement: ChatGPT mutates
+  // the DOM constantly (streaming, lazy content) which would fire reflow-heavy
+  // position checks on every frame. window resize + visualViewport cover the
+  // real layout-changing events (rotation, address bar, window resize).
+  const onViewportResize = () => {
     checkPanelPosition();
     throttledCheckButtonPosition();
-  });
+  };
 
-  // ResizeObserver on documentElement - catches all size changes
-  const resizeObserver = new ResizeObserver(() => {
-    checkPanelPosition();
-    throttledCheckButtonPosition();
-  });
-  resizeObserver.observe(document.documentElement);
+  window.addEventListener('resize', onViewportResize);
 
   // visualViewport resize - catches browser UI changes (address bar, etc.)
   if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', () => {
-      checkPanelPosition();
-      throttledCheckButtonPosition();
-    });
+    window.visualViewport.addEventListener('resize', onViewportResize);
   }
 
-  // Push-to-Talk: hold configured combo to record, release to stop
+  // Push-to-Talk: hold configured combo to record, release to stop.
+  // Parsed combo is cached so we don't split/map strings on every keydown.
+  const MODIFIER_KEYS = new Set(['Control', 'Shift', 'Alt', 'Meta']);
   const parseCombo = (comboStr) => comboStr.split('+').map(s => s.trim());
+
+  let cachedPttParts = null;
+  let cachedPttComboStr = null;
+
+  const getPttParts = () => {
+    const comboStr = getState().pushToTalkCombo || 'Control+Shift';
+    if (cachedPttComboStr !== comboStr) {
+      cachedPttComboStr = comboStr;
+      cachedPttParts = parseCombo(comboStr);
+    }
+    return cachedPttParts;
+  };
+
   const isComboSatisfied = (e, parts) => {
     const needsCtrl = parts.includes('Control');
     const needsShift = parts.includes('Shift');
@@ -1160,7 +1330,7 @@ const resolveCurrentTabId = async () => {
     if (needsShift !== e.shiftKey) return false;
     if (needsAlt !== e.altKey) return false;
     if (needsMeta !== e.metaKey) return false;
-    const nonModifiers = parts.filter(p => !['Control','Shift','Alt','Meta'].includes(p));
+    const nonModifiers = parts.filter(p => !MODIFIER_KEYS.has(p));
     if (nonModifiers.length > 0) {
       return nonModifiers.some(nm => nm.toLowerCase() === e.key.toLowerCase());
     }
@@ -1168,16 +1338,25 @@ const resolveCurrentTabId = async () => {
   };
   const isComboReleased = (e, parts) => {
     const key = e.key;
-    const nonModifiers = parts.filter(p => !['Control','Shift','Alt','Meta'].includes(p));
+    const nonModifiers = parts.filter(p => !MODIFIER_KEYS.has(p));
     if (nonModifiers.length > 0) {
       return nonModifiers.some(nm => nm.toLowerCase() === key.toLowerCase()) ||
-             parts.some(p => ['Control','Shift','Alt','Meta'].includes(key) && p === key);
+             parts.some(p => MODIFIER_KEYS.has(key) && p === key);
     }
     return parts.some(p => p === key);
   };
+
+  // Single keydown listener handles both Ctrl+M toggle and PTT combo.
   document.addEventListener('keydown', (e) => {
+    // Ctrl+M — toggle recognition (always active, cheap boolean check)
+    if (e.ctrlKey && !e.repeat && (e.key === 'm' || e.code === 'KeyM')) {
+      e.stopPropagation();
+      toggleRecognition();
+      return;
+    }
+    // Push-to-Talk combo
     if (!getState().isPushToTalkEnabled) return;
-    const parts = parseCombo(getState().pushToTalkCombo || 'Control+Shift');
+    const parts = getPttParts();
     if (isComboSatisfied(e, parts) && !e.repeat) {
       e.preventDefault();
       startPushToTalk();
@@ -1186,7 +1365,7 @@ const resolveCurrentTabId = async () => {
 
   document.addEventListener('keyup', (e) => {
     if (!getState().isPushToTalkEnabled) return;
-    const parts = parseCombo(getState().pushToTalkCombo || 'Control+Shift');
+    const parts = getPttParts();
     if (isComboReleased(e, parts)) {
       e.preventDefault();
       stopPushToTalk();

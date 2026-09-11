@@ -39,6 +39,10 @@
     "message": "Sélectionner les langues favorites :",
     "description": "Label for the language selection list in settings."
   },
+  "searchLanguages": {
+    "message": "Rechercher des langues...",
+    "description": "Espace réservé du champ de recherche de langues dans les paramètres."
+  },
   "selectAll": {
     "message": "Tout sélectionner",
     "description": "Button to select all languages."
@@ -59,6 +63,10 @@
     "message": "Ajuster la largeur du contenu :",
     "description": "Label for the content width slider."
   },
+  "contentWidthHint": {
+    "message": "Rendez la zone de réponses de ChatGPT plus large ou plus étroite. 100 % est la largeur par défaut, 90 % est légèrement plus étroite, 175 % est la plus large.",
+    "description": "Indice expliquant le curseur de largeur du contenu."
+  },
   "autoSendOnSilence": {
     "message": "Envoi automatique en cas de silence :",
     "description": "Label for the auto-send checkbox."
@@ -74,6 +82,14 @@
   "autoSendHint": {
     "message": "Conseil : cliquez sur le compte à rebours pour mettre l'envoi automatique en pause ou le reprendre.",
     "description": "Hint about timer interaction."
+  },
+  "keepMicOnAfterAutoSend": {
+    "message": "Garder le microphone allumé après l'envoi automatique",
+    "description": "Option : le microphone reste allumé après l'envoi automatique sur silence."
+  },
+  "keepMicOnAfterAutoSendHint": {
+    "message": "Si activé, le microphone ne s'éteint pas après l'envoi — vous pouvez continuer à dicter sans le réactiver.",
+    "description": "Indice pour l'option de maintien du microphone allumé."
   },
   "pushToTalk": {
     "message": "Pousser-pour-parler (talkie-walkie) :",
@@ -118,5 +134,25 @@
   "version": {
     "message": "Version",
     "description": "Label for the current extension version in the settings modal."
+  },
+  "micButtonLabel": {
+    "message": "Microphone Voice to Text",
+    "description": "Étiquette accessible du bouton flottant du microphone."
+  },
+  "clearButtonLabel": {
+    "message": "Effacer la saisie",
+    "description": "Étiquette accessible du bouton d'effacement."
+  },
+  "settingsButtonLabel": {
+    "message": "Ouvrir les paramètres",
+    "description": "Étiquette accessible du bouton des paramètres."
+  },
+  "languageSelectorLabel": {
+    "message": "Langue de reconnaissance",
+    "description": "Étiquette accessible du sélecteur de langue."
+  },
+  "modalLabel": {
+    "message": "Boîte de dialogue des paramètres",
+    "description": "Étiquette accessible du modal des paramètres."
   }
 }

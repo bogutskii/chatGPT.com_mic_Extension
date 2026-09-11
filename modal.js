@@ -19,6 +19,9 @@ loadCSS(chrome.runtime.getURL('styles.css'));
 export const createModal = () => {
   const modal = document.createElement('div');
   modal.classList.add('modal');
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.setAttribute('aria-label', t('modalLabel'));
   return modal;
 };
 
@@ -41,6 +44,13 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const languageListInfo = document.createElement('div');
   languageListInfo.textContent = t('selectFavoriteLanguages');
   languageListInfo.classList.add('language-list-info');
+
+  // Search input — filters the language list as the user types.
+  const languageSearch = document.createElement('input');
+  languageSearch.type = 'search';
+  languageSearch.placeholder = t('searchLanguages') || 'Search languages...';
+  languageSearch.classList.add('language-search');
+  languageSearch.setAttribute('aria-label', t('searchLanguages') || 'Search languages');
 
   const languageActionsRow = document.createElement('div');
   languageActionsRow.classList.add('language-actions-row');
@@ -65,9 +75,14 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   };
 
   const {languages} = await import(chrome.runtime.getURL('languages.js'));
+
+  // Build all language items once, then show/hide based on search filter.
+  const languageItems = [];
   languages.forEach(lang => {
     const label = document.createElement('label');
     label.classList.add('language-item');
+    label.dataset.name = lang.name.toLowerCase();
+    label.dataset.code = lang.code.toLowerCase();
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.value = lang.code;
@@ -75,22 +90,36 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
     checkbox.onclick = saveFavoriteLanguagesFunction;
     label.appendChild(checkbox);
     label.appendChild(document.createTextNode(lang.name));
+    languageItems.push(label);
     languageList.appendChild(label);
   });
 
+  // Filter languages by search query — matches name or code.
+  const filterLanguages = (query) => {
+    const q = query.trim().toLowerCase();
+    languageItems.forEach(item => {
+      const matches = !q || item.dataset.name.includes(q) || item.dataset.code.includes(q);
+      item.style.display = matches ? '' : 'none';
+    });
+  };
+
+  languageSearch.addEventListener('input', () => filterLanguages(languageSearch.value));
+
   languageContainer.appendChild(languageListInfo);
+  languageContainer.appendChild(languageSearch);
   languageContainer.appendChild(languageActionsRow);
   languageContainer.appendChild(languageList);
 
   selectAllButton.addEventListener('click', () => {
-    languageList.querySelectorAll('input').forEach(checkbox => {
+    // Only select visible (filtered) items so hidden ones are not affected.
+    languageList.querySelectorAll('label:not([style*="display: none"]) input').forEach(checkbox => {
       checkbox.checked = true;
     });
     saveFavoriteLanguagesFunction();
   });
 
   deselectAllButton.addEventListener('click', () => {
-    languageList.querySelectorAll('input').forEach(checkbox => {
+    languageList.querySelectorAll('label:not([style*="display: none"]) input').forEach(checkbox => {
       checkbox.checked = false;
     });
     saveFavoriteLanguagesFunction();
@@ -132,16 +161,32 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const widthSliderLabel = document.createElement('label');
   widthSliderLabel.classList.add('width-slider-label');
   widthSliderLabel.textContent = t('adjustContentWidth');
+
+  const widthSliderValue = document.createElement('span');
+  widthSliderValue.classList.add('width-slider-value');
+  widthSliderValue.textContent = `${state.contentWidth}%`;
+  widthSliderLabel.appendChild(widthSliderValue);
+
   const widthSlider = document.createElement('input');
   widthSlider.type = 'range';
   widthSlider.id = 'contentWidthSlider';
-  widthSlider.min = '50';
-  widthSlider.max = '100';
+  widthSlider.min = '90';
+  widthSlider.max = '175';
   widthSlider.step = '5';
   widthSlider.value = state.contentWidth;
+
+  const widthSliderHint = document.createElement('div');
+  widthSliderHint.classList.add('setting-hint', 'info');
+  widthSliderHint.textContent = t('contentWidthHint');
+
   widthSliderContainer.appendChild(widthSliderLabel);
   widthSliderContainer.appendChild(widthSlider);
+  widthSliderContainer.appendChild(widthSliderHint);
   settingsContainer.appendChild(widthSliderContainer);
+
+  widthSlider.addEventListener('input', () => {
+    widthSliderValue.textContent = `${widthSlider.value}%`;
+  });
 
   const autoSendOnSilenceContainer = document.createElement('div');
   autoSendOnSilenceContainer.classList.add('silence-autosend-container', 'settings-card');
@@ -202,8 +247,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
     autoSendOnSilenceDelayValue.textContent = `${delaySec}s`;
     const showWarning = autoSendOnSilenceCheckbox.checked && delaySec >= 20;
     autoSendOnSilenceWarning.classList.toggle('show', showWarning);
-    autoSendOnSilenceBeta.classList.toggle('show', autoSendOnSilenceCheckbox.checked);
-    autoSendOnSilenceHint.classList.toggle('show', autoSendOnSilenceCheckbox.checked);
     autoSendOnSilenceDelaySlider.disabled = !autoSendOnSilenceCheckbox.checked;
     autoSendOnSilenceDelayValue.classList.toggle('disabled', !autoSendOnSilenceCheckbox.checked);
   };
@@ -227,6 +270,35 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   autoSendOnSilenceContainer.appendChild(autoSendOnSilenceWarning);
   autoSendOnSilenceContainer.appendChild(autoSendOnSilenceBeta);
   autoSendOnSilenceContainer.appendChild(autoSendOnSilenceHint);
+
+  // Keep microphone on after auto-send — allows continuous dictation.
+  const keepMicOnRow = document.createElement('div');
+  keepMicOnRow.classList.add('silence-autosend-row', 'keep-mic-on-row');
+
+  const keepMicOnLabel = document.createElement('label');
+  keepMicOnLabel.classList.add('autogeneration-info');
+  keepMicOnLabel.textContent = t('keepMicOnAfterAutoSend');
+
+  const keepMicOnCheckbox = document.createElement('input');
+  keepMicOnCheckbox.type = 'checkbox';
+  keepMicOnCheckbox.id = 'keepMicOnCheckbox';
+  keepMicOnCheckbox.checked = Boolean(state.keepMicOnAfterAutoSend);
+  const keepMicOnControl = document.createElement('span');
+  keepMicOnControl.classList.add('control-group');
+  keepMicOnControl.appendChild(keepMicOnCheckbox);
+  keepMicOnLabel.appendChild(keepMicOnControl);
+
+  keepMicOnCheckbox.addEventListener('change', () => {
+    setState({keepMicOnAfterAutoSend: keepMicOnCheckbox.checked});
+  });
+
+  const keepMicOnHint = document.createElement('div');
+  keepMicOnHint.classList.add('setting-hint', 'info');
+  keepMicOnHint.textContent = t('keepMicOnAfterAutoSendHint');
+
+  keepMicOnRow.appendChild(keepMicOnLabel);
+  autoSendOnSilenceContainer.appendChild(keepMicOnRow);
+  autoSendOnSilenceContainer.appendChild(keepMicOnHint);
   settingsContainer.appendChild(autoSendOnSilenceContainer);
   renderAutoSendOnSilenceDelay();
 
@@ -285,7 +357,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const renderPttState = () => {
     pttComboSelect.disabled = !pttCheckbox.checked;
-    pttHint.classList.toggle('show', pttCheckbox.checked);
   };
 
   pttCheckbox.addEventListener('change', () => {
@@ -402,6 +473,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   });
 
   const closeModal = () => {
+    modal.classList.remove('modal-open');
     modal.style.display = 'none';
     const overlay = document.querySelector('.modal-overlay');
     if (overlay) overlay.style.display = 'none';

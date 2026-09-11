@@ -39,6 +39,10 @@
     "message": "Select Favorite Languages:",
     "description": "Label for the language selection list in settings."
   },
+  "searchLanguages": {
+    "message": "Search languages...",
+    "description": "Placeholder for the language search input in settings."
+  },
   "selectAll": {
     "message": "Select All",
     "description": "Button to select all languages."
@@ -59,6 +63,10 @@
     "message": "Adjust Content Width:",
     "description": "Label for the content width slider."
   },
+  "contentWidthHint": {
+    "message": "Make the ChatGPT response area wider or narrower. 100% is the default width, 90% is slightly narrower, 175% is the widest.",
+    "description": "Hint explaining the content width slider."
+  },
   "autoSendOnSilence": {
     "message": "Auto-send on silence:",
     "description": "Label for the auto-send checkbox."
@@ -74,6 +82,14 @@
   "autoSendHint": {
     "message": "Tip: click the countdown timer to pause or resume auto-send.",
     "description": "Hint about timer interaction."
+  },
+  "keepMicOnAfterAutoSend": {
+    "message": "Keep microphone on after auto-send",
+    "description": "Option to keep the microphone running after auto-send on silence."
+  },
+  "keepMicOnAfterAutoSendHint": {
+    "message": "When enabled, the microphone stays on after sending, so you can continue dictating without clicking it again.",
+    "description": "Hint for the keep-mic-on option."
   },
   "pushToTalk": {
     "message": "Push-to-Talk (walkie-talkie):",
@@ -118,5 +134,25 @@
   "version": {
     "message": "Version",
     "description": "Label for the current extension version in the settings modal."
+  },
+  "micButtonLabel": {
+    "message": "Voice to Text microphone",
+    "description": "Accessible label for the floating microphone button."
+  },
+  "clearButtonLabel": {
+    "message": "Clear input",
+    "description": "Accessible label for the clear button."
+  },
+  "settingsButtonLabel": {
+    "message": "Open settings",
+    "description": "Accessible label for the settings button."
+  },
+  "languageSelectorLabel": {
+    "message": "Recognition language",
+    "description": "Accessible label for the language selector."
+  },
+  "modalLabel": {
+    "message": "Settings dialog",
+    "description": "Accessible label for the settings modal."
   }
 }

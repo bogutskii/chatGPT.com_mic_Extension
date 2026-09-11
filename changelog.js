@@ -1,5 +1,79 @@
 // Changelog data per version and locale
 const CHANGELOG_DATA = {
+  '2.5': {
+    en: [
+      'Major performance optimization: smoother dragging, faster speech recognition rendering, and reduced main-thread work during ChatGPT streaming.',
+      'Cached input field and send button references — no more querySelector on every speech result or countdown tick.',
+      'Replaced deprecated execCommand with Range API for contenteditable input — eliminates forced reflow during dictation.',
+      'Single combined keydown listener for Ctrl+M and Push-to-Talk — less overhead on every keystroke.',
+      'Settings modal: entrance animation, focus trap, and ARIA labels for screen readers.',
+      'Narrowed MutationObserver from body to main — no longer fires on streaming tokens or overlays.',
+    ],
+    ru: [
+      'Масштабная оптимизация производительности: более плавное перетаскивание, быстрая отрисовка распознавания речи, меньше нагрузки на главный поток при стриминге ChatGPT.',
+      'Кэширование поля ввода и кнопки отправки — больше нет querySelector при каждом результате речи или тике таймера.',
+      'Замена устаревшего execCommand на Range API для contenteditable — убран forced reflow во время диктовки.',
+      'Единый listener для Ctrl+M и Push-to-Talk — меньше накладных расходов на каждое нажатие.',
+      'Окно настроек: анимация появления, focus trap и ARIA-метки для скринридеров.',
+      'MutationObserver сужен с body до main — больше не срабатывает на стриминг токенов и оверлеи.',
+    ],
+    es: [
+      'Optimización de rendimiento importante: arrastre más suave, renderizado de reconocimiento de voz más rápido y menos trabajo en el hilo principal durante el streaming de ChatGPT.',
+      'Campo de entrada y botón de envío en caché — sin querySelector en cada resultado de voz o tick del temporizador.',
+      'Reemplazo del obsoleto execCommand por Range API para contenteditable — elimina el reflow forzado durante el dictado.',
+      'Un único listener de teclado para Ctrl+M y Push-to-Talk — menos sobrecarga en cada pulsación.',
+      'Modal de ajustes: animación de entrada, focus trap y etiquetas ARIA para lectores de pantalla.',
+      'MutationObserver reducido de body a main — ya no se activa con tokens de streaming u overlays.',
+    ],
+    fr: [
+      'Optimisation majeure des performances : glisser plus fluide, rendu plus rapide de la reconnaissance vocale et moins de travail sur le thread principal pendant le streaming de ChatGPT.',
+      'Champ de saisie et bouton d\'envoi mis en cache — plus de querySelector à chaque résultat vocal ou tick du minuteur.',
+      'Remplacement du deprecated execCommand par l\'API Range pour contenteditable — élimine le reflow forcé pendant la dictée.',
+      'Un seul listener clavier pour Ctrl+M et Push-to-Talk — moins de surcoût à chaque frappe.',
+      'Modal des paramètres : animation d\'entrée, focus trap et étiquettes ARIA pour les lecteurs d\'écran.',
+      'MutationObserver réduit de body à main — ne se déclenche plus sur les tokens de streaming ou les overlays.',
+    ],
+    hi: [
+      'प्रमुख प्रदर्शन अनुकूलन: अधिक सहज ड्रैगिंग, तेज़ भाषण पहचान रेंडरिंग, और ChatGPT स्ट्रीमिंग के दौरान कम मेन-थ्रेड कार्य।',
+      'कैश्ड इनपुट फ़ील्ड और सेंड बटन संदर्भ — हर भाषण परिणाम या टाइमर टिक पर querySelector नहीं।',
+      'contenteditable के लिए deprecated execCommand को Range API से बदला — डिक्टेशन के दौरान forced reflow समाप्त।',
+      'Ctrl+M और Push-to-Talk के लिए एकल कीबोर्ड listener — हर कीस्ट्रोक पर कम ओवरहेड।',
+      'सेटिंग्स मोडल: एंट्री एनिमेशन, फोकस ट्रैप और स्क्रीन रीडर के लिए ARIA लेबल।',
+      'MutationObserver को body से main तक सीमित किया — स्ट्रीमिंग टोकन या ओवरले पर अब सक्रिय नहीं।',
+    ],
+    ko: [
+      '주요 성능 최적화: 더 부드러운 드래그, 더 빠른 음성 인식 렌더링, ChatGPT 스트리밍 중 메인 스레드 작업 감소.',
+      '입력 필드 및 전송 버튼 참조 캐싱 — 음성 결과나 타이머 틱마다 querySelector 없음.',
+      'contenteditable에 대해 더 이상 사용되지 않는 execCommand를 Range API로 교체 — 받아쓰기 중 강제 리플로우 제거.',
+      'Ctrl+M 및 Push-to-Talk을 위한 단일 키보드 리스너 — 키 입력마다 오버헤드 감소.',
+      '설정 모달: 등장 애니메이션, 포커스 트랩 및 스크린 리더용 ARIA 라벨.',
+      'MutationObserver를 body에서 main으로 축소 — 스트리밍 토큰이나 오버레이에서 더 이상 트리거되지 않음.',
+    ],
+    pt: [
+      'Otimização importante de desempenho: arrasto mais suave, renderização mais rápida do reconhecimento de voz e menos trabalho na thread principal durante o streaming do ChatGPT.',
+      'Campo de entrada e botão de envio em cache — sem querySelector a cada resultado de voz ou tick do temporizador.',
+      'Substituição do obsoleto execCommand pela API Range para contenteditable — elimina o reflow forçado durante o ditado.',
+      'Único listener de teclado para Ctrl+M e Push-to-Talk — menos sobrecarga em cada tecla.',
+      'Modal de configurações: animação de entrada, focus trap e rótulos ARIA para leitores de tela.',
+      'MutationObserver reduzido de body para main — não dispara mais em tokens de streaming ou overlays.',
+    ],
+    uk: [
+      'Масштабна оптимізація продуктивності: плавніше перетягування, швидший рендерінг розпізнавання мови, менше навантаження на головний потік під час стрімінгу ChatGPT.',
+      'Кешування поля вводу та кнопки надсилання — більше немає querySelector при кожному результаті мови або тику таймера.',
+      'Заміна застарілого execCommand на Range API для contenteditable — прибрано forced reflow під час диктування.',
+      'Єдиний listener для Ctrl+M та Push-to-Talk — менше накладних витрат на кожне натискання.',
+      'Вікно налаштувань: анімація появи, focus trap та ARIA-мітки для скрінрідерів.',
+      'MutationObserver звужено з body до main — більше не спрацьовує на стрімінг токени та оверлеї.',
+    ],
+    zh: [
+      '重大性能优化：更流畅的拖拽、更快的语音识别渲染，以及减少 ChatGPT 流式传输期间的主线程工作。',
+      '缓存输入字段和发送按钮引用 — 不再在每次语音结果或计时器滴答时调用 querySelector。',
+      '用 Range API 替换已弃用的 execCommand 处理 contenteditable — 消除听写期间的强制回流。',
+      'Ctrl+M 和一键通合并为单个键盘监听器 — 每次按键开销更小。',
+      '设置弹窗：入场动画、焦点陷阱和屏幕阅读器 ARIA 标签。',
+      'MutationObserver 从 body 缩小到 main — 不再对流式标记或覆盖层触发。',
+    ],
+  },
   '2.4': {
     en: [
       'Smoother interim speech recognition spacing — spaces appear as words are recognized instead of after finalization.',
@@ -170,7 +244,7 @@ const CHANGELOG_DATA = {
   },
 };
 
-export const CURRENT_VERSION = '2.4';
+export const CURRENT_VERSION = '2.5';
 
 export const getChangelog = (version, locale) => {
   const data = CHANGELOG_DATA[version];

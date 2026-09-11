@@ -39,6 +39,10 @@
     "message": "选择常用语言：",
     "description": "Label for the language selection list in settings."
   },
+  "searchLanguages": {
+    "message": "搜索语言...",
+    "description": "设置中语言搜索输入框的占位符。"
+  },
   "selectAll": {
     "message": "全选",
     "description": "Button to select all languages."
@@ -59,6 +63,10 @@
     "message": "调整内容宽度：",
     "description": "Label for the content width slider."
   },
+  "contentWidthHint": {
+    "message": "让 ChatGPT 回答区域更宽或更窄。100% 是默认宽度，90% 稍窄，175% 最宽。",
+    "description": "解释内容宽度滑块的提示。"
+  },
   "autoSendOnSilence": {
     "message": "静音时自动发送：",
     "description": "Label for the auto-send checkbox."
@@ -74,6 +82,14 @@
   "autoSendHint": {
     "message": "提示：点击倒计时器可暂停或恢复自动发送。",
     "description": "Hint about timer interaction."
+  },
+  "keepMicOnAfterAutoSend": {
+    "message": "自动发送后保持麦克风开启",
+    "description": "选项：静音自动发送后麦克风保持开启。"
+  },
+  "keepMicOnAfterAutoSendHint": {
+    "message": "启用后，发送后麦克风不会关闭 — 无需再次点击即可继续口述。",
+    "description": "保持麦克风开启选项的提示。"
   },
   "pushToTalk": {
     "message": "一键通（对讲机）：",
@@ -118,5 +134,25 @@
   "version": {
     "message": "版本",
     "description": "Label for the current extension version in the settings modal."
+  },
+  "micButtonLabel": {
+    "message": "Voice to Text 麦克风",
+    "description": "Accessibility label for the floating microphone button."
+  },
+  "clearButtonLabel": {
+    "message": "清除输入",
+    "description": "Accessibility label for the clear button."
+  },
+  "settingsButtonLabel": {
+    "message": "打开设置",
+    "description": "Accessibility label for the settings button."
+  },
+  "languageSelectorLabel": {
+    "message": "识别语言",
+    "description": "Accessibility label for the language selector."
+  },
+  "modalLabel": {
+    "message": "设置对话框",
+    "description": "Accessibility label for the settings modal."
   }
 }

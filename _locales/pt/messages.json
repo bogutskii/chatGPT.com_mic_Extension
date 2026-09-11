@@ -39,6 +39,10 @@
     "message": "Selecionar idiomas favoritos:",
     "description": "Label for the language selection list in settings."
   },
+  "searchLanguages": {
+    "message": "Pesquisar idiomas...",
+    "description": "Espaço reservado do campo de pesquisa de idiomas nas configurações."
+  },
   "selectAll": {
     "message": "Selecionar tudo",
     "description": "Button to select all languages."
@@ -59,6 +63,10 @@
     "message": "Ajustar largura do conteúdo:",
     "description": "Label for the content width slider."
   },
+  "contentWidthHint": {
+    "message": "Torne a área de respostas do ChatGPT mais larga ou mais estreita. 100% é a largura padrão, 90% é ligeiramente mais estreita, 175% é a mais larga.",
+    "description": "Dica que explica o controle deslizante de largura do conteúdo."
+  },
   "autoSendOnSilence": {
     "message": "Enviar automaticamente em silêncio:",
     "description": "Label for the auto-send checkbox."
@@ -74,6 +82,14 @@
   "autoSendHint": {
     "message": "Dica: clique no temporizador para pausar ou retomar o envio automático.",
     "description": "Hint about timer interaction."
+  },
+  "keepMicOnAfterAutoSend": {
+    "message": "Manter o microfone ligado após o envio automático",
+    "description": "Opção: o microfone permanece ligado após o envio automático por silêncio."
+  },
+  "keepMicOnAfterAutoSendHint": {
+    "message": "Se ativado, o microfone não desliga após o envio — você pode continuar ditando sem clicar novamente.",
+    "description": "Dica para a opção de manter o microfone ligado."
   },
   "pushToTalk": {
     "message": "Push-to-Talk (rádio):",
@@ -118,5 +134,25 @@
   "version": {
     "message": "Versão",
     "description": "Label for the current extension version in the settings modal."
+  },
+  "micButtonLabel": {
+    "message": "Microfone do Voice to Text",
+    "description": "Etiqueta acessível do botão flutuante do microfone."
+  },
+  "clearButtonLabel": {
+    "message": "Limpar entrada",
+    "description": "Etiqueta acessível do botão de limpar."
+  },
+  "settingsButtonLabel": {
+    "message": "Abrir configurações",
+    "description": "Etiqueta acessível do botão de configurações."
+  },
+  "languageSelectorLabel": {
+    "message": "Idioma de reconhecimento",
+    "description": "Etiqueta acessível do seletor de idioma."
+  },
+  "modalLabel": {
+    "message": "Diálogo de configurações",
+    "description": "Etiqueta acessível do modal de configurações."
   }
 }

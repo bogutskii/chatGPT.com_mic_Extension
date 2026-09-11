@@ -39,6 +39,10 @@
     "message": "Seleccionar idiomas favoritos:",
     "description": "Etiqueta de la lista de selección de idiomas en ajustes."
   },
+  "searchLanguages": {
+    "message": "Buscar idiomas...",
+    "description": "Marcador de posición del campo de búsqueda de idiomas en ajustes."
+  },
   "selectAll": {
     "message": "Seleccionar todos",
     "description": "Botón para seleccionar todos los idiomas."
@@ -59,6 +63,10 @@
     "message": "Ancho del contenido:",
     "description": "Etiqueta del deslizador de ancho de contenido."
   },
+  "contentWidthHint": {
+    "message": "Haz el área de respuestas de ChatGPT más ancha o más estrecha. 100% es el ancho predeterminado, 90% es ligeramente más estrecho, 175% es lo más ancho.",
+    "description": "Pista que explica el deslizador de ancho de contenido."
+  },
   "autoSendOnSilence": {
     "message": "Enviar automáticamente tras silencio:",
     "description": "Etiqueta del checkbox de envío automático."
@@ -74,6 +82,14 @@
   "autoSendHint": {
     "message": "Consejo: haz clic en el temporizador para pausar o reanudar el envío automático.",
     "description": "Consejo sobre la interacción con el temporizador."
+  },
+  "keepMicOnAfterAutoSend": {
+    "message": "Mantener el micrófono encendido después del envío automático",
+    "description": "Opción: el micrófono sigue encendido después del envío automático por silencio."
+  },
+  "keepMicOnAfterAutoSendHint": {
+    "message": "Si está activado, el micrófono no se apaga después del envío — puedes seguir dictando sin pulsarlo de nuevo.",
+    "description": "Pista para la opción de mantener el micrófono encendido."
   },
   "pushToTalk": {
     "message": "Push-to-Talk (walkie-talkie):",
@@ -118,5 +134,25 @@
   "version": {
     "message": "Versión",
     "description": "Etiqueta de la versión actual de la extensión en el modal de ajustes."
+  },
+  "micButtonLabel": {
+    "message": "Micrófono de Voice to Text",
+    "description": "Etiqueta accesible del botón flotante del micrófono."
+  },
+  "clearButtonLabel": {
+    "message": "Borrar entrada",
+    "description": "Etiqueta accesible del botón de borrado."
+  },
+  "settingsButtonLabel": {
+    "message": "Abrir ajustes",
+    "description": "Etiqueta accesible del botón de ajustes."
+  },
+  "languageSelectorLabel": {
+    "message": "Idioma de reconocimiento",
+    "description": "Etiqueta accesible del selector de idioma."
+  },
+  "modalLabel": {
+    "message": "Diálogo de ajustes",
+    "description": "Etiqueta accesible del modal de ajustes."
   }
 }
