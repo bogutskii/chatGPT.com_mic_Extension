@@ -51,20 +51,12 @@
     "message": "सभी अचयनित करें",
     "description": "Button to deselect all languages."
   },
-  "autoContinueGenerate": {
-    "message": "स्वचालित रूप से जवाब जारी रखें:",
-    "description": "Label for the auto-continue checkbox."
-  },
-  "autoContinueTooltip": {
-    "message": "यदि सक्षम, स्वचालित रूप से जारी रखने से पहले 2 सेकंड का विलंब",
-    "description": "Tooltip for the auto-continue info icon."
-  },
   "adjustContentWidth": {
     "message": "सामग्री की चौड़ाई समायोजित करें:",
     "description": "Label for the content width slider."
   },
   "contentWidthHint": {
-    "message": "ChatGPT के उत्तर क्षेत्र को चौड़ा या संकरा बनाएं। 100% डिफ़ॉल्ट चौड़ाई है, 90% थोड़ा संकरा, 175% सबसे चौड़ी।",
+    "message": "ChatGPT के उत्तर क्षेत्र को चौड़ा बनाएं। 100% डिफ़ॉल्ट चौड़ाई है, बहुत चौड़ी स्क्रीन के लिए 300% तक।",
     "description": "सामग्री चौड़ाई स्लाइडर की व्याख्या करने वाली संकेत।"
   },
   "autoSendOnSilence": {
@@ -102,6 +94,62 @@
   "donate": {
     "message": "दान करें",
     "description": "Link text for donation."
+  },
+  "resetSettings": {
+    "message": "सेटिंग्स रीसेट करें",
+    "description": "सभी सेटिंग्स को डिफ़ॉल्ट पर रीसेट करने का बटन।"
+  },
+  "resetSettingsConfirm": {
+    "message": "सभी सेटिंग्स को डिफ़ॉल्ट पर रीसेट करें? इसे पूर्ववत नहीं किया जा सकता।",
+    "description": "सेटिंग्स रीसेट करने की पुष्टि।"
+  },
+  "soundOnAutoSend": {
+    "message": "ऑटो-सेंड पर ध्वनि",
+    "description": "ऑप्शन: ऑटो-सेंड पर बीप ध्वनि।"
+  },
+  "soundOnAutoSendHint": {
+    "message": "संदेश स्वचालित रूप से भेजे जाने पर एक छोटी बीप ध्वनि बजती है।",
+    "description": "ऑटो-सेंड ध्वनि विकल्प के लिए संकेत।"
+  },
+  "voicePunctuation": {
+    "message": "वॉइस विराम चिह्न आदेश",
+    "description": "ऑप्शन: विराम चिह्न के लिए वॉइस आदेश।"
+  },
+  "voicePunctuationHint": {
+    "message": "डिक्टेशन के दौरान \"कॉमा\", \"पूर्ण विराम\", \"प्रश्नवाचक\", \"विस्मयादिबोधक\", \"नई पंक्ति\" कहें।",
+    "description": "वॉइस विराम चिह्न आदेशों के लिए संकेत।"
+  },
+  "wordReplacements": {
+    "message": "शब्द प्रतिस्थापन",
+    "description": "ऑप्शन: कस्टम शब्द प्रतिस्थापन।"
+  },
+  "wordReplacementsHint": {
+    "message": "पहचाने गए शब्दों को अपने टेक्स्ट से बदलें। पहचान त्रुटियों को ठीक करने या अक्सर उपयोग किए जाने वाले वाक्यांशों को डालने के लिए उपयोगी।",
+    "description": "शब्द प्रतिस्थापन के लिए संकेत।"
+  },
+  "addReplacement": {
+    "message": "प्रतिस्थापन जोड़ें",
+    "description": "नया शब्द प्रतिस्थापन जोड़ने का बटन।"
+  },
+  "replacementFrom": {
+    "message": "पहचाना गया शब्द",
+    "description": "स्रोत शब्द के लिए प्लेसहोल्डर।"
+  },
+  "replacementTo": {
+    "message": "से बदलें",
+    "description": "प्रतिस्थापन टेक्स्ट के लिए प्लेसहोल्डर।"
+  },
+  "onboardingTitle": {
+    "message": "Voice to Text में आपका स्वागत है!",
+    "description": "पहली बार उपयोग के लिए टूलटिप का शीर्षक।"
+  },
+  "onboardingText": {
+    "message": "डिक्टेशन शुरू करने के लिए माइक्रोफ़ोन बटन पर क्लिक करें। टॉगल करने के लिए Ctrl+M दबाए रखें। भाषाओं और व्यवहार को अनुकूलित करने के लिए सेटिंग्स खोलें।",
+    "description": "पहली बार उपयोग के लिए टूलटिप टेक्स्ट।"
+  },
+  "onboardingGotIt": {
+    "message": "समझ गया",
+    "description": "ऑनबोर्डिंग टूलटिप बंद करने का बटन।"
   },
   "hotkeys": {
     "message": "शॉर्टकट:",

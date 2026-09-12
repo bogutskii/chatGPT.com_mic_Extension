@@ -159,7 +159,6 @@ const resolveCurrentTabId = async () => {
   let initializeState, getState, setState, subscribe;
   let initializeSpeechRecognition;
   let createModal, createModalOverlay, setupModal;
-  let setupAutoGeneration;
   let setupWidthAdjustment;
 
   try {
@@ -171,7 +170,6 @@ const resolveCurrentTabId = async () => {
       stateModule,
       speechModule,
       modalModule,
-      autoGenModule,
       widthModule,
     ] = await Promise.all([
       import(chrome.runtime.getURL('i18n.js')),
@@ -180,7 +178,6 @@ const resolveCurrentTabId = async () => {
       import(chrome.runtime.getURL('state.js')),
       import(chrome.runtime.getURL('speech.js')),
       import(chrome.runtime.getURL('modal.js')),
-      import(chrome.runtime.getURL('autoGeneration.js')),
       import(chrome.runtime.getURL('widthAdjustment.js')),
     ]);
 
@@ -190,7 +187,6 @@ const resolveCurrentTabId = async () => {
     ({initializeState, getState, setState, subscribe} = stateModule);
     ({initializeSpeechRecognition} = speechModule);
     ({createModal, createModalOverlay, setupModal} = modalModule);
-    ({setupAutoGeneration} = autoGenModule);
     ({setupWidthAdjustment} = widthModule);
   } catch {
     location.reload();
@@ -399,6 +395,25 @@ const resolveCurrentTabId = async () => {
     isAutoSending = true;
     silenceDeadlineTimestamp = null;
     stopSilenceCountdown();
+
+    // Play a short beep if the sound option is enabled.
+    if (Boolean(getState().soundOnAutoSend)) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.2);
+      } catch (e) {
+        // AudioContext may not be available — silently ignore.
+      }
+    }
+
     sendButton.click();
 
     // Reset transcript state after React processes the send.
@@ -933,6 +948,11 @@ const resolveCurrentTabId = async () => {
 
   const openModal = () => {
     lastFocusedBeforeModal = document.activeElement;
+    // Apply theme before showing so there's no flash of wrong theme.
+    const theme = getState().theme || 'system';
+    const isDark = theme === 'dark' ||
+      (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    modal.setAttribute('data-theme', isDark ? 'dark' : 'light');
     modal.style.display = 'block';
     modalOverlay.style.display = 'block';
     // Trigger entrance animation on the next frame so display:block applies first.
@@ -984,7 +1004,6 @@ const resolveCurrentTabId = async () => {
     updateLanguageSelector(state);
   }, container, updateFloatingButtonPosition, floatingButtonContainer);
 
-  await setupAutoGeneration(modal);
   await setupWidthAdjustment(modal);
 
   recognition = initializeSpeechRecognition(state.recognitionLanguage);
@@ -1083,6 +1102,78 @@ const resolveCurrentTabId = async () => {
     floatingMicButton.classList.remove('ptt-active');
   };
 
+  // Voice punctuation command mappings per locale.
+  const PUNCTUATION_MAP = {
+    en: {
+      'comma': ',', 'period': '.', 'full stop': '.',
+      'question mark': '?', 'exclamation mark': '!', 'exclamation point': '!',
+      'new line': '\n', 'newline': '\n',
+      'semicolon': ';', 'colon': ':', 'dash': '—', 'hyphen': '-',
+      'open parenthesis': '(', 'close parenthesis': ')',
+      'open quote': '"', 'close quote': '"',
+    },
+    ru: {
+      'запятая': ',', 'точка': '.', 'вопрос': '?', 'вопросительный знак': '?',
+      'восклицание': '!', 'восклицательный знак': '!',
+      'новая строка': '\n', 'новая строка': '\n', 'абзац': '\n',
+      'точка с запятой': ';', 'двоеточие': ':', 'тире': '—', 'дефис': '-',
+      'открывающая скобка': '(', 'закрывающая скобка': ')',
+      'кавычка': '"',
+    },
+    uk: {
+      'кома': ',', 'крапка': '.', 'питання': '?', 'знак оклику': '!',
+      'новий рядок': '\n', 'крапка з комою': ';', 'двокрапка': ':',
+      'тире': '—', 'дефіс': '-',
+    },
+    es: {
+      'coma': ',', 'punto': '.', 'signo de interrogación': '?',
+      'signo de exclamación': '!', 'nueva línea': '\n',
+      'punto y coma': ';', 'dos puntos': ':', 'guión': '—',
+    },
+    fr: {
+      'virgule': ',', 'point': '.', "point d'interrogation": '?',
+      "point d'exclamation": '!', 'nouvelle ligne': '\n',
+      'point-virgule': ';', 'deux points': ':', 'tiret': '—',
+    },
+    pt: {
+      'vírgula': ',', 'ponto': '.', 'ponto de interrogação': '?',
+      'ponto de exclamação': '!', 'nova linha': '\n',
+      'ponto e vírgula': ';', 'dois pontos': ':', 'traço': '—',
+    },
+    de: {
+      'komma': ',', 'punkt': '.', 'fragezeichen': '?',
+      'ausrufezeichen': '!', 'neue zeile': '\n',
+      'semikolon': ';', 'doppelpunkt': ':', 'strich': '—',
+    },
+  };
+
+  // Apply voice punctuation commands and word replacements to a transcript fragment.
+  const processTranscript = (text) => {
+    let result = text;
+
+    // Voice punctuation: replace spoken commands with punctuation marks.
+    if (Boolean(getState().isVoicePunctuationEnabled)) {
+      const lang = (getState().recognitionLanguage || 'en-US').split('-')[0];
+      const map = PUNCTUATION_MAP[lang] || PUNCTUATION_MAP.en;
+      const entries = Object.entries(map).sort((a, b) => b[0].length - a[0].length);
+      for (const [command, punct] of entries) {
+        const regex = new RegExp(`\\b${command}\\b`, 'gi');
+        result = result.replace(regex, punct);
+      }
+    }
+
+    // Word replacements: replace recognized words with user-defined text.
+    const replacements = getState().wordReplacements || [];
+    for (const rep of replacements) {
+      if (rep.from && rep.to) {
+        const regex = new RegExp(`\\b${rep.from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+        result = result.replace(regex, rep.to);
+      }
+    }
+
+    return result;
+  };
+
   recognition.onresult = (event) => {
     // Pick up manual edits made between speech results
     const currentValue = readInputValue();
@@ -1105,7 +1196,7 @@ const resolveCurrentTabId = async () => {
     let newInterimTranscript = '';
     const startIndex = Math.max(event.resultIndex, lastFinalResultIndex + 1);
     for (let i = startIndex; i < event.results.length; ++i) {
-      const transcript = event.results[i][0].transcript.trim();
+      const transcript = processTranscript(event.results[i][0].transcript.trim());
       if (event.results[i].isFinal) {
         finalTranscriptFragment = appendWithSpace(finalTranscriptFragment, transcript);
         lastFinalResultIndex = Math.max(lastFinalResultIndex, i);
@@ -1390,4 +1481,39 @@ const resolveCurrentTabId = async () => {
 
   checkButtonPosition();
   checkPanelPosition();
+
+  // First-run onboarding tooltip — shows once, then never again.
+  if (!getState().hasSeenOnboarding) {
+    const onboarding = document.createElement('div');
+    onboarding.classList.add('onboarding-tooltip');
+
+    const onboardingTitle = document.createElement('div');
+    onboardingTitle.classList.add('onboarding-title');
+    onboardingTitle.textContent = t('onboardingTitle');
+
+    const onboardingText = document.createElement('div');
+    onboardingText.classList.add('onboarding-text');
+    onboardingText.textContent = t('onboardingText');
+
+    const gotItBtn = document.createElement('button');
+    gotItBtn.classList.add('onboarding-button');
+    gotItBtn.textContent = t('onboardingGotIt');
+    gotItBtn.addEventListener('click', () => {
+      onboarding.remove();
+      setState({hasSeenOnboarding: true});
+    });
+
+    onboarding.appendChild(onboardingTitle);
+    onboarding.appendChild(onboardingText);
+    onboarding.appendChild(gotItBtn);
+    document.body.appendChild(onboarding);
+
+    // Auto-dismiss after 15 seconds.
+    setTimeout(() => {
+      if (onboarding.parentNode) {
+        onboarding.remove();
+        setState({hasSeenOnboarding: true});
+      }
+    }, 15000);
+  }
 })();

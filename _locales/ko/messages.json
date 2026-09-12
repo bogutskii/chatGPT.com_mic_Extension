@@ -51,20 +51,12 @@
     "message": "모두 선택 해제",
     "description": "Button to deselect all languages."
   },
-  "autoContinueGenerate": {
-    "message": "자동 계속 생성:",
-    "description": "Label for the auto-continue checkbox."
-  },
-  "autoContinueTooltip": {
-    "message": "활성화하면 2초 지연 후 자동 계속 생성",
-    "description": "Tooltip for the auto-continue info icon."
-  },
   "adjustContentWidth": {
     "message": "콘텐츠 너비 조정:",
     "description": "Label for the content width slider."
   },
   "contentWidthHint": {
-    "message": "ChatGPT 응답 영역을 더 넓게 또는 좁게 만드세요. 100%가 기본 너비, 90%가 약간 좁음, 175%가 가장 넓음.",
+    "message": "ChatGPT 응답 영역을 더 넓게 만드세요. 100%가 기본 너비, 매우 넓은 화면에서는 최대 300%.",
     "description": "콘텐츠 너비 슬라이더를 설명하는 힌트입니다."
   },
   "autoSendOnSilence": {
@@ -102,6 +94,62 @@
   "donate": {
     "message": "기부",
     "description": "Link text for donation."
+  },
+  "resetSettings": {
+    "message": "설정 초기화",
+    "description": "모든 설정을 기본값으로 초기화하는 버튼."
+  },
+  "resetSettingsConfirm": {
+    "message": "모든 설정을 기본값으로 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "description": "설정 초기화 확인."
+  },
+  "soundOnAutoSend": {
+    "message": "자동 전송 시 소리",
+    "description": "옵션: 자동 전송 시 비프음."
+  },
+  "soundOnAutoSendHint": {
+    "message": "침묵 후 메시지가 자동으로 전송될 때 짧은 비프음이 재생됩니다.",
+    "description": "자동 전송 소리 옵션에 대한 힌트."
+  },
+  "voicePunctuation": {
+    "message": "음성 문장 부호 명령",
+    "description": "옵션: 문장 부호를 위한 음성 명령."
+  },
+  "voicePunctuationHint": {
+    "message": "받아쓰기 중 \"쉼표\", \"마침표\", \"물음표\", \"느낌표\", \"새 줄\"이라고 말하여 문장 부호를 삽입하세요.",
+    "description": "음성 문장 부호 명령에 대한 힌트."
+  },
+  "wordReplacements": {
+    "message": "단어 교체",
+    "description": "옵션: 사용자 정의 단어 교체."
+  },
+  "wordReplacementsHint": {
+    "message": "인식된 단어를 자신의 텍스트로 교체합니다. 인식 오류 수정이나 자주 사용하는 구문 삽입에 유용합니다.",
+    "description": "단어 교체에 대한 힌트."
+  },
+  "addReplacement": {
+    "message": "교체 추가",
+    "description": "새 단어 교체를 추가하는 버튼."
+  },
+  "replacementFrom": {
+    "message": "인식된 단어",
+    "description": "소스 단어의 자리 표시자."
+  },
+  "replacementTo": {
+    "message": "다음으로 교체",
+    "description": "교체 텍스트의 자리 표시자."
+  },
+  "onboardingTitle": {
+    "message": "Voice to Text에 오신 것을 환영합니다!",
+    "description": "첫 실행 온보딩 툴팁의 제목."
+  },
+  "onboardingText": {
+    "message": "마이크 버튼을 클릭하여 받아쓰기를 시작하세요. Ctrl+M을 눌러 토글하세요. 언어와 동작을 사용자 정의하려면 설정을 여세요.",
+    "description": "첫 실행 온보딩 툴팁의 텍스트."
+  },
+  "onboardingGotIt": {
+    "message": "알겠습니다",
+    "description": "온보딩 툴팁을 닫는 버튼."
   },
   "hotkeys": {
     "message": "단축키:",

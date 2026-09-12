@@ -51,20 +51,12 @@
     "message": "Deselect All",
     "description": "Button to deselect all languages."
   },
-  "autoContinueGenerate": {
-    "message": "Auto continue generate responses:",
-    "description": "Label for the auto-continue checkbox."
-  },
-  "autoContinueTooltip": {
-    "message": "Auto continue generate responses if enabled 2 second delay",
-    "description": "Tooltip for the auto-continue info icon."
-  },
   "adjustContentWidth": {
     "message": "Adjust Content Width:",
     "description": "Label for the content width slider."
   },
   "contentWidthHint": {
-    "message": "Make the ChatGPT response area wider or narrower. 100% is the default width, 90% is slightly narrower, 175% is the widest.",
+    "message": "Make the ChatGPT response area wider. 100% is the default width, up to 300% for very wide screens.",
     "description": "Hint explaining the content width slider."
   },
   "autoSendOnSilence": {
@@ -102,6 +94,62 @@
   "donate": {
     "message": "Donate",
     "description": "Link text for donation."
+  },
+  "resetSettings": {
+    "message": "Reset Settings",
+    "description": "Button to reset all settings to defaults."
+  },
+  "resetSettingsConfirm": {
+    "message": "Reset all settings to defaults? This cannot be undone.",
+    "description": "Confirmation prompt for resetting settings."
+  },
+  "soundOnAutoSend": {
+    "message": "Play sound on auto-send",
+    "description": "Option to play a beep when auto-send triggers."
+  },
+  "soundOnAutoSendHint": {
+    "message": "A short beep plays when the message is sent automatically after silence.",
+    "description": "Hint for the auto-send sound option."
+  },
+  "voicePunctuation": {
+    "message": "Voice punctuation commands",
+    "description": "Option to enable voice commands for punctuation."
+  },
+  "voicePunctuationHint": {
+    "message": "Say \"comma\", \"period\", \"question mark\", \"exclamation\", \"new line\" or \"newline\" to insert punctuation while dictating.",
+    "description": "Hint for voice punctuation commands."
+  },
+  "wordReplacements": {
+    "message": "Word replacements",
+    "description": "Option to configure custom word replacements."
+  },
+  "wordReplacementsHint": {
+    "message": "Replace recognized words with your own text. Useful for fixing recognition errors or inserting frequently used phrases.",
+    "description": "Hint for word replacements."
+  },
+  "addReplacement": {
+    "message": "Add replacement",
+    "description": "Button to add a new word replacement."
+  },
+  "replacementFrom": {
+    "message": "Recognized word",
+    "description": "Placeholder for the source word in a replacement."
+  },
+  "replacementTo": {
+    "message": "Replace with",
+    "description": "Placeholder for the replacement text."
+  },
+  "onboardingTitle": {
+    "message": "Welcome to Voice to Text!",
+    "description": "Title for the first-run onboarding tooltip."
+  },
+  "onboardingText": {
+    "message": "Click the microphone button to start dictating. Hold Ctrl+M to toggle it. Open settings to customize languages and behavior.",
+    "description": "Body text for the first-run onboarding tooltip."
+  },
+  "onboardingGotIt": {
+    "message": "Got it",
+    "description": "Button to dismiss the onboarding tooltip."
   },
   "hotkeys": {
     "message": "Hotkeys:",

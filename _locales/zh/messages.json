@@ -51,20 +51,12 @@
     "message": "取消全选",
     "description": "Button to deselect all languages."
   },
-  "autoContinueGenerate": {
-    "message": "自动继续生成回复：",
-    "description": "Label for the auto-continue checkbox."
-  },
-  "autoContinueTooltip": {
-    "message": "如果启用，2秒延迟后自动继续生成回复",
-    "description": "Tooltip for the auto-continue info icon."
-  },
   "adjustContentWidth": {
     "message": "调整内容宽度：",
     "description": "Label for the content width slider."
   },
   "contentWidthHint": {
-    "message": "让 ChatGPT 回答区域更宽或更窄。100% 是默认宽度，90% 稍窄，175% 最宽。",
+    "message": "让 ChatGPT 回答区域更宽。100% 是默认宽度，超宽屏幕最高可到 300%。",
     "description": "解释内容宽度滑块的提示。"
   },
   "autoSendOnSilence": {
@@ -102,6 +94,62 @@
   "donate": {
     "message": "捐赠",
     "description": "Link text for donation."
+  },
+  "resetSettings": {
+    "message": "重置设置",
+    "description": "将所有设置重置为默认值的按钮。"
+  },
+  "resetSettingsConfirm": {
+    "message": "将所有设置重置为默认值？此操作无法撤销。",
+    "description": "重置设置的确认提示。"
+  },
+  "soundOnAutoSend": {
+    "message": "自动发送时播放声音",
+    "description": "选项：自动发送时播放提示音。"
+  },
+  "soundOnAutoSendHint": {
+    "message": "消息在静默后自动发送时会播放短促提示音。",
+    "description": "自动发送声音选项的提示。"
+  },
+  "voicePunctuation": {
+    "message": "语音标点命令",
+    "description": "选项：用于标点的语音命令。"
+  },
+  "voicePunctuationHint": {
+    "message": "口述时说「逗号」「句号」「问号」「感叹号」「换行」来插入标点。",
+    "description": "语音标点命令的提示。"
+  },
+  "wordReplacements": {
+    "message": "单词替换",
+    "description": "选项：自定义单词替换。"
+  },
+  "wordReplacementsHint": {
+    "message": "用您自己的文本替换识别的单词。适用于纠正识别错误或插入常用短语。",
+    "description": "单词替换的提示。"
+  },
+  "addReplacement": {
+    "message": "添加替换",
+    "description": "添加新单词替换的按钮。"
+  },
+  "replacementFrom": {
+    "message": "识别的单词",
+    "description": "源单词的占位符。"
+  },
+  "replacementTo": {
+    "message": "替换为",
+    "description": "替换文本的占位符。"
+  },
+  "onboardingTitle": {
+    "message": "欢迎使用 Voice to Text！",
+    "description": "首次使用提示的标题。"
+  },
+  "onboardingText": {
+    "message": "点击麦克风按钮开始口述。按 Ctrl+M 切换。打开设置以自定义语言和行为。",
+    "description": "首次使用提示的文本。"
+  },
+  "onboardingGotIt": {
+    "message": "知道了",
+    "description": "关闭新手引导提示的按钮。"
   },
   "hotkeys": {
     "message": "快捷键：",

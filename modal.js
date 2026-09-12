@@ -131,30 +131,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const settingsContainer = document.createElement('div');
   settingsContainer.classList.add('column');
 
-  const autogenerationContainer = document.createElement('div');
-  autogenerationContainer.classList.add('autogeneration-container', 'settings-card');
-
-  const autogenerationInfo = document.createElement('label');
-  autogenerationInfo.classList.add('autogeneration-info');
-  autogenerationInfo.textContent = t('autoContinueGenerate');
-
-  const autogenerationCheckbox = document.createElement('input');
-  autogenerationCheckbox.type = 'checkbox';
-  autogenerationCheckbox.id = 'autogenerationCheckbox';
-  autogenerationCheckbox.checked = state.isAutoGenerationEnabled;
-
-  const autogenerationIcon = document.createElement('span');
-  autogenerationIcon.textContent = 'ℹ️';
-  autogenerationIcon.classList.add('hotkeys-icon');
-  autogenerationIcon.title = t('autoContinueTooltip');
-  const autogenerationControl = document.createElement('span');
-  autogenerationControl.classList.add('control-group');
-  autogenerationControl.appendChild(autogenerationCheckbox);
-  autogenerationControl.appendChild(autogenerationIcon);
-  autogenerationInfo.appendChild(autogenerationControl);
-  autogenerationContainer.appendChild(autogenerationInfo);
-  settingsContainer.appendChild(autogenerationContainer);
-
   const widthSliderContainer = document.createElement('div');
   widthSliderContainer.classList.add('width-slider-container', 'settings-card');
 
@@ -170,8 +146,8 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const widthSlider = document.createElement('input');
   widthSlider.type = 'range';
   widthSlider.id = 'contentWidthSlider';
-  widthSlider.min = '90';
-  widthSlider.max = '175';
+  widthSlider.min = '100';
+  widthSlider.max = '300';
   widthSlider.step = '5';
   widthSlider.value = state.contentWidth;
 
@@ -299,6 +275,35 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   keepMicOnRow.appendChild(keepMicOnLabel);
   autoSendOnSilenceContainer.appendChild(keepMicOnRow);
   autoSendOnSilenceContainer.appendChild(keepMicOnHint);
+
+  // Sound on auto-send option
+  const soundRow = document.createElement('div');
+  soundRow.classList.add('silence-autosend-row', 'sound-row');
+
+  const soundLabel = document.createElement('label');
+  soundLabel.classList.add('autogeneration-info');
+  soundLabel.textContent = t('soundOnAutoSend');
+
+  const soundCheckbox = document.createElement('input');
+  soundCheckbox.type = 'checkbox';
+  soundCheckbox.id = 'soundOnAutoSendCheckbox';
+  soundCheckbox.checked = Boolean(state.soundOnAutoSend);
+  const soundControl = document.createElement('span');
+  soundControl.classList.add('control-group');
+  soundControl.appendChild(soundCheckbox);
+  soundLabel.appendChild(soundControl);
+
+  soundCheckbox.addEventListener('change', () => {
+    setState({soundOnAutoSend: soundCheckbox.checked});
+  });
+
+  const soundHint = document.createElement('div');
+  soundHint.classList.add('setting-hint', 'info');
+  soundHint.textContent = t('soundOnAutoSendHint');
+
+  soundRow.appendChild(soundLabel);
+  autoSendOnSilenceContainer.appendChild(soundRow);
+  autoSendOnSilenceContainer.appendChild(soundHint);
   settingsContainer.appendChild(autoSendOnSilenceContainer);
   renderAutoSendOnSilenceDelay();
 
@@ -374,6 +379,121 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   pttContainer.appendChild(pttHint);
   settingsContainer.appendChild(pttContainer);
   renderPttState();
+
+  // Voice punctuation commands
+  const punctuationContainer = document.createElement('div');
+  punctuationContainer.classList.add('silence-autosend-container', 'settings-card');
+
+  const punctuationRow = document.createElement('div');
+  punctuationRow.classList.add('silence-autosend-row');
+
+  const punctuationLabel = document.createElement('label');
+  punctuationLabel.classList.add('autogeneration-info');
+  punctuationLabel.textContent = t('voicePunctuation');
+
+  const punctuationCheckbox = document.createElement('input');
+  punctuationCheckbox.type = 'checkbox';
+  punctuationCheckbox.id = 'voicePunctuationCheckbox';
+  punctuationCheckbox.checked = Boolean(state.isVoicePunctuationEnabled);
+  const punctuationControl = document.createElement('span');
+  punctuationControl.classList.add('control-group');
+  punctuationControl.appendChild(punctuationCheckbox);
+  punctuationLabel.appendChild(punctuationControl);
+
+  punctuationCheckbox.addEventListener('change', () => {
+    setState({isVoicePunctuationEnabled: punctuationCheckbox.checked});
+  });
+
+  const punctuationHint = document.createElement('div');
+  punctuationHint.classList.add('setting-hint', 'info');
+  punctuationHint.textContent = t('voicePunctuationHint');
+
+  punctuationRow.appendChild(punctuationLabel);
+  punctuationContainer.appendChild(punctuationRow);
+  punctuationContainer.appendChild(punctuationHint);
+  settingsContainer.appendChild(punctuationContainer);
+
+  // Word replacements dictionary
+  const replacementsContainer = document.createElement('div');
+  replacementsContainer.classList.add('silence-autosend-container', 'settings-card');
+
+  const replacementsTitle = document.createElement('div');
+  replacementsTitle.classList.add('language-list-info');
+  replacementsTitle.textContent = t('wordReplacements');
+
+  const replacementsHint = document.createElement('div');
+  replacementsHint.classList.add('setting-hint', 'info');
+  replacementsHint.textContent = t('wordReplacementsHint');
+
+  const replacementsList = document.createElement('div');
+  replacementsList.classList.add('replacements-list');
+
+  const renderReplacements = () => {
+    const current = getState().wordReplacements || [];
+    replacementsList.innerHTML = '';
+    current.forEach((rep, idx) => {
+      const row = document.createElement('div');
+      row.classList.add('replacement-row');
+
+      const fromInput = document.createElement('input');
+      fromInput.type = 'text';
+      fromInput.value = rep.from || '';
+      fromInput.placeholder = t('replacementFrom');
+      fromInput.classList.add('replacement-input');
+
+      const arrow = document.createElement('span');
+      arrow.textContent = '→';
+      arrow.classList.add('replacement-arrow');
+
+      const toInput = document.createElement('input');
+      toInput.type = 'text';
+      toInput.value = rep.to || '';
+      toInput.placeholder = t('replacementTo');
+      toInput.classList.add('replacement-input');
+
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = '×';
+      removeBtn.classList.add('replacement-remove');
+      removeBtn.setAttribute('aria-label', 'Remove');
+
+      const updateReplacement = () => {
+        const updated = [...getState().wordReplacements || []];
+        updated[idx] = {from: fromInput.value, to: toInput.value};
+        setState({wordReplacements: updated});
+      };
+      fromInput.addEventListener('input', updateReplacement);
+      toInput.addEventListener('input', updateReplacement);
+
+      removeBtn.addEventListener('click', () => {
+        const updated = [...getState().wordReplacements || []];
+        updated.splice(idx, 1);
+        setState({wordReplacements: updated});
+        renderReplacements();
+      });
+
+      row.appendChild(fromInput);
+      row.appendChild(arrow);
+      row.appendChild(toInput);
+      row.appendChild(removeBtn);
+      replacementsList.appendChild(row);
+    });
+  };
+
+  const addReplacementBtn = document.createElement('button');
+  addReplacementBtn.classList.add('add-replacement-button');
+  addReplacementBtn.textContent = t('addReplacement');
+  addReplacementBtn.addEventListener('click', () => {
+    const current = getState().wordReplacements || [];
+    setState({wordReplacements: [...current, {from: '', to: ''}]});
+    renderReplacements();
+  });
+
+  replacementsContainer.appendChild(replacementsTitle);
+  replacementsContainer.appendChild(replacementsHint);
+  replacementsContainer.appendChild(replacementsList);
+  replacementsContainer.appendChild(addReplacementBtn);
+  settingsContainer.appendChild(replacementsContainer);
+  renderReplacements();
 
   // Hotkeys info below Push-to-Talk, above Center buttons
   const hotkeysInfoContainer = document.createElement('div');
@@ -496,6 +616,42 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   closeButton.textContent = '×';
   closeButton.setAttribute('aria-label', 'Close');
   closeButton.addEventListener('click', closeModal);
+
+  // Theme selector — light / dark / system
+  const themeSelector = document.createElement('div');
+  themeSelector.classList.add('theme-selector');
+
+  const applyTheme = (theme) => {
+    const isDark = theme === 'dark' ||
+      (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    modal.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  };
+
+  const currentTheme = getState().theme || 'system';
+  applyTheme(currentTheme);
+
+  const themeOptions = [
+    {value: 'light', label: '☀'},
+    {value: 'system', label: '🖥'},
+    {value: 'dark', label: '🌙'},
+  ];
+
+  themeOptions.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.classList.add('theme-option');
+    btn.textContent = opt.label;
+    btn.title = opt.value;
+    if (opt.value === currentTheme) btn.classList.add('active');
+    btn.addEventListener('click', () => {
+      themeSelector.querySelectorAll('.theme-option').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      setState({theme: opt.value});
+      applyTheme(opt.value);
+    });
+    themeSelector.appendChild(btn);
+  });
+
+  headerActions.appendChild(themeSelector);
   headerActions.appendChild(closeButton);
 
   modalHeader.appendChild(modalTitle);
@@ -544,6 +700,19 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   donationContainer.appendChild(author);
   modalFooter.appendChild(donationContainer);
+
+  // Reset settings button
+  const resetButton = document.createElement('button');
+  resetButton.classList.add('reset-settings-button');
+  resetButton.textContent = t('resetSettings');
+  resetButton.addEventListener('click', () => {
+    if (confirm(t('resetSettingsConfirm'))) {
+      chrome.storage.local.clear(() => {
+        location.reload();
+      });
+    }
+  });
+  modalFooter.appendChild(resetButton);
 
   modal.appendChild(modalHeader);
   modal.appendChild(modalBody);

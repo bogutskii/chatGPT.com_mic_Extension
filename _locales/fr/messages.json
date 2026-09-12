@@ -51,20 +51,12 @@
     "message": "Tout désélectionner",
     "description": "Button to deselect all languages."
   },
-  "autoContinueGenerate": {
-    "message": "Continuer automatiquement les réponses :",
-    "description": "Label for the auto-continue checkbox."
-  },
-  "autoContinueTooltip": {
-    "message": "Si activé, délai de 2 secondes avant continuation automatique",
-    "description": "Tooltip for the auto-continue info icon."
-  },
   "adjustContentWidth": {
     "message": "Ajuster la largeur du contenu :",
     "description": "Label for the content width slider."
   },
   "contentWidthHint": {
-    "message": "Rendez la zone de réponses de ChatGPT plus large ou plus étroite. 100 % est la largeur par défaut, 90 % est légèrement plus étroite, 175 % est la plus large.",
+    "message": "Rendez la zone de réponses de ChatGPT plus large. 100 % est la largeur par défaut, jusqu'à 300 % pour les écrans très larges.",
     "description": "Indice expliquant le curseur de largeur du contenu."
   },
   "autoSendOnSilence": {
@@ -102,6 +94,62 @@
   "donate": {
     "message": "Faire un don",
     "description": "Link text for donation."
+  },
+  "resetSettings": {
+    "message": "Réinitialiser les paramètres",
+    "description": "Bouton pour réinitialiser tous les paramètres aux valeurs par défaut."
+  },
+  "resetSettingsConfirm": {
+    "message": "Réinitialiser tous les paramètres aux valeurs par défaut ? Cette action est irréversible.",
+    "description": "Confirmation de la réinitialisation."
+  },
+  "soundOnAutoSend": {
+    "message": "Son à l'envoi automatique",
+    "description": "Option : signal sonore à l'envoi automatique."
+  },
+  "soundOnAutoSendHint": {
+    "message": "Un bip court se fait entendre lorsque le message est envoyé automatiquement après le silence.",
+    "description": "Indice pour l'option de son d'envoi automatique."
+  },
+  "voicePunctuation": {
+    "message": "Commandes vocales de ponctuation",
+    "description": "Option : commandes vocales pour la ponctuation."
+  },
+  "voicePunctuationHint": {
+    "message": "Dites « virgule », « point », « point d'interrogation », « point d'exclamation », « nouvelle ligne » pour insérer la ponctuation pendant la dictée.",
+    "description": "Indice pour les commandes de ponctuation vocale."
+  },
+  "wordReplacements": {
+    "message": "Remplacement de mots",
+    "description": "Option : remplacement personnalisé de mots."
+  },
+  "wordReplacementsHint": {
+    "message": "Remplacez les mots reconnus par votre propre texte. Utile pour corriger les erreurs de reconnaissance ou insérer des phrases fréquemment utilisées.",
+    "description": "Indice pour le remplacement de mots."
+  },
+  "addReplacement": {
+    "message": "Ajouter un remplacement",
+    "description": "Bouton pour ajouter un nouveau remplacement de mot."
+  },
+  "replacementFrom": {
+    "message": "Mot reconnu",
+    "description": "Espace réservé pour le mot source."
+  },
+  "replacementTo": {
+    "message": "Remplacer par",
+    "description": "Espace réservé pour le texte de remplacement."
+  },
+  "onboardingTitle": {
+    "message": "Bienvenue sur Voice to Text !",
+    "description": "Titre de l'info-bulle au premier lancement."
+  },
+  "onboardingText": {
+    "message": "Cliquez sur le bouton du microphone pour commencer à dicter. Maintenez Ctrl+M pour basculer. Ouvrez les paramètres pour personnaliser les langues et le comportement.",
+    "description": "Texte de l'info-bulle au premier lancement."
+  },
+  "onboardingGotIt": {
+    "message": "Compris",
+    "description": "Bouton pour fermer l'info-bulle d'onboarding."
   },
   "hotkeys": {
     "message": "Raccourcis :",

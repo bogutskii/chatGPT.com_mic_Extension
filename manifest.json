@@ -46,7 +46,6 @@
         "state.js",
         "speech.js",
         "modal.js",
-        "autoGeneration.js",
         "widthAdjustment.js",
         "i18n.js",
         "changelog.js"

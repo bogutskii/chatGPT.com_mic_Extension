@@ -51,20 +51,12 @@
     "message": "Deseleccionar todos",
     "description": "Botón para deseleccionar todos los idiomas."
   },
-  "autoContinueGenerate": {
-    "message": "Continuar generando respuestas automáticamente:",
-    "description": "Etiqueta del checkbox de continuación automática."
-  },
-  "autoContinueTooltip": {
-    "message": "Continuar generando respuestas automáticamente con un retardo de 2 segundos",
-    "description": "Tooltip del icono de información de continuación automática."
-  },
   "adjustContentWidth": {
     "message": "Ancho del contenido:",
     "description": "Etiqueta del deslizador de ancho de contenido."
   },
   "contentWidthHint": {
-    "message": "Haz el área de respuestas de ChatGPT más ancha o más estrecha. 100% es el ancho predeterminado, 90% es ligeramente más estrecho, 175% es lo más ancho.",
+    "message": "Haz el área de respuestas de ChatGPT más ancha. 100% es el ancho predeterminado, hasta 300% para pantallas muy anchas.",
     "description": "Pista que explica el deslizador de ancho de contenido."
   },
   "autoSendOnSilence": {
@@ -102,6 +94,62 @@
   "donate": {
     "message": "Apoyar",
     "description": "Texto del enlace de donación."
+  },
+  "resetSettings": {
+    "message": "Restablecer ajustes",
+    "description": "Botón para restablecer todos los ajustes a los valores predeterminados."
+  },
+  "resetSettingsConfirm": {
+    "message": "¿Restablecer todos los ajustes a los valores predeterminados? Esta acción no se puede deshacer.",
+    "description": "Confirmación para restablecer los ajustes."
+  },
+  "soundOnAutoSend": {
+    "message": "Sonido al envío automático",
+    "description": "Opción: señal de sonido al envío automático."
+  },
+  "soundOnAutoSendHint": {
+    "message": "Suena un pitido corto cuando el mensaje se envía automáticamente tras el silencio.",
+    "description": "Pista para la opción de sonido de envío automático."
+  },
+  "voicePunctuation": {
+    "message": "Comandos de voz para puntuación",
+    "description": "Opción: comandos de voz para puntuación."
+  },
+  "voicePunctuationHint": {
+    "message": "Di «coma», «punto», «interrogación», «exclamación», «nueva línea» para insertar signos de puntuación mientras dictas.",
+    "description": "Pista para los comandos de puntuación por voz."
+  },
+  "wordReplacements": {
+    "message": "Reemplazo de palabras",
+    "description": "Opción: reemplazo personalizado de palabras."
+  },
+  "wordReplacementsHint": {
+    "message": "Reemplaza palabras reconocidas con tu propio texto. Útil para corregir errores de reconocimiento o insertar frases frecuentes.",
+    "description": "Pista para el reemplazo de palabras."
+  },
+  "addReplacement": {
+    "message": "Añadir reemplazo",
+    "description": "Botón para añadir un nuevo reemplazo de palabra."
+  },
+  "replacementFrom": {
+    "message": "Palabra reconocida",
+    "description": "Marcador de posición de la palabra de origen."
+  },
+  "replacementTo": {
+    "message": "Reemplazar con",
+    "description": "Marcador de posición del texto de reemplazo."
+  },
+  "onboardingTitle": {
+    "message": "¡Bienvenido a Voice to Text!",
+    "description": "Título de la sugerencia del primer uso."
+  },
+  "onboardingText": {
+    "message": "Haz clic en el botón del micrófono para empezar a dictar. Mantén Ctrl+M para alternar. Abre los ajustes para personalizar idiomas y comportamiento.",
+    "description": "Texto de la sugerencia del primer uso."
+  },
+  "onboardingGotIt": {
+    "message": "Entendido",
+    "description": "Botón para cerrar la sugerencia de onboarding."
   },
   "hotkeys": {
     "message": "Atajos de teclado:",
