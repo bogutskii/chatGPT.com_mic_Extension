@@ -116,7 +116,7 @@
     "description": "Opción: comandos de voz para puntuación."
   },
   "voicePunctuationHint": {
-    "message": "Di «coma», «punto», «interrogación», «exclamación», «nueva línea» para insertar signos de puntuación mientras dictas.",
+    "message": "Di los nombres de los signos — «coma», «punto», «nueva línea». Los comandos se reconocen automáticamente en el idioma de dictado (los comandos en inglés también funcionan). No se añade espacio antes del signo.",
     "description": "Pista para los comandos de puntuación por voz."
   },
   "wordReplacements": {
@@ -202,5 +202,21 @@
   "modalLabel": {
     "message": "Diálogo de ajustes",
     "description": "Etiqueta accesible del modal de ajustes."
+  },
+  "themeLight": {
+    "message": "Claro",
+    "description": "Light theme option."
+  },
+  "themeSystem": {
+    "message": "Sistema",
+    "description": "System theme option."
+  },
+  "themeDark": {
+    "message": "Oscuro",
+    "description": "Dark theme option."
+  },
+  "openSettings": {
+    "message": "Abrir ajustes",
+    "description": "Button in the extension popup that opens the settings modal."
   }
 }

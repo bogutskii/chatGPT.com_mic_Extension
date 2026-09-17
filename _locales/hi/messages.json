@@ -116,7 +116,7 @@
     "description": "ऑप्शन: विराम चिह्न के लिए वॉइस आदेश।"
   },
   "voicePunctuationHint": {
-    "message": "डिक्टेशन के दौरान \"कॉमा\", \"पूर्ण विराम\", \"प्रश्नवाचक\", \"विस्मयादिबोधक\", \"नई पंक्ति\" कहें।",
+    "message": "विराम चिह्नों के नाम बोलें — \"अल्पविराम\", \"पूर्ण विराम\", \"नई पंक्ति\"। कमांड आपकी डिक्टेशन भाषा में अपने आप पहचाने जाते हैं (अंग्रेज़ी कमांड भी काम करते हैं)। चिह्न से पहले कोई अतिरिक्त स्पेस नहीं जोड़ा जाता।",
     "description": "वॉइस विराम चिह्न आदेशों के लिए संकेत।"
   },
   "wordReplacements": {
@@ -202,5 +202,21 @@
   "modalLabel": {
     "message": "सेटिंग्स संवाद",
     "description": "Accessibility label for the settings modal."
+  },
+  "themeLight": {
+    "message": "लाइट",
+    "description": "Light theme option."
+  },
+  "themeSystem": {
+    "message": "सिस्टम",
+    "description": "System theme option."
+  },
+  "themeDark": {
+    "message": "डार्क",
+    "description": "Dark theme option."
+  },
+  "openSettings": {
+    "message": "सेटिंग्स खोलें",
+    "description": "Button in the extension popup that opens the settings modal."
   }
 }

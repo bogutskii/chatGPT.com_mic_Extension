@@ -116,7 +116,7 @@
     "description": "Opção: comandos de voz para pontuação."
   },
   "voicePunctuationHint": {
-    "message": "Diga «vírgula», «ponto», «interrogação», «exclamação», «nova linha» para inserir pontuação durante o ditado.",
+    "message": "Diga os nomes dos sinais — \"vírgula\", \"ponto\", \"nova linha\". Os comandos são reconhecidos automaticamente no idioma de ditado (comandos em inglês também funcionam). Nenhum espaço extra é adicionado antes do sinal.",
     "description": "Dica para os comandos de pontuação por voz."
   },
   "wordReplacements": {
@@ -202,5 +202,21 @@
   "modalLabel": {
     "message": "Diálogo de configurações",
     "description": "Etiqueta acessível do modal de configurações."
+  },
+  "themeLight": {
+    "message": "Claro",
+    "description": "Light theme option."
+  },
+  "themeSystem": {
+    "message": "Sistema",
+    "description": "System theme option."
+  },
+  "themeDark": {
+    "message": "Escuro",
+    "description": "Dark theme option."
+  },
+  "openSettings": {
+    "message": "Abrir configurações",
+    "description": "Button in the extension popup that opens the settings modal."
   }
 }

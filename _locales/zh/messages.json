@@ -116,7 +116,7 @@
     "description": "选项：用于标点的语音命令。"
   },
   "voicePunctuationHint": {
-    "message": "口述时说「逗号」「句号」「问号」「感叹号」「换行」来插入标点。",
+    "message": "说出标点名称，如\"逗号\"、\"句号\"、\"换行\"——命令会按您的听写语言自动识别（英文命令也始终有效），符号前不会添加多余空格。",
     "description": "语音标点命令的提示。"
   },
   "wordReplacements": {
@@ -202,5 +202,21 @@
   "modalLabel": {
     "message": "设置对话框",
     "description": "Accessibility label for the settings modal."
+  },
+  "themeLight": {
+    "message": "浅色",
+    "description": "Light theme option."
+  },
+  "themeSystem": {
+    "message": "系统",
+    "description": "System theme option."
+  },
+  "themeDark": {
+    "message": "深色",
+    "description": "Dark theme option."
+  },
+  "openSettings": {
+    "message": "打开设置",
+    "description": "Button in the extension popup that opens the settings modal."
   }
 }

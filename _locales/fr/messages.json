@@ -116,7 +116,7 @@
     "description": "Option : commandes vocales pour la ponctuation."
   },
   "voicePunctuationHint": {
-    "message": "Dites « virgule », « point », « point d'interrogation », « point d'exclamation », « nouvelle ligne » pour insérer la ponctuation pendant la dictée.",
+    "message": "Dictez les noms des signes — «virgule», «point», «nouvelle ligne». Les commandes sont reconnues automatiquement dans la langue de dictée (les commandes anglaises fonctionnent aussi). Aucun espace ajouté avant le signe.",
     "description": "Indice pour les commandes de ponctuation vocale."
   },
   "wordReplacements": {
@@ -202,5 +202,21 @@
   "modalLabel": {
     "message": "Boîte de dialogue des paramètres",
     "description": "Étiquette accessible du modal des paramètres."
+  },
+  "themeLight": {
+    "message": "Clair",
+    "description": "Light theme option."
+  },
+  "themeSystem": {
+    "message": "Système",
+    "description": "System theme option."
+  },
+  "themeDark": {
+    "message": "Sombre",
+    "description": "Dark theme option."
+  },
+  "openSettings": {
+    "message": "Ouvrir les paramètres",
+    "description": "Button in the extension popup that opens the settings modal."
   }
 }

@@ -23,7 +23,9 @@ Key features:
 - Push-to-Talk (walkie-talkie) mode — hold a key, speak, release to stop
 - Collapsible floating panel with drag-and-drop positioning
 - Adjustable ChatGPT content width
-- Auto-continue for long responses
+- Light / Dark / System theme selector
+- Voice punctuation commands in your dictation language (~30 languages)
+- Word replacements in any language
 - Support for multiple recognition languages
 
 Your voice data never leaves your device. All processing happens inside the browser using the built-in Web Speech API.
@@ -32,11 +34,14 @@ Your voice data never leaves your device. All processing happens inside the brow
 
 **Version 2.5**
 - Major performance optimization: smoother dragging, faster speech recognition rendering, and reduced main-thread work during ChatGPT streaming.
-- Cached input field and send button references — no more querySelector on every speech result or countdown tick.
-- Replaced deprecated execCommand with Range API for contenteditable input — eliminates forced reflow during dictation.
-- Single combined keydown listener for Ctrl+M and Push-to-Talk — less overhead on every keystroke.
-- Settings modal: entrance animation, focus trap, and ARIA labels for screen readers.
-- Narrowed MutationObserver from body to main — no longer fires on streaming tokens or overlays.
+- Theme selector: Light / Dark / System — dark mode is fully restyled and follows your OS live.
+- Voice punctuation commands now work in your dictation language (~30 languages) — say "comma" or "запятая" and get "," with no stray space.
+- Word replacements now work in any language and ignore case.
+- Language picker with instant search and a scrollable list.
+- Content width slider extended to 300% and made resilient to ChatGPT layout changes.
+- Extension popup: Center Mic, Center Panel, and Open Settings buttons.
+- Floating controls reliably keep their position — offscreen positions are recovered and clamped to the viewport.
+- Removed the obsolete "Auto continue" option.
 
 **Version 2.4**  
 - Settings modal visually refreshed with a modern header, card-based layout, two-column language grid, and a compact footer.
@@ -88,7 +93,9 @@ Version 2.0
 - Режим Push-to-Talk (как рация) — зажмите клавишу, говорите, отпустите — запись остановится
 - Сворачиваемая плавающая панель с возможностью перетаскивания
 - Регулировка ширины контента ChatGPT
-- Автопродолжение длинных ответов
+- Выбор темы: светлая / тёмная / системная
+- Голосовые команды пунктуации на языке диктовки (~30 языков)
+- Автозамена слов на любом языке
 - Поддержка множества языков распознавания
 
 Ваши голосовые данные не покидают устройство. Вся обработка происходит в браузере через встроенный Web Speech API.
@@ -97,11 +104,14 @@ Version 2.0
 
 **Версия 2.5**
 - Масштабная оптимизация производительности: более плавное перетаскивание, быстрая отрисовка распознавания речи, меньше нагрузки на главный поток при стриминге ChatGPT.
-- Кэширование поля ввода и кнопки отправки — больше нет querySelector при каждом результате речи или тике таймера.
-- Замена устаревшего execCommand на Range API для contenteditable — убран forced reflow во время диктовки.
-- Единый listener для Ctrl+M и Push-to-Talk — меньше накладных расходов на каждое нажатие.
-- Окно настроек: анимация появления, focus trap и ARIA-метки для скринридеров.
-- MutationObserver сужен с body до main — больше не срабатывает на стриминг токенов и оверлеи.
+- Выбор темы: Светлая / Тёмная / Системная — тёмный режим полностью переработан и следует за ОС в реальном времени.
+- Голосовые команды пунктуации теперь работают на языке диктовки (~30 языков) — скажите «запятая» или "comma" и получите «,» без лишнего пробела.
+- Автозамена слов теперь работает на любом языке и не зависит от регистра.
+- Выбор языка с мгновенным поиском и прокручиваемым списком.
+- Слайдер ширины контента расширен до 300% и устойчив к изменениям вёрстки ChatGPT.
+- Popup расширения: кнопки «Центрировать микрофон», «Центрировать панель» и «Открыть настройки».
+- Плавающие элементы надёжно держат позицию — позиции за пределами экрана восстанавливаются и прижимаются к краям.
+- Удалена устаревшая опция «Автопродолжение ответов».
 
 **Версия 2.4**  
 - Окно настроек обновлено внешне: современный заголовок, карточки, двухколоночная сетка языков и компактный подвал.
@@ -153,7 +163,9 @@ Características principales:
 - Modo Push-to-Talk (walkie-talkie) — mantén pulsada una tecla, habla, suelta para detener
 - Panel flotante plegable con posición arrastrable
 - Ajuste del ancho de contenido de ChatGPT
-- Continuación automática de respuestas largas
+- Selector de tema: claro / oscuro / sistema
+- Comandos de puntuación por voz en tu idioma de dictado (~30 idiomas)
+- Reemplazos de palabras en cualquier idioma
 - Soporte para múltiples idiomas de reconocimiento
 
 Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza dentro del navegador mediante la API Web Speech integrada.
@@ -161,12 +173,15 @@ Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza
 **Novedades**
 
 **Versión 2.5**
-- Optimización de rendimiento importante: arrastre más suave, renderizado de reconocimiento de voz más rápido y menos trabajo en el hilo principal durante el streaming de ChatGPT.
-- Campo de entrada y botón de envío en caché — sin querySelector en cada resultado de voz o tick del temporizador.
-- Reemplazo del obsoleto execCommand por Range API para contenteditable — elimina el reflow forzado durante el dictado.
-- Un único listener de teclado para Ctrl+M y Push-to-Talk — menos sobrecarga en cada pulsación.
-- Modal de ajustes: animación de entrada, focus trap y etiquetas ARIA para lectores de pantalla.
-- MutationObserver reducido de body a main — ya no se activa con tokens de streaming u overlays.
+- Optimización importante de rendimiento: arrastre más suave, renderizado de reconocimiento de voz más rápido y menos trabajo en el hilo principal durante el streaming de ChatGPT.
+- Selector de tema: Claro / Oscuro / Sistema — el modo oscuro está completamente rediseñado y sigue al SO en tiempo real.
+- Los comandos de puntuación por voz ahora funcionan en tu idioma de dictado (~30 idiomas) — di "coma" o "comma" y obtén "," sin espacio extra.
+- Los reemplazos de palabras ahora funcionan en cualquier idioma e ignoran mayúsculas.
+- Selector de idioma con búsqueda instantánea y lista desplazable.
+- Deslizador de ancho de contenido ampliado al 300% y resistente a los cambios de diseño de ChatGPT.
+- Popup de la extensión: botones Centrar micrófono, Centrar panel y Abrir ajustes.
+- Los controles flotantes mantienen su posición de forma fiable — las posiciones fuera de pantalla se recuperan y se ajustan al viewport.
+- Eliminada la opción obsoleta "Continuar automáticamente".
 
 **Versión 2.4**  
 - Modal de ajustes renovado visualmente: encabezado moderno, diseño de tarjetas, cuadrícula de idiomas en dos columnas y pie compacto.
@@ -218,7 +233,9 @@ Versión 2.0
 - Режим Push-to-Talk (як рація) — затисніть клавішу, говоріть, відпустіть — запис зупиниться
 - Згортна плаваюча панель з можливістю перетягування
 - Регулювання ширини контенту ChatGPT
-- Автопродовження довгих відповідей
+- Вибір теми: світла / темна / системна
+- Голосові команди розділових знаків мовою диктування (~30 мов)
+- Автозаміна слів будь-якою мовою
 - Підтримка багатьох мов розпізнавання
 
 Ваші голосові дані не залишають пристрій. Уся обробка відбувається в браузері через вбудований Web Speech API.
@@ -227,11 +244,14 @@ Versión 2.0
 
 **Версія 2.5**
 - Масштабна оптимізація продуктивності: плавніше перетягування, швидший рендерінг розпізнавання мови, менше навантаження на головний потік під час стрімінгу ChatGPT.
-- Кешування поля вводу та кнопки надсилання — більше немає querySelector при кожному результаті мови або тику таймера.
-- Заміна застарілого execCommand на Range API для contenteditable — прибрано forced reflow під час диктування.
-- Єдиний listener для Ctrl+M та Push-to-Talk — менше накладних витрат на кожне натискання.
-- Вікно налаштувань: анімація появи, focus trap та ARIA-мітки для скрінрідерів.
-- MutationObserver звужено з body до main — більше не спрацьовує на стрімінг токени та оверлеї.
+- Вибір теми: Світла / Темна / Системна — темний режим повністю перероблено та він слідкує за ОС у реальному часі.
+- Голосові команди розділових знаків тепер працюють мовою диктування (~30 мов) — скажіть «кома» або "comma" й отримайте «,» без зайвого пробілу.
+- Автозаміна слів тепер працює будь-якою мовою та не залежить від регістру.
+- Вибір мови з миттєвим пошуком та списком із прокручуванням.
+- Слайдер ширини контенту розширено до 300% і він стійкий до змін верстки ChatGPT.
+- Popup розширення: кнопки «Центрувати мікрофон», «Центрувати панель» та «Відкрити налаштування».
+- Плаваючі елементи надійно тримають позицію — позиції за межами екрана відновлюються та притискаються до країв.
+- Видалено застарілу опцію «Автопродовження відповідей».
 
 **Версія 2.4**  
 - Вікно налаштувань оновлено візуально: сучасний заголовок, картковий макет, двоколонкова сітка мов і компактний підвал.
@@ -283,7 +303,9 @@ ChatGPT 语音输入
 - 一键通（对讲机）模式 — 按住按键，说话，松开停止
 - 可折叠的浮动面板，可拖动定位
 - 调整 ChatGPT 内容宽度
-- 长回复自动继续
+- 主题选择器：浅色 / 深色 / 系统
+- 听写语言中的语音标点命令（约30种语言）
+- 任意语言的单词替换
 - 支持多种识别语言
 
 您的语音数据永远不会离开您的设备。所有处理都在浏览器内通过内置的 Web Speech API 完成。
@@ -292,11 +314,14 @@ ChatGPT 语音输入
 
 **版本 2.5**
 - 重大性能优化：更流畅的拖拽、更快的语音识别渲染，以及减少 ChatGPT 流式传输期间的主线程工作。
-- 缓存输入字段和发送按钮引用 — 不再在每次语音结果或计时器滴答时调用 querySelector。
-- 用 Range API 替换已弃用的 execCommand 处理 contenteditable — 消除听写期间的强制回流。
-- Ctrl+M 和一键通合并为单个键盘监听器 — 每次按键开销更小。
-- 设置弹窗：入场动画、焦点陷阱和屏幕阅读器 ARIA 标签。
-- MutationObserver 从 body 缩小到 main — 不再对流式标记或覆盖层触发。
+- 主题选择器：浅色 / 深色 / 系统 — 深色模式全面重新设计并实时跟随操作系统。
+- 语音标点命令现在支持您的听写语言（约30种语言）— 说"逗号"或"comma"即可得到","，不会有多余空格。
+- 单词替换现在支持任何语言且不区分大小写。
+- 语言选择器支持即时搜索和滚动列表。
+- 内容宽度滑块扩展至300%，并能适应 ChatGPT 布局变化。
+- 扩展弹出菜单：居中麦克风、居中面板和打开设置按钮。
+- 浮动控件可靠地保持位置 — 超出屏幕的位置会被恢复并限制在视口内。
+- 移除了过时的"自动继续"选项。
 
 **版本 2.4**  
 - 设置窗口视觉升级：现代标题、卡片布局、双列语言网格、紧凑页脚。
@@ -348,7 +373,9 @@ ChatGPT에서 음성을 텍스트로 변환하세요.
 - 푸시 투 토크(무전기) 모드 — 키를 누르고, 말하고, 놓으면 중지
 - 드래그 앤 드롭 위치 지정이 가능한 접이식 플로팅 패널
 - ChatGPT 콘텐츠 너비 조정
-- 긴 응답 자동 계속
+- 테마 선택기: 라이트 / 다크 / 시스템
+- 받아쓰기 언어의 음성 문장 부호 명령(~30개 언어)
+- 모든 언어의 단어 치환
 - 다양한 인식 언어 지원
 
 음성 데이터는 절대 기기를 떠나지 않습니다. 모든 처리는 내장된 Web Speech API를 사용하여 브라우저 내부에서 이루어집니다.
@@ -357,11 +384,14 @@ ChatGPT에서 음성을 텍스트로 변환하세요.
 
 **버전 2.5**
 - 주요 성능 최적화: 더 부드러운 드래그, 더 빠른 음성 인식 렌더링, ChatGPT 스트리밍 중 메인 스레드 작업 감소.
-- 입력 필드 및 전송 버튼 참조 캐싱 — 음성 결과나 타이머 틱마다 querySelector 없음.
-- contenteditable에 대해 더 이상 사용되지 않는 execCommand를 Range API로 교체 — 받아쓰기 중 강제 리플로우 제거.
-- Ctrl+M 및 Push-to-Talk을 위한 단일 키보드 리스너 — 키 입력마다 오버헤드 감소.
-- 설정 모달: 등장 애니메이션, 포커스 트랩 및 스크린 리더용 ARIA 라벨.
-- MutationObserver를 body에서 main으로 축소 — 스트리밍 토큰이나 오버레이에서 더 이상 트리거되지 않음.
+- 테마 선택기: 라이트 / 다크 / 시스템 — 다크 모드가 완전히 새로 디자인되고 OS를 실시간으로 따릅니다.
+- 음성 문장 부호 명령이 이제 받아쓰기 언어로 작동합니다(~30개 언어) — "쉼표" 또는 "comma"라고 말하면 불필요한 공백 없이 ","가 입력됩니다.
+- 단어 치환이 이제 모든 언어에서 작동하며 대소문자를 구분하지 않습니다.
+- 즉시 검색과 스크롤 목록이 있는 언어 선택기.
+- 콘텐츠 너비 슬라이더가 300%까지 확장되고 ChatGPT 레이아웃 변경에 강해졌습니다.
+- 확장 프로그램 팝업: 마이크 가운데 정렬, 패널 가운데 정렬, 설정 열기 버튼.
+- 플로팅 컨트롤이 위치를 안정적으로 유지 — 화면 밖 위치는 복구되어 뷰포트 안으로 제한됩니다.
+- 더 이상 사용되지 않는 "자동 계속" 옵션을 제거했습니다.
 
 **버전 2.4**  
 - 설정 모달 UI 개선: 현대적인 헤더, 카드 레이아웃, 2열 언어 그리드, 컴팩트한 푸터.
@@ -413,7 +443,9 @@ Fonctionnalités principales :
 - Mode Push-to-Talk (talkie-walkie) — maintenez la touche, parlez, relâchez pour arrêter
 - Panneau flottant pliable avec position glissante
 - Ajustement de la largeur du contenu ChatGPT
-- Continuation automatique des réponses longues
+- Sélecteur de thème : clair / sombre / système
+- Commandes vocales de ponctuation dans votre langue de dictée (~30 langues)
+- Remplacements de mots dans n'importe quelle langue
 - Prise en charge de plusieurs langues de reconnaissance
 
 Vos données vocales ne quittent jamais votre appareil. Tout le traitement s'effectue dans le navigateur via l'API Web Speech intégrée.
@@ -422,11 +454,14 @@ Vos données vocales ne quittent jamais votre appareil. Tout le traitement s'eff
 
 **Version 2.5**
 - Optimisation majeure des performances : glisser plus fluide, rendu plus rapide de la reconnaissance vocale et moins de travail sur le thread principal pendant le streaming de ChatGPT.
-- Champ de saisie et bouton d'envoi mis en cache — plus de querySelector à chaque résultat vocal ou tick du minuteur.
-- Remplacement du deprecated execCommand par l'API Range pour contenteditable — élimine le reflow forcé pendant la dictée.
-- Un seul listener clavier pour Ctrl+M et Push-to-Talk — moins de surcoût à chaque frappe.
-- Modal des paramètres : animation d'entrée, focus trap et étiquettes ARIA pour les lecteurs d'écran.
-- MutationObserver réduit de body à main — ne se déclenche plus sur les tokens de streaming ou les overlays.
+- Sélecteur de thème : Clair / Sombre / Système — le mode sombre est entièrement restylé et suit l'OS en temps réel.
+- Les commandes vocales de ponctuation fonctionnent désormais dans votre langue de dictée (~30 langues) — dites « virgule » ou "comma" et obtenez « , » sans espace superflu.
+- Les remplacements de mots fonctionnent désormais dans n'importe quelle langue et ignorent la casse.
+- Sélecteur de langue avec recherche instantanée et liste défilante.
+- Curseur de largeur de contenu étendu à 300 % et résistant aux changements de mise en page de ChatGPT.
+- Popup de l'extension : boutons Centrer le micro, Centrer le panneau et Ouvrir les paramètres.
+- Les contrôles flottants conservent leur position de façon fiable — les positions hors écran sont récupérées et limitées au viewport.
+- Suppression de l'option obsolète « Continuer automatiquement ».
 
 **Version 2.4**  
 - Modal des paramètres rafraîchi visuellement : en-tête moderne, disposition en cartes, grille de langues sur deux colonnes et pied de page compact.
@@ -478,7 +513,9 @@ Principais recursos:
 - Modo Push-to-Talk (rádio) — segure a tecla, fale, solte para parar
 - Painel flutuante dobrável com posição arrastável
 - Ajuste da largura do conteúdo do ChatGPT
-- Continuação automática de respostas longas
+- Seletor de tema: claro / escuro / sistema
+- Comandos de pontuação por voz no seu idioma de ditado (~30 idiomas)
+- Substituições de palavras em qualquer idioma
 - Suporte a vários idiomas de reconhecimento
 
 Seus dados de voz nunca saem do seu dispositivo. Todo o processamento ocorre dentro do navegador usando a API Web Speech integrada.
@@ -487,11 +524,14 @@ Seus dados de voz nunca saem do seu dispositivo. Todo o processamento ocorre den
 
 **Versão 2.5**
 - Otimização importante de desempenho: arrasto mais suave, renderização mais rápida do reconhecimento de voz e menos trabalho na thread principal durante o streaming do ChatGPT.
-- Campo de entrada e botão de envio em cache — sem querySelector a cada resultado de voz ou tick do temporizador.
-- Substituição do obsoleto execCommand pela API Range para contenteditable — elimina o reflow forçado durante o ditado.
-- Único listener de teclado para Ctrl+M e Push-to-Talk — menos sobrecarga em cada tecla.
-- Modal de configurações: animação de entrada, focus trap e rótulos ARIA para leitores de tela.
-- MutationObserver reduzido de body para main — não dispara mais em tokens de streaming ou overlays.
+- Seletor de tema: Claro / Escuro / Sistema — o modo escuro foi totalmente reformulado e segue o SO em tempo real.
+- Comandos de pontuação por voz agora funcionam no seu idioma de ditado (~30 idiomas) — diga "vírgula" ou "comma" e obtenha "," sem espaço extra.
+- Substituições de palavras agora funcionam em qualquer idioma e ignoram maiúsculas.
+- Seletor de idioma com busca instantânea e lista rolável.
+- Controle de largura de conteúdo estendido até 300% e resistente às mudanças de layout do ChatGPT.
+- Popup da extensão: botões Centralizar microfone, Centralizar painel e Abrir configurações.
+- Controles flutuantes mantêm a posição de forma confiável — posições fora da tela são recuperadas e limitadas ao viewport.
+- Removida a opção obsoleta "Continuar automaticamente".
 
 **Versão 2.4**  
 - Modal de configurações renovado visualmente: cabeçalho moderno, layout em cartões, grade de idiomas em duas colunas e rodapé compacto.
@@ -543,7 +583,9 @@ ChatGPT के लिए वॉइस टाइपिंग
 - पुश-टू-टॉक (वॉकी-टॉकी) मोड — कुंजी दबाएँ, बोलें, छोड़ें — रिकॉर्डिंग बंद
 - ड्रैग करने योग्य स्थिति के साथ फोल्डेबल फ्लोटिंग पैनल
 - ChatGPT सामग्री की चौड़ाई को समायोजित करें
-- लंबी प्रतिक्रियाओं को स्वचालित रूप से जारी रखें
+- थीम चयनकर्ता: लाइट / डार्क / सिस्टम
+- आपकी डिक्टेशन भाषा में वॉइस विराम चिह्न कमांड (~30 भाषाएँ)
+- किसी भी भाषा में शब्द प्रतिस्थापन
 - कई रिकग्निशन भाषाओं का समर्थन
 
 आपकी आवाज़ का डेटा कभी भी आपके डिवाइस को नहीं छोड़ता। सारी प्रोसेसिंग बिल्ट-इन Web Speech API के माध्यम से ब्राउज़र के अंदर होती है।
@@ -552,11 +594,14 @@ ChatGPT के लिए वॉइस टाइपिंग
 
 **संस्करण 2.5**
 - प्रमुख प्रदर्शन अनुकूलन: अधिक सहज ड्रैगिंग, तेज़ भाषण पहचान रेंडरिंग, और ChatGPT स्ट्रीमिंग के दौरान कम मेन-थ्रेड कार्य।
-- कैश्ड इनपुट फ़ील्ड और सेंड बटन संदर्भ — हर भाषण परिणाम या टाइमर टिक पर querySelector नहीं।
-- contenteditable के लिए deprecated execCommand को Range API से बदला — डिक्टेशन के दौरान forced reflow समाप्त।
-- Ctrl+M और Push-to-Talk के लिए एकल कीबोर्ड listener — हर कीस्ट्रोक पर कम ओवरहेड।
-- सेटिंग्स मोडल: एंट्री एनिमेशन, फोकस ट्रैप और स्क्रीन रीडर के लिए ARIA लेबल।
-- MutationObserver को body से main तक सीमित किया — स्ट्रीमिंग टोकन या ओवरले पर अब सक्रिय नहीं।
+- थीम चयनकर्ता: लाइट / डार्क / सिस्टम — डार्क मोड पूरी तरह नया है और OS को रीयल-टाइम में फ़ॉलो करता है।
+- वॉइस विराम चिह्न कमांड अब आपकी डिक्टेशन भाषा में काम करती हैं (~30 भाषाएँ) — "comma" या "अल्पविराम" बोलें और बिना अतिरिक्त स्पेस के "," पाएँ।
+- शब्द प्रतिस्थापन अब किसी भी भाषा में काम करते हैं और अपरकेस/लोअरकेस को अनदेखा करते हैं।
+- तुरंत खोज और स्क्रॉल करने योग्य सूची के साथ भाषा चयनकर्ता।
+- कंटेंट चौड़ाई स्लाइडर 300% तक बढ़ाया गया और ChatGPT लेआउट बदलावों के प्रति मज़बूत बनाया गया।
+- एक्सटेंशन पॉपअप: माइक्रोफ़ोन केंद्रित करें, पैनल केंद्रित करें और सेटिंग्स खोलें बटन।
+- फ़्लोटिंग कंट्रोल अपनी स्थिति विश्वसनीय रूप से बनाए रखते हैं — स्क्रीन से बाहर की स्थितियाँ पुनर्प्राप्त होकर व्यूपोर्ट तक सीमित होती हैं।
+- अप्रचलित "ऑटो कंटिन्यू" विकल्प हटा दिया गया।
 
 **संस्करण 2.4**  
 - सेटिंग्स मोडल को दिखने में नया रूप दिया गया: आधुनिक हेडर, कार्ड लेआउट, दो-कॉलम भाषा ग्रिड और कॉम्पैक्ट फुटर।

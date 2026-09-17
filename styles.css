@@ -665,6 +665,10 @@ input[type="range"]::-moz-range-thumb:hover {
 
 #floatingMicButtonContainer {
     position: fixed;
+    /* Fallback position — JS overrides with left/top; never leave the
+       button at the static position on the left edge if init fails. */
+    right: 16px;
+    bottom: 90px;
     z-index: 10001;
     padding: 8px 12px;
     cursor: move;
@@ -1137,14 +1141,15 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 /* ===== Dark theme ===== */
-/* Applied via data-theme="dark" on the modal root element. */
-/* Also auto-applies when system prefers dark and user selected "system". */
-[data-theme="dark"] .modal {
+/* Applied via data-theme="dark" on the modal root element itself, */
+/* so the modal needs .modal[data-theme="dark"] to match. */
+.modal[data-theme="dark"] {
     background: #1e1e2e;
     color: #e0e0e0;
 }
 
 [data-theme="dark"] .modal-header {
+    background: #232338;
     border-bottom-color: #2e2e3e;
 }
 
@@ -1180,8 +1185,20 @@ input[type="range"]::-moz-range-thumb:hover {
     border-color: #3a3a4a;
 }
 
+[data-theme="dark"] .language-item {
+    color: #d8d8e8;
+}
+
 [data-theme="dark"] .language-item:hover {
     background-color: rgba(139, 92, 246, 0.15);
+}
+
+[data-theme="dark"] .language-list::-webkit-scrollbar-thumb {
+    background: #4a4a5e;
+}
+
+[data-theme="dark"] .language-list::-webkit-scrollbar-thumb:hover {
+    background: #5a5a70;
 }
 
 [data-theme="dark"] .language-search {
@@ -1272,6 +1289,143 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 [data-theme="dark"] .modal-close-btn {
+    background: #2a2a3e;
+    color: #b0b0c0;
+}
+
+[data-theme="dark"] .modal-close-btn:hover {
+    background: #3a3a50;
+    color: #e0e0e0;
+}
+
+/* Select dropdowns (e.g. Push-to-Talk combo) */
+[data-theme="dark"] .silence-delay-control select,
+[data-theme="dark"] .ptt-key-select {
+    background: #1e1e2e;
+    border-color: #3a3a4a;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .silence-delay-control select:hover:not(:disabled) {
+    border-color: #8b5cf6;
+}
+
+/* Slider value badge ("5s", "195%") */
+[data-theme="dark"] .silence-delay-value {
+    color: #ddd6fe;
+}
+
+[data-theme="dark"] .silence-delay-value.disabled {
+    color: #6b7280;
+}
+
+/* Hotkeys info row */
+[data-theme="dark"] .hotkeys-info-container {
+    background: #252535;
+    color: #b0b0c0;
+}
+
+[data-theme="dark"] .hotkeys-info-title {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .hotkeys-info,
+[data-theme="dark"] .hotkeys-info b {
+    color: #c4b5fd;
+}
+
+[data-theme="dark"] .hotkeys-icon {
+    color: #b0b0c0;
+}
+
+/* Footer links */
+[data-theme="dark"] .donation-link,
+[data-theme="dark"] .linkedin-link,
+[data-theme="dark"] .github-link {
+    color: #b0b0c0;
+    border-color: #3a3a4a;
+}
+
+[data-theme="dark"] .donation-link:hover,
+[data-theme="dark"] .linkedin-link:hover,
+[data-theme="dark"] .github-link:hover {
+    color: #ddd6fe;
+    background-color: rgba(139, 92, 246, 0.15);
+    border-color: rgba(139, 92, 246, 0.5);
+}
+
+[data-theme="dark"] .author {
+    color: #7a7a8e;
+}
+
+/* Version badge in header */
+[data-theme="dark"] .changelog-badge {
+    color: #c4b5fd;
+    background: rgba(139, 92, 246, 0.18);
+    border-color: rgba(139, 92, 246, 0.4);
+}
+
+[data-theme="dark"] .changelog-badge:hover {
+    background: rgba(139, 92, 246, 0.28);
+}
+
+[data-theme="dark"] .changelog-tooltip {
+    background: #252535;
+    color: #d8d8e8;
+    border-color: #3a3a4a;
+}
+
+/* ===== Dark theme for floating elements ===== */
+/* These live on <body>, outside the modal, so they use the */
+/* data-vtt-theme attribute set on documentElement. */
+[data-vtt-theme="dark"] .silence-send-timer-progress::after {
+    background: #252535;
+}
+
+[data-vtt-theme="dark"] .silence-send-timer-value {
+    color: #ddd6fe;
+}
+
+[data-vtt-theme="dark"] .silence-send-timer.paused .silence-send-timer-value {
+    color: #7a7a8e;
+}
+
+/* Floating panel (language selector + settings button) */
+[data-vtt-theme="dark"] .mainMenu-container {
+    background: rgba(30, 30, 46, 0.92);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(139, 92, 246, 0.25);
+}
+
+[data-vtt-theme="dark"] .mainMenu-container .select {
+    background: #252535;
+    border-color: #3a3a4a;
+    color: #e0e0e0;
+}
+
+[data-vtt-theme="dark"] .mainMenu-container .drag-handle {
+    background: rgba(139, 92, 246, 0.25);
+}
+
+[data-vtt-theme="dark"] .collapse-toggle {
+    background: rgba(139, 92, 246, 0.18);
+    color: #c4b5fd;
+}
+
+[data-vtt-theme="dark"] .collapse-toggle:hover {
+    background: rgba(139, 92, 246, 0.32);
+}
+
+/* Onboarding tooltip (floating, appended to body) */
+[data-vtt-theme="dark"] .onboarding-tooltip {
+    background: #252535;
+    border-color: #3a3a4a;
+}
+
+[data-vtt-theme="dark"] .onboarding-title {
+    color: #e0e0e0;
+}
+
+[data-vtt-theme="dark"] .onboarding-text {
     color: #b0b0c0;
 }
 
@@ -1282,16 +1436,18 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 .theme-option {
-    flex: 1;
-    padding: 6px 10px;
+    flex: 0 0 auto;
+    padding: 5px 10px;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     background: #fff;
     color: #6b7280;
     font-size: 12px;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.15s ease;
     text-align: center;
+    white-space: nowrap;
 }
 
 .theme-option:hover {

@@ -116,7 +116,7 @@
     "description": "Option to enable voice commands for punctuation."
   },
   "voicePunctuationHint": {
-    "message": "Say \"comma\", \"period\", \"question mark\", \"exclamation\", \"new line\" or \"newline\" to insert punctuation while dictating.",
+    "message": "Say punctuation names like \"comma\", \"period\", \"question mark\", \"new line\" — commands are recognized in your dictation language automatically (English commands always work too). No extra space is added before the mark.",
     "description": "Hint for voice punctuation commands."
   },
   "wordReplacements": {
@@ -202,5 +202,21 @@
   "modalLabel": {
     "message": "Settings dialog",
     "description": "Accessible label for the settings modal."
+  },
+  "themeLight": {
+    "message": "Light",
+    "description": "Light theme option."
+  },
+  "themeSystem": {
+    "message": "System",
+    "description": "System theme option."
+  },
+  "themeDark": {
+    "message": "Dark",
+    "description": "Dark theme option."
+  },
+  "openSettings": {
+    "message": "Open Settings",
+    "description": "Button in the extension popup that opens the settings modal."
   }
 }

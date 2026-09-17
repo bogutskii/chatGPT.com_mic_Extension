@@ -32,4 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (centerPanelBtn) {
     centerPanelBtn.addEventListener('click', () => sendTabMessage('centerPanel'));
   }
+
+  const openSettingsBtn = document.getElementById('openSettings');
+  if (openSettingsBtn) {
+    openSettingsBtn.addEventListener('click', () => sendTabMessage('openSettings'));
+  }
 });

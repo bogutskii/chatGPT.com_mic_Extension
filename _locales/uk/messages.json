@@ -116,7 +116,7 @@
     "description": "Опція: голосові команди для пунктуації."
   },
   "voicePunctuationHint": {
-    "message": "Скажіть «кома», «крапка», «питання», «знак оклику», «новий рядок» для вставлення розділових знаків під час диктування.",
+    "message": "Вимовляйте назви знаків — «кома», «крапка», «новий рядок». Команди розпізнаються мовою диктування автоматично (англійські команди теж працюють). Зайвий пробіл перед знаком не ставиться.",
     "description": "Підказка до голосових команд пунктуації."
   },
   "wordReplacements": {
@@ -202,5 +202,21 @@
   "modalLabel": {
     "message": "Вікно налаштувань",
     "description": "Доступна підпис модального вікна налаштувань."
+  },
+  "themeLight": {
+    "message": "Світла",
+    "description": "Light theme option."
+  },
+  "themeSystem": {
+    "message": "Системна",
+    "description": "System theme option."
+  },
+  "themeDark": {
+    "message": "Темна",
+    "description": "Dark theme option."
+  },
+  "openSettings": {
+    "message": "Відкрити налаштування",
+    "description": "Button in the extension popup that opens the settings modal."
   }
 }

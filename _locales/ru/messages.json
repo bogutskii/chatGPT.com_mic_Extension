@@ -116,7 +116,7 @@
     "description": "Опция: голосовые команды для пунктуации."
   },
   "voicePunctuationHint": {
-    "message": "Скажите «запятая», «точка», «вопрос», «восклицание», «новая строка» для вставки знаков препинания во время диктовки.",
+    "message": "Говорите названия знаков — «запятая», «точка», «новая строка». Команды распознаются на языке диктовки автоматически (английские команды тоже работают). Лишний пробел перед знаком не ставится.",
     "description": "Подсказка к голосовым командам пунктуации."
   },
   "wordReplacements": {
@@ -202,5 +202,21 @@
   "modalLabel": {
     "message": "Окно настроек",
     "description": "Доступная подпись модального окна настроек."
+  },
+  "themeLight": {
+    "message": "Светлая",
+    "description": "Light theme option."
+  },
+  "themeSystem": {
+    "message": "Системная",
+    "description": "System theme option."
+  },
+  "themeDark": {
+    "message": "Тёмная",
+    "description": "Dark theme option."
+  },
+  "openSettings": {
+    "message": "Открыть настройки",
+    "description": "Button in the extension popup that opens the settings modal."
   }
 }

@@ -106,8 +106,24 @@ const writeInputValue = (value) => {
   }
 };
 
+// Characters that must not be preceded by a space when joining fragments.
+const NO_LEADING_SPACE_RE = /^[\n,.!?;:)\]}»”…，。、！？；：؟؛،]/;
+
+const joinTranscriptParts = (existing, fragment) => {
+  if (!existing) {
+    return fragment;
+  }
+  if (!fragment) {
+    return existing;
+  }
+  if (existing.endsWith('\n') || NO_LEADING_SPACE_RE.test(fragment)) {
+    return existing + fragment;
+  }
+  return `${existing} ${fragment}`;
+};
+
 const applyTranscriptsToInput = () => {
-  const text = [baseTranscript, finalTranscript, interimTranscript].filter(Boolean).join(' ');
+  const text = [baseTranscript, finalTranscript, interimTranscript].filter(Boolean).reduce(joinTranscriptParts, '');
   writeInputValue(text);
 };
 
@@ -558,49 +574,110 @@ const resolveCurrentTabId = async () => {
   document.body.appendChild(floatingButtonContainer);
 
   const updateFloatingButtonPosition = (x, y) => {
+    // Clear CSS right/bottom fallback so left/top take effect.
+    floatingButtonContainer.style.right = 'auto';
+    floatingButtonContainer.style.bottom = 'auto';
     floatingButtonContainer.style.left = `${x}px`;
     floatingButtonContainer.style.top = `${y}px`;
     setState({floatingButtonX: x, floatingButtonY: y});
   };
 
+  // True when the element at (x, y) is fully outside the current viewport.
+  const isOffscreen = (x, y, width, height) =>
+    x + width < 0 || y + height < 0 || x > window.innerWidth || y > window.innerHeight;
+
+  // Clamp a position so the element stays fully inside the viewport.
+  const clampToViewport = (x, y, width, height) => ({
+    x: Math.max(0, Math.min(x, Math.max(0, window.innerWidth - width))),
+    y: Math.max(0, Math.min(y, Math.max(0, window.innerHeight - height))),
+  });
+
+  // Old storage may hold non-numeric leftovers (e.g. "500px" strings or
+  // null) — NaN makes style.left an invalid value and the element falls
+  // back to its static position on the left edge. Normalize first.
+  const parsePos = (v) => {
+    const n = typeof v === 'string' ? parseFloat(v) : v;
+    return Number.isFinite(n) ? n : undefined;
+  };
+
+  // Default placement for the very first run (no saved position): center
+  // of the viewport. `shiftX` places an element to the left of its
+  // neighbour so the controls sit side by side.
+  const getDefaultAnchoredPosition = (width, height, shiftX = 0) => {
+    const x = (window.innerWidth - width) / 2 - shiftX;
+    const y = (window.innerHeight - height) / 2;
+    return clampToViewport(x, y, width, height);
+  };
+
+  // Mic defaults to the left of the panel (panel width is unknown until
+  // initPanel runs), so initFloatingButtonPosition is invoked after it.
   const initFloatingButtonPosition = () => {
-    const {floatingButtonX, floatingButtonY} = getState();
-    if (floatingButtonX !== undefined && floatingButtonY !== undefined) {
-      updateFloatingButtonPosition(floatingButtonX, floatingButtonY);
-    } else {
-      const centerX = window.innerWidth / 2 - floatingButtonContainer.offsetWidth / 2;
-      const centerY = window.innerHeight / 2 - floatingButtonContainer.offsetHeight / 2;
-      updateFloatingButtonPosition(centerX, centerY);
+    try {
+      const {floatingButtonX, floatingButtonY} = getState();
+      const savedX = parsePos(floatingButtonX);
+      const savedY = parsePos(floatingButtonY);
+      const w = floatingButtonContainer.offsetWidth;
+      const h = floatingButtonContainer.offsetHeight;
+      const shiftX = container.offsetWidth + 8;
+      const target = (savedX === undefined || savedY === undefined ||
+          isOffscreen(savedX, savedY, w, h))
+        ? getDefaultAnchoredPosition(w, h, shiftX)
+        : clampToViewport(savedX, savedY, w, h);
+      // left/top are written together with clearing right/bottom inside
+      // updateFloatingButtonPosition; if this throws, the CSS fallback
+      // keeps the mic in the bottom-right corner.
+      updateFloatingButtonPosition(target.x, target.y);
+    } catch (e) {
+      console.warn('[VoiceToText] Mic init failed, using CSS fallback:', e);
     }
   };
 
-  initFloatingButtonPosition();
-
   // Always use custom mode - allow dragging to any position
   const initPanel = () => {
-    container.classList.add('position-custom', 'draggable');
-    // Reset conflicting CSS properties
-    container.style.right = 'auto';
-    container.style.bottom = 'auto';
-    const { panelX, panelY, isPanelMinimized } = getState();
+    try {
+      const { panelX, panelY, isPanelMinimized } = getState();
 
-    if (panelX !== undefined && panelY !== undefined) {
-      container.style.left = `${panelX}px`;
-      container.style.top = `${panelY}px`;
-    } else {
-      // Default to bottom-right corner
-      const defaultX = window.innerWidth - container.offsetWidth - 16;
-      const defaultY = window.innerHeight - container.offsetHeight - 16;
-      container.style.left = `${defaultX}px`;
-      container.style.top = `${defaultY}px`;
-      setState({ panelX: defaultX, panelY: defaultY });
-    }
+      const w = container.offsetWidth;
+      const h = container.offsetHeight;
+      const savedX = parsePos(panelX);
+      const savedY = parsePos(panelY);
 
-    // Restore minimized state
-    if (isPanelMinimized) {
-      container.classList.add('minimized');
+      let target;
+      let shouldSave = false;
+      if (savedX === undefined || savedY === undefined ||
+          isOffscreen(savedX, savedY, w, h)) {
+        target = getDefaultAnchoredPosition(w, h);
+        shouldSave = true;
+      } else {
+        target = clampToViewport(savedX, savedY, w, h);
+        shouldSave = target.x !== panelX || target.y !== panelY;
+      }
+
+      // Write left/top together with clearing right/bottom. If anything
+      // above throws, the CSS default keeps the panel in the bottom-right
+      // corner instead of falling back to the static position (left edge).
+      container.style.left = `${target.x}px`;
+      container.style.top = `${target.y}px`;
+      container.style.right = 'auto';
+      container.style.bottom = 'auto';
+      container.classList.add('position-custom', 'draggable');
+
+      // setState notifies subscribers — run it last and never let a
+      // listener failure leave the panel unpositioned.
+      try {
+        if (shouldSave) setState({ panelX: target.x, panelY: target.y });
+      } catch (e) {
+        console.warn('[VoiceToText] Failed to persist panel position:', e);
+      }
+
+      // Restore minimized state
+      if (isPanelMinimized) {
+        container.classList.add('minimized');
+      }
+      updateToggleArrow();
+    } catch (e) {
+      console.warn('[VoiceToText] Panel init failed, using CSS fallback:', e);
     }
-    updateToggleArrow();
   };
 
   // Panel drag functionality
@@ -719,6 +796,10 @@ const resolveCurrentTabId = async () => {
           sendResponse({ success: true });
           return true;
         }
+        case 'openSettings':
+          openModal();
+          sendResponse({ success: true });
+          return true;
         case 'stopRecognitionIfActive':
           stopRecognitionLocally();
           floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
@@ -774,6 +855,8 @@ const resolveCurrentTabId = async () => {
       // Reset transform BEFORE removing .dragging class so the reset
       // happens with transition disabled (no "snap-back" animation).
       floatingButtonContainer.style.transform = '';
+      floatingButtonContainer.style.right = 'auto';
+      floatingButtonContainer.style.bottom = 'auto';
       floatingButtonContainer.style.left = `${clampedX}px`;
       floatingButtonContainer.style.top = `${clampedY}px`;
       // Force reflow so the transform reset is committed without transition
@@ -935,6 +1018,8 @@ const resolveCurrentTabId = async () => {
 
   // Initialize panel position after it's in DOM
   initPanel();
+  // Mic sits left of the panel — needs the panel width measured first.
+  initFloatingButtonPosition();
 
   const modal = createModal();
   const modalOverlay = createModalOverlay();
@@ -1102,7 +1187,8 @@ const resolveCurrentTabId = async () => {
     floatingMicButton.classList.remove('ptt-active');
   };
 
-  // Voice punctuation command mappings per locale.
+  // Voice punctuation command mappings per language.
+  // English commands are merged into every language so they always work.
   const PUNCTUATION_MAP = {
     en: {
       'comma': ',', 'period': '.', 'full stop': '.',
@@ -1113,15 +1199,16 @@ const resolveCurrentTabId = async () => {
       'open quote': '"', 'close quote': '"',
     },
     ru: {
-      'запятая': ',', 'точка': '.', 'вопрос': '?', 'вопросительный знак': '?',
-      'восклицание': '!', 'восклицательный знак': '!',
-      'новая строка': '\n', 'новая строка': '\n', 'абзац': '\n',
+      'запятая': ',', 'точка': '.', 'вопросительный знак': '?',
+      'восклицательный знак': '!',
+      'новая строка': '\n', 'новый абзац': '\n', 'абзац': '\n',
       'точка с запятой': ';', 'двоеточие': ':', 'тире': '—', 'дефис': '-',
       'открывающая скобка': '(', 'закрывающая скобка': ')',
-      'кавычка': '"',
+      'открыть скобку': '(', 'закрыть скобку': ')',
+      'кавычки': '"', 'кавычка': '"',
     },
     uk: {
-      'кома': ',', 'крапка': '.', 'питання': '?', 'знак оклику': '!',
+      'кома': ',', 'крапка': '.', 'знак питання': '?', 'знак оклику': '!',
       'новий рядок': '\n', 'крапка з комою': ';', 'двокрапка': ':',
       'тире': '—', 'дефіс': '-',
     },
@@ -1129,45 +1216,205 @@ const resolveCurrentTabId = async () => {
       'coma': ',', 'punto': '.', 'signo de interrogación': '?',
       'signo de exclamación': '!', 'nueva línea': '\n',
       'punto y coma': ';', 'dos puntos': ':', 'guión': '—',
+      'abre paréntesis': '(', 'cierra paréntesis': ')',
     },
     fr: {
       'virgule': ',', 'point': '.', "point d'interrogation": '?',
       "point d'exclamation": '!', 'nouvelle ligne': '\n',
       'point-virgule': ';', 'deux points': ':', 'tiret': '—',
+      'ouvrez parenthèse': '(', 'fermez parenthèse': ')',
     },
     pt: {
       'vírgula': ',', 'ponto': '.', 'ponto de interrogação': '?',
       'ponto de exclamação': '!', 'nova linha': '\n',
       'ponto e vírgula': ';', 'dois pontos': ':', 'traço': '—',
+      'abre parêntese': '(', 'fecha parêntese': ')',
     },
     de: {
       'komma': ',', 'punkt': '.', 'fragezeichen': '?',
       'ausrufezeichen': '!', 'neue zeile': '\n',
-      'semikolon': ';', 'doppelpunkt': ':', 'strich': '—',
+      'semikolon': ';', 'doppelpunkt': ':', 'bindestrich': '-', 'gedankenstrich': '—',
+      'klammer auf': '(', 'klammer zu': ')',
+    },
+    it: {
+      'virgola': ',', 'punto': '.', 'punto interrogativo': '?',
+      'punto esclamativo': '!', 'nuova riga': '\n', 'a capo': '\n',
+      'punto e virgola': ';', 'due punti': ':', 'trattino': '—',
+      'apri parentesi': '(', 'chiudi parentesi': ')',
+    },
+    nl: {
+      'komma': ',', 'punt': '.', 'vraagteken': '?', 'uitroepteken': '!',
+      'nieuwe regel': '\n', 'puntkomma': ';', 'dubbele punt': ':',
+      'koppelteken': '-', 'gedachtestreep': '—',
+      'haakje openen': '(', 'haakje sluiten': ')',
+    },
+    pl: {
+      'przecinek': ',', 'kropka': '.', 'znak zapytania': '?', 'pytajnik': '?',
+      'wykrzyknik': '!', 'nowa linia': '\n', 'nowy wiersz': '\n',
+      'średnik': ';', 'dwukropek': ':', 'myślnik': '—',
+      'otwórz nawias': '(', 'zamknij nawias': ')',
+    },
+    tr: {
+      'virgül': ',', 'nokta': '.', 'soru işareti': '?', 'ünlem': '!', 'ünlem işareti': '!',
+      'yeni satır': '\n', 'noktalı virgül': ';', 'iki nokta': ':', 'tire': '—',
+      'parantez aç': '(', 'parantez kapat': ')',
+    },
+    sv: {
+      'komma': ',', 'punkt': '.', 'frågetecken': '?', 'utropstecken': '!',
+      'ny rad': '\n', 'semikolon': ';', 'kolon': ':', 'bindestreck': '-',
+      'vänsterparentes': '(', 'högerparentes': ')',
+    },
+    no: {
+      'komma': ',', 'punktum': '.', 'spørsmålstegn': '?', 'utropstegn': '!',
+      'ny linje': '\n', 'semikolon': ';', 'kolon': ':', 'tankestrek': '—',
+      'åpne parentes': '(', 'lukk parentes': ')',
+    },
+    da: {
+      'komma': ',', 'punktum': '.', 'spørgsmålstegn': '?', 'udråbstegn': '!',
+      'ny linje': '\n', 'semikolon': ';', 'kolon': ':', 'tankestreg': '—',
+    },
+    fi: {
+      'pilkku': ',', 'piste': '.', 'kysymysmerkki': '?', 'huutomerkki': '!',
+      'uusi rivi': '\n', 'puolipiste': ';', 'kaksoispiste': ':', 'ajatusviiva': '—',
+    },
+    cs: {
+      'čárka': ',', 'tečka': '.', 'otazník': '?', 'vykřičník': '!',
+      'nový řádek': '\n', 'středník': ';', 'dvojtečka': ':', 'pomlčka': '—',
+      'otevřít závorku': '(', 'zavřít závorku': ')',
+    },
+    sk: {
+      'čiarka': ',', 'bodka': '.', 'otáznik': '?', 'výkričník': '!',
+      'nový riadok': '\n', 'bodkočiarka': ';', 'dvojbodka': ':', 'pomlčka': '—',
+    },
+    hr: {
+      'zarez': ',', 'točka': '.', 'upitnik': '?', 'uskličnik': '!',
+      'novi red': '\n', 'točka zarez': ';', 'dvotočje': ':', 'crtica': '—',
+    },
+    sl: {
+      'vejica': ',', 'pika': '.', 'vprašaj': '?', 'klicaj': '!',
+      'nova vrstica': '\n', 'podpičje': ';', 'dvopičje': ':', 'pomišljaj': '—',
+    },
+    ro: {
+      'virgulă': ',', 'punct': '.', 'semnul întrebării': '?', 'semnul exclamării': '!',
+      'linie nouă': '\n', 'rând nou': '\n', 'punct și virgulă': ';', 'două puncte': ':',
+    },
+    bg: {
+      'запетая': ',', 'точка': '.', 'въпросителен знак': '?', 'въпросителна': '?',
+      'удивителен знак': '!', 'удивителна': '!',
+      'нов ред': '\n', 'точка и запетая': ';', 'двоеточие': ':', 'тире': '—',
+    },
+    el: {
+      'κόμμα': ',', 'τελεία': '.', 'ερωτηματικό': ';', 'θαυμαστικό': '!',
+      'νέα γραμμή': '\n', 'άνω κάτω τελεία': ':', 'παύλα': '—',
+    },
+    he: {
+      'פסיק': ',', 'נקודה': '.', 'סימן שאלה': '?', 'סימן קריאה': '!',
+      'שורה חדשה': '\n', 'נקודה פסיק': ';', 'נקודתיים': ':', 'מקף': '-',
+    },
+    ar: {
+      'فاصلة': '،', 'نقطة': '.', 'علامة استفهام': '؟', 'علامة تعجب': '!',
+      'سطر جديد': '\n', 'فاصلة منقوطة': '؛', 'نقطتان': ':', 'شرطة': '—',
+    },
+    hi: {
+      'अल्पविराम': ',', 'कॉमा': ',', 'पूर्ण विराम': '.', 'बिंदु': '.',
+      'प्रश्न चिह्न': '?', 'विस्मयादिबोधक चिह्न': '!',
+      'नई पंक्ति': '\n', 'अर्धविराम': ';', 'दो बिंदु': ':', 'डैश': '—',
+    },
+    ja: {
+      'かんま': '、', 'カンマ': '、', 'くてん': '、', '読点': '、',
+      'ぴりおど': '。', 'ピリオド': '。', 'まる': '。', '句点': '。',
+      'はてな': '？', 'はてなまーく': '？', 'クエスチョンマーク': '？',
+      'びっくりまーく': '！', 'かんたんふ': '！', '感嘆符': '！',
+      'かいぎょう': '\n', '改行': '\n',
+    },
+    ko: {
+      '쉼표': ',', '콤마': ',', '마침표': '.', '온점': '.',
+      '물음표': '?', '느낌표': '!', '줄바꿈': '\n', '새 줄': '\n',
+      '세미콜론': ';', '콜론': ':', '하이픈': '-', '대시': '—',
+      '여는 괄호': '(', '닫는 괄호': ')',
+    },
+    zh: {
+      '逗号': '，', '句号': '。', '问号': '？', '感叹号': '！', '叹号': '！',
+      '换行': '\n', '分号': '；', '冒号': '：', '破折号': '—',
+      '左括号': '（', '右括号': '）',
+    },
+    vi: {
+      'dấu phẩy': ',', 'dấu chấm': '.', 'dấu hỏi': '?', 'dấu chấm hỏi': '?',
+      'dấu chấm than': '!', 'dòng mới': '\n', 'xuống dòng': '\n',
+      'dấu chấm phẩy': ';', 'dấu hai chấm': ':', 'dấu gạch ngang': '-',
+    },
+    th: {
+      'จุลภาค': ',', 'มหัพภาค': ',', 'จุด': '.', 'เครื่องหมายคำถาม': '?',
+      'เครื่องหมายอัศเจรีย์': '!', 'บรรทัดใหม่': '\n', 'ขึ้นบรรทัดใหม่': '\n',
+      'อัฒภาค': ';', 'จุดคู่': ':',
+    },
+    id: {
+      'koma': ',', 'titik': '.', 'tanda tanya': '?', 'tanda seru': '!',
+      'baris baru': '\n', 'titik koma': ';', 'titik dua': ':', 'tanda hubung': '-',
+    },
+    ms: {
+      'koma': ',', 'noktah': '.', 'tanda soal': '?', 'tanda seru': '!',
+      'baris baru': '\n', 'koma bertitik': ';', 'titik bertindih': ':',
+    },
+    ca: {
+      'coma': ',', 'punt': '.', "signe d'interrogació": '?', 'interrogant': '?',
+      "signe d'exclamació": '!', 'exclamació': '!', 'nova línia': '\n',
+      'punt i coma': ';', 'dos punts': ':', 'guió': '—',
+    },
+    gl: {
+      'coma': ',', 'punto': '.', 'nova liña': '\n',
+      'punto e coma': ';', 'dous puntos': ':',
+    },
+    fil: {
+      'kuwit': ',', 'tuldok': '.', 'tandang pananong': '?',
+      'tandang pandamdam': '!', 'bagong linya': '\n',
     },
   };
+
+  // Languages whose script has no spaces between words — substring
+  // replacement is used instead of word-boundary matching.
+  const NO_WORD_BOUNDARY_LANGS = new Set(['zh', 'ja', 'th', 'lo', 'km', 'my']);
+
+  const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
   // Apply voice punctuation commands and word replacements to a transcript fragment.
   const processTranscript = (text) => {
     let result = text;
 
+    const lang = (getState().recognitionLanguage || 'en-US').split('-')[0];
+    const useBoundary = !NO_WORD_BOUNDARY_LANGS.has(lang);
+    // \b only understands ASCII — wrap with Unicode letter/number boundaries
+    // so Cyrillic, Hangul, Arabic, Devanagari etc. commands also match.
+    const withBoundary = (inner) => useBoundary
+      ? `(?<![\\p{L}\\p{N}])${inner}(?![\\p{L}\\p{N}])`
+      : inner;
+
     // Voice punctuation: replace spoken commands with punctuation marks.
     if (Boolean(getState().isVoicePunctuationEnabled)) {
-      const lang = (getState().recognitionLanguage || 'en-US').split('-')[0];
-      const map = PUNCTUATION_MAP[lang] || PUNCTUATION_MAP.en;
+      // English commands always work; the dictation language adds its own.
+      const map = {...PUNCTUATION_MAP.en, ...(PUNCTUATION_MAP[lang] || {})};
       const entries = Object.entries(map).sort((a, b) => b[0].length - a[0].length);
       for (const [command, punct] of entries) {
-        const regex = new RegExp(`\\b${command}\\b`, 'gi');
-        result = result.replace(regex, punct);
+        result = result.replace(new RegExp(withBoundary(escapeRegExp(command)), 'giu'), punct);
       }
+      // Tidy spacing around the inserted marks: no space before closing
+      // punctuation, none after opening brackets, none around newlines.
+      result = result
+        .replace(/\s+([,.!?;:)\]}»”…，。、！？；：؟؛،])/g, '$1')
+        .replace(/([(\[{«“（])\s+/g, '$1')
+        .replace(/ *\n */g, '\n');
     }
 
-    // Word replacements: replace recognized words with user-defined text.
+    // Word replacements: left side → right side, case-insensitive, with
+    // flexible whitespace inside the "from" phrase and Unicode boundaries
+    // so it works in any language, not just Latin scripts.
     const replacements = getState().wordReplacements || [];
     for (const rep of replacements) {
-      if (rep.from && rep.to) {
-        const regex = new RegExp(`\\b${rep.from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
-        result = result.replace(regex, rep.to);
+      const from = (rep.from || '').trim();
+      if (from && rep.to != null && rep.to !== '') {
+        const pattern = escapeRegExp(from).replace(/\s+/g, '\\s+');
+        // Function replacer keeps "$" and other chars in "to" literal.
+        result = result.replace(new RegExp(withBoundary(pattern), 'giu'), () => rep.to);
       }
     }
 
@@ -1182,29 +1429,19 @@ const resolveCurrentTabId = async () => {
       rebaseTranscriptsFromCurrentInput();
     }
 
-    const appendWithSpace = (existing, fragment) => {
-      if (!existing) {
-        return fragment;
-      }
-      if (!fragment) {
-        return existing;
-      }
-      return `${existing} ${fragment}`;
-    };
-
     let finalTranscriptFragment = '';
     let newInterimTranscript = '';
     const startIndex = Math.max(event.resultIndex, lastFinalResultIndex + 1);
     for (let i = startIndex; i < event.results.length; ++i) {
       const transcript = processTranscript(event.results[i][0].transcript.trim());
       if (event.results[i].isFinal) {
-        finalTranscriptFragment = appendWithSpace(finalTranscriptFragment, transcript);
+        finalTranscriptFragment = joinTranscriptParts(finalTranscriptFragment, transcript);
         lastFinalResultIndex = Math.max(lastFinalResultIndex, i);
       } else {
-        newInterimTranscript = appendWithSpace(newInterimTranscript, transcript);
+        newInterimTranscript = joinTranscriptParts(newInterimTranscript, transcript);
       }
     }
-    finalTranscript = appendWithSpace(finalTranscript, finalTranscriptFragment);
+    finalTranscript = joinTranscriptParts(finalTranscript, finalTranscriptFragment);
     interimTranscript = newInterimTranscript;
     applyTranscriptsToInput();
     startSilenceCountdown();
@@ -1337,7 +1574,17 @@ const resolveCurrentTabId = async () => {
 
   const checkButtonPosition = () => {
     const floatingButtonContainer = document.getElementById('floatingMicButtonContainer');
+    if (!floatingButtonContainer) return;
     const containerRect = floatingButtonContainer.getBoundingClientRect();
+
+    const outOfBounds = containerRect.left < 0 || containerRect.top < 0 ||
+      containerRect.right > window.innerWidth || containerRect.bottom > window.innerHeight;
+    if (!outOfBounds) return;
+
+    // Clear the CSS right/bottom fallback before writing left/top so the
+    // element doesn't stretch across both edges.
+    floatingButtonContainer.style.right = 'auto';
+    floatingButtonContainer.style.bottom = 'auto';
 
     if (containerRect.left < 0) {
       floatingButtonContainer.style.left = '0px';
@@ -1357,6 +1604,10 @@ const resolveCurrentTabId = async () => {
     const panelRect = container.getBoundingClientRect();
     const w = window.innerWidth;
     const h = window.innerHeight;
+
+    const outOfBounds = panelRect.right > w || panelRect.bottom > h ||
+      panelRect.left < 0 || panelRect.top < 0;
+    if (!outOfBounds) return;
 
     // Reset conflicting CSS properties
     container.style.right = 'auto';
@@ -1393,6 +1644,22 @@ const resolveCurrentTabId = async () => {
   // visualViewport resize - catches browser UI changes (address bar, etc.)
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', onViewportResize);
+  }
+
+  // Safety net: if layout wasn't ready during init (zero offsetWidth,
+  // delayed CSS, etc.) the elements may still lack left/top. Re-run once
+  // the page finishes loading so they never get stuck on the left edge.
+  // Declared after checkPanelPosition/checkButtonPosition to avoid TDZ.
+  const ensureControlsPositioned = () => {
+    if (!container.style.left) initPanel();
+    if (!floatingButtonContainer.style.left) initFloatingButtonPosition();
+    checkPanelPosition();
+    checkButtonPosition();
+  };
+  if (document.readyState === 'complete') {
+    requestAnimationFrame(ensureControlsPositioned);
+  } else {
+    window.addEventListener('load', ensureControlsPositioned, { once: true });
   }
 
   // Push-to-Talk: hold configured combo to record, release to stop.

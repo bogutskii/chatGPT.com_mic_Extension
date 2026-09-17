@@ -624,23 +624,36 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const applyTheme = (theme) => {
     const isDark = theme === 'dark' ||
       (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    modal.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    const value = isDark ? 'dark' : 'light';
+    // Set on both the modal and the document root so floating elements
+    // (panel, mic, silence timer) get themed too, not only the modal.
+    modal.setAttribute('data-theme', value);
+    document.documentElement.setAttribute('data-vtt-theme', value);
   };
 
   const currentTheme = getState().theme || 'system';
   applyTheme(currentTheme);
 
+  // React to OS theme changes while "system" is selected.
+  try {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if ((getState().theme || 'system') === 'system') {
+        applyTheme('system');
+      }
+    });
+  } catch {}
+
   const themeOptions = [
-    {value: 'light', label: '☀'},
-    {value: 'system', label: '🖥'},
-    {value: 'dark', label: '🌙'},
+    {value: 'light', label: t('themeLight')},
+    {value: 'system', label: t('themeSystem')},
+    {value: 'dark', label: t('themeDark')},
   ];
 
   themeOptions.forEach(opt => {
     const btn = document.createElement('button');
     btn.classList.add('theme-option');
     btn.textContent = opt.label;
-    btn.title = opt.value;
+    btn.title = opt.label;
     if (opt.value === currentTheme) btn.classList.add('active');
     btn.addEventListener('click', () => {
       themeSelector.querySelectorAll('.theme-option').forEach(b => b.classList.remove('active'));
