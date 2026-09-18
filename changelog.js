@@ -273,6 +273,8 @@ const CHANGELOG_DATA = {
 
 export const CURRENT_VERSION = '2.5';
 
+export const VERSIONS = Object.keys(CHANGELOG_DATA).sort().reverse();
+
 export const getChangelog = (version, locale) => {
   const data = CHANGELOG_DATA[version];
   if (!data) return [];

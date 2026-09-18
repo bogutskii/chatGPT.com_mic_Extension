@@ -1,5 +1,7 @@
 # Chrome Web Store Listing Translations
 
+<!-- GENERATED FILE — do not edit by hand. Run `node generate-store-listing.mjs`. -->
+
 Paste these into the Chrome Web Store Dashboard under the **Store listing** tab for each locale.
 
 ---
@@ -32,7 +34,7 @@ Your voice data never leaves your device. All processing happens inside the brow
 
 **What’s New**
 
-**Version 2.5**
+**Version 2.5**  
 - Major performance optimization: smoother dragging, faster speech recognition rendering, and reduced main-thread work during ChatGPT streaming.
 - Theme selector: Light / Dark / System — dark mode is fully restyled and follows your OS live.
 - Voice punctuation commands now work in your dictation language (~30 languages) — say "comma" or "запятая" and get "," with no stray space.
@@ -44,33 +46,23 @@ Your voice data never leaves your device. All processing happens inside the brow
 - Removed the obsolete "Auto continue" option.
 
 **Version 2.4**  
-- Settings modal visually refreshed with a modern header, card-based layout, two-column language grid, and a compact footer.
-- Smoother interim speech recognition spacing — spaces appear as words are recognized instead of only after finalization.
-- Security and reliability improvements: reduced extension resource exposure and fixed message handler leaks.
+- Smoother interim speech recognition spacing — spaces appear as words are recognized instead of after finalization.
+- Security and reliability hardening: tightened resource exposure and fixed message handler leaks.
+- Settings modal visually refreshed: modern header, card layout, two-column language grid, and compact footer.
 
 **Version 2.3**  
-- Line break support during dictation — press Shift+Enter while the microphone is on to insert a new line and continue dictating on the next line.
-- Note: for best results, pause briefly before inserting a line break to let the current text finalize. After the line break, you can continue dictating normally.
-- Fixed duplicate text issue that occurred when rebase happened during ongoing speech recognition.
-- Improved manual edit preservation during dictation — edits made between speech results are now picked up correctly.
-- Settings modal redesign: close button (X) in the top-right corner, hotkeys info relocated, and cleaner layout.
+- Line break support during dictation — press Shift+Enter while the microphone is on.
+- Tip: pause briefly before inserting a line break to let the current text finalize.
+- Fixed duplicate text that occurred when rebase happened during recognition.
+- Manual edits are now preserved while dictation is active.
+- Settings modal redesign: close button (X), cleaner layout.
 
 **Version 2.2**  
-- Improved speech recognition reliability — finalized text is no longer overwritten when you pause and resume speaking.
-- Full i18n localization: extension UI, tooltips, settings modal, and Chrome Web Store listing now support English, Russian, Spanish, Ukrainian, Chinese, Korean, French, Portuguese, and Hindi with automatic language fallback.
-- Refined settings modal layout: Select All / Deselect All and Center Mic / Center Panel buttons are now compact inline rows.
-- Improved Push-to-Talk (walkie-talkie) key combo handling and visual feedback.
+- Improved speech recognition reliability.
+- Full i18n localization for EN, RU, ES, UK, ZH, KO, FR, PT, HI.
+- Refined settings modal layout.
+- Improved Push-to-Talk handling.
 
-Version 2.1  
-- Auto-Send on Silence (Beta) — Set a countdown timer (2–30s). Stop speaking and your message sends automatically. Click the countdown timer to pause or resume it at any time.
-- Collapsible Floating Panel — Collapse the control panel to a thin strip to save screen space; expand when needed.
-- Draggable & Saved Position — Drag the panel anywhere; its position is remembered across sessions.
-- Voice Dictation — Hands-free speech-to-text with multi-language support and real-time transcription.
-
-Version 2.0  
-- Modernized floating panel, settings modal, and buttons with gradients and motion.
-- Clear microphone status cues plus tidy hotkey section.
-- More reliable voice input: safe start/stop, robust auto‑actions, and persistent preferences.
 
 ---
 
@@ -102,7 +94,7 @@ Version 2.0
 
 **Что нового**
 
-**Версия 2.5**
+**Версия 2.5**  
 - Масштабная оптимизация производительности: более плавное перетаскивание, быстрая отрисовка распознавания речи, меньше нагрузки на главный поток при стриминге ChatGPT.
 - Выбор темы: Светлая / Тёмная / Системная — тёмный режим полностью переработан и следует за ОС в реальном времени.
 - Голосовые команды пунктуации теперь работают на языке диктовки (~30 языков) — скажите «запятая» или "comma" и получите «,» без лишнего пробела.
@@ -114,33 +106,23 @@ Version 2.0
 - Удалена устаревшая опция «Автопродолжение ответов».
 
 **Версия 2.4**  
-- Окно настроек обновлено внешне: современный заголовок, карточки, двухколоночная сетка языков и компактный подвал.
 - Более плавное распознавание речи — пробелы между словами появляются сразу, а не после финализации.
 - Улучшения безопасности и надёжности: ограничен доступ к ресурсам расширения, исправлены утечки обработчиков сообщений.
+- Окно настроек обновлено внешне: современный заголовок, карточки, двухколоночная сетка языков и компактный подвал.
 
 **Версия 2.3**  
-- Поддержка переноса строки во время диктовки — нажмите Shift+Enter, пока микрофон включён, чтобы вставить новую строку и продолжить диктовать на следующей строке.
-- Примечание: для лучшего результата сделайте короткую паузу перед вставкой переноса строки, чтобы текущий текст применился. После переноса можно сразу продолжать диктовать.
-- Исправлено дублирование текста, возникавшее при перебазировании во время активного распознавания речи.
-- Улучшено сохранение ручных правок во время диктовки — изменения, сделанные между результатами распознавания, теперь корректно подхватываются.
-- Переработано окно настроек: кнопка закрытия (X) в правом верхнем углу, информация о горячих клавишах перемещена, улучшен макет.
+- Поддержка переноса строки во время диктовки — нажмите Shift+Enter, пока микрофон включён.
+- Совет: сделайте короткую паузу перед переносом строки, чтобы текущий текст применился.
+- Исправлено дублирование текста при перебазировании во время распознавания.
+- Ручные правки теперь сохраняются при активной диктовке.
+- Переработано окно настроек: кнопка закрытия (X), улучшен макет.
 
 **Версия 2.2**  
-- Улучшена надёжность распознавания речи — финальный текст больше не перезаписывается при паузе и возобновлении речи.
-- Полная мультиязычность (i18n): интерфейс расширения, подсказки, модальное окно настроек и описание в Chrome Web Store поддерживают английский, русский, испанский, украинский, китайский, корейский, французский, португальский и хинди с автоматическим fallback.
-- Улучшен макет окна настроек: кнопки «Обрати все» / «Зняти все» и «Центрувати мікрофон» / «Центрувати панель» теперь компактные и расположены в одну строку.
-- Улучшена работа режима рации (Push-to-Talk) и визуальная обратная связь.
+- Улучшена надёжность распознавания речи.
+- Полная мультиязычность: EN, RU, ES, UK, ZH, KO, FR, PT, HI.
+- Улучшен макет окна настроек.
+- Улучшена работа режима рации.
 
-Версия 2.1  
-- Автоотправка по тишине (Бета) — Задайте таймер (2–30 сек). Перестаньте говорить — сообщение уйдёт автоматически. Кликните по таймеру, чтобы поставить отсчёт на паузу или возобновить.
-- Сворачиваемая плавающая панель — Сворачивайте панель в узкую полоску, чтобы освободить место; разворачивайте при необходимости.
-- Перетаскивание и сохранение позиции — Перемещайте панель в любое место экрана; позиция запоминается между сессиями.
-- Голосовая диктовка — Преобразование речи в текст без помощи рук с поддержкой множества языков.
-
-Версия 2.0  
-- Современный внешний вид плавающей панели, модальных настроек и кнопок.
-- Чёткая индикация активного микрофона и улучшенный блок горячих клавиш.
-- Более стабильный голосовой ввод: корректное включение/выключение, надёжные авто‑действия, сохранение настроек.
 
 ---
 
@@ -172,7 +154,7 @@ Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza
 
 **Novedades**
 
-**Versión 2.5**
+**Versión 2.5**  
 - Optimización importante de rendimiento: arrastre más suave, renderizado de reconocimiento de voz más rápido y menos trabajo en el hilo principal durante el streaming de ChatGPT.
 - Selector de tema: Claro / Oscuro / Sistema — el modo oscuro está completamente rediseñado y sigue al SO en tiempo real.
 - Los comandos de puntuación por voz ahora funcionan en tu idioma de dictado (~30 idiomas) — di "coma" o "comma" y obtén "," sin espacio extra.
@@ -184,33 +166,23 @@ Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza
 - Eliminada la opción obsoleta "Continuar automáticamente".
 
 **Versión 2.4**  
-- Modal de ajustes renovado visualmente: encabezado moderno, diseño de tarjetas, cuadrícula de idiomas en dos columnas y pie compacto.
-- Espaciado más fluido de los resultados intermedios de reconocimiento de voz: los espacios aparecen a medida que se reconocen las palabras, en lugar de solo después de la finalización.
+- Espaciado más fluido de los resultados intermedios de reconocimiento de voz: los espacios aparecen a medida que se reconocen las palabras, en lugar de después de la finalización.
 - Mayor seguridad y fiabilidad: reducida la exposición de recursos y corregidas fugas de manejadores de mensajes.
+- Modal de ajustes renovado visualmente: encabezado moderno, diseño de tarjetas, cuadrícula de idiomas en dos columnas y pie compacto.
 
 **Versión 2.3**  
-- Soporte para saltos de línea durante la dictado — pulsa Shift+Enter mientras el micrófono está activo para insertar una nueva línea y continuar dictando en la siguiente línea.
-- Nota: para obtener mejores resultados, haz una breve pausa antes de insertar un salto de línea para que el texto actual se aplique. Después del salto de línea puedes continuar dictando normalmente.
-- Corregida la duplicación de texto que ocurría cuando se produjo una reconstrucción durante el reconocimiento de voz en curso.
-- Mejorada la preservación de ediciones manuales durante la dictado — las ediciones realizadas entre resultados de voz ahora se capturan correctamente.
-- Rediseño del modal de ajustes: botón de cierre (X) en la esquina superior derecha, información de atajos de teclado reubicada y diseño más limpio.
+- Soporte para saltos de línea durante la dictado — pulsa Shift+Enter con el micrófono activo.
+- Consejo: haz una breve pausa antes de insertar un salto de línea.
+- Corregida la duplicación de texto durante el reconocimiento de voz.
+- Las ediciones manuales se conservan ahora durante la dictado.
+- Rediseño del modal de ajustes: botón de cierre (X), diseño más limpio.
 
 **Versión 2.2**  
-- Reconocimiento de voz más fiable — el texto finalizado ya no se sobrescribe cuando haces una pausa y sigues hablando.
-- Localización completa (i18n): la interfaz de la extensión, tooltips, modal de ajustes y la ficha de Chrome Web Store ahora disponibles en inglés, ruso, español, ucraniano, chino, coreano, francés, portugués e hindi, con fallback automático.
-- Diseño del modal de ajustes refinado: los botones Seleccionar todo / Deseleccionar todo y Centrar micrófono / Centrar panel ahora son filas compactas en línea.
-- Mejorada la gestión de atajos del modo Push-to-Talk (walkie-talkie) y la retroalimentación visual.
+- Reconocimiento de voz más fiable.
+- Localización completa: EN, RU, ES, UK, ZH, KO, FR, PT, HI.
+- Diseño del modal de ajustes refinado.
+- Mejorada la gestión de Push-to-Talk.
 
-Versión 2.1  
-- Envío automático tras silencio (Beta) — Configura un temporizador (2–30s). Deja de hablar y tu mensaje se enviará automáticamente. Haz clic en el temporizador para pausar o reanudar en cualquier momento.
-- Panel flotante plegable — Colapsa el panel a una tira fina para ahorrar espacio; expándelo cuando lo necesites.
-- Posición arrastrable y guardada — Arrastra el panel a cualquier lugar; su posición se recuerda entre sesiones.
-- Dictado por voz — Conversión de voz a texto manos libres con soporte multilingüe y transcripción en tiempo real.
-
-Versión 2.0  
-- Panel flotante, modal de ajustes y botones modernizados con gradientes y animaciones.
-- Indicadores claros del estado del micrófono y sección de atajos mejorada.
-- Entrada de voz más fiable: inicio/parada seguros, acciones automáticas robustas y preferencias persistentes.
 
 ---
 
@@ -242,7 +214,7 @@ Versión 2.0
 
 **Що нового**
 
-**Версія 2.5**
+**Версія 2.5**  
 - Масштабна оптимізація продуктивності: плавніше перетягування, швидший рендерінг розпізнавання мови, менше навантаження на головний потік під час стрімінгу ChatGPT.
 - Вибір теми: Світла / Темна / Системна — темний режим повністю перероблено та він слідкує за ОС у реальному часі.
 - Голосові команди розділових знаків тепер працюють мовою диктування (~30 мов) — скажіть «кома» або "comma" й отримайте «,» без зайвого пробілу.
@@ -254,33 +226,23 @@ Versión 2.0
 - Видалено застарілу опцію «Автопродовження відповідей».
 
 **Версія 2.4**  
-- Вікно налаштувань оновлено візуально: сучасний заголовок, картковий макет, двоколонкова сітка мов і компактний підвал.
 - Більш плавне розпізнавання мови — пробіли між словами з’являються одразу, а не після фіналізації.
 - Покращення безпеки та надійності: обмежено доступ до ресурсів розширення, виправлено витоки обробників повідомлень.
+- Вікно налаштувань оновлено візуально: сучасний заголовок, картковий макет, двоколонкова сітка мов і компактний підвал.
 
 **Версія 2.3**  
-- Підтримка перенесення рядка під час диктування — натисніть Shift+Enter, поки мікрофон увімкнено, щоб вставити новий рядок і продовжити диктувати на наступному рядку.
-- Примітка: для найкращого результату зробіть коротку паузу перед вставкою переносу рядка, щоб поточний текст застосувався. Після переносу можна одразу продовжувати диктувати.
-- Виправлено дублювання тексту, що виникало при перебазуванні під час активного розпізнавання мови.
-- Покращено збереження ручних правок під час диктування — зміни, зроблені між результатами розпізнавання, тепер коректно підхоплюються.
-- Перероблено вікно налаштувань: кнопка закриття (X) у правому верхньому куті, інформація про гарячі клавіші переміщена, покращений макет.
+- Підтримка перенесення рядка під час диктування — натисніть Shift+Enter, поки мікрофон увімкнено.
+- Порада: зробіть коротку паузу перед переносом рядка, щоб текст застосувався.
+- Виправлено дублювання тексту під час активного розпізнавання мови.
+- Ручні правки тепер зберігаються під час диктування.
+- Перероблено вікно налаштувань: кнопка закриття (X), покращений макет.
 
 **Версія 2.2**  
-- Покращено надійність розпізнавання мови — фінальний текст більше не перезаписується під час паузи та відновлення мовлення.
-- Повна багатомовність (i18n): інтерфейс розширення, підказки, модальне вікно налаштувань та опис у Chrome Web Store тепер підтримують англійську, російську, іспанську, українську, китайську, корейську, французьку, португальську та хінді з автоматичним fallback.
-- Удосконалено макет вікна налаштувань: кнопки «Обрати всі» / «Зняти всі» та «Центрувати мікрофон» / «Центрувати панель» тепер компактні та розташовані в один ряд.
-- Покращено роботу режиму рації (Push-to-Talk) та візуальний зворотний зв’язок.
+- Покращено надійність розпізнавання мови.
+- Повна багатомовність: EN, RU, ES, UK, ZH, KO, FR, PT, HI.
+- Удосконалено макет вікна налаштувань.
+- Покращено роботу режиму рації.
 
-Версія 2.1  
-- Автовідправка за тишею (Бета) — Задайте таймер (2–30 сек). Перестаньте говорити — повідомлення піде автоматично. Натисніть на таймер, щоб поставити відлік на паузу або відновити.
-- Згортна плаваюча панель — Згортайте панель у вузьку смужку, щоб звільнити місце; розгортайте за потреби.
-- Перетягування та збереження позиції — Переміщуйте панель куди завгодно; позиція запам’ятовується між сесіями.
-- Голосове диктування — Перетворення мови на текст без допомоги рук із підтримкою багатьох мов і транскрипцією в реальному часі.
-
-Версія 2.0  
-- Сучасний вигляд плаваючої панелі, модальних налаштувань і кнопок із градієнтами та анімаціями.
-- Чітка індикація активного мікрофона та покращений блок гарячих клавіш.
-- Стабільніший голосовий ввід: коректне вмикання/вимкнення, надійні авто-дії, збереження налаштувань.
 
 ---
 
@@ -312,7 +274,7 @@ ChatGPT 语音输入
 
 **更新内容**
 
-**版本 2.5**
+**版本 2.5**  
 - 重大性能优化：更流畅的拖拽、更快的语音识别渲染，以及减少 ChatGPT 流式传输期间的主线程工作。
 - 主题选择器：浅色 / 深色 / 系统 — 深色模式全面重新设计并实时跟随操作系统。
 - 语音标点命令现在支持您的听写语言（约30种语言）— 说"逗号"或"comma"即可得到","，不会有多余空格。
@@ -324,33 +286,23 @@ ChatGPT 语音输入
 - 移除了过时的"自动继续"选项。
 
 **版本 2.4**  
-- 设置窗口视觉升级：现代标题、卡片布局、双列语言网格、紧凑页脚。
 - 更流畅的临时语音识别间距 — 空格会在识别单词时立即出现，而不是等到最终确定后才显示。
 - 安全性与可靠性增强：收紧资源暴露范围，并修复消息处理程序泄漏。
+- 设置窗口视觉升级：现代标题、卡片布局、双列语言网格、紧凑页脚。
 
 **版本 2.3**  
-- 口述时支持换行 — 麦克风开启时按 Shift+Enter 插入新行并继续在下一段口述。
-- 提示：插入换行前请先短暂暂停，让当前文本生效。换行后可以正常继续口述。
+- 口述时支持换行 — 麦克风开启时按 Shift+Enter。
+- 提示：插入换行前先短暂暂停，让当前文本生效。
 - 修复了语音识别过程中重新定位时出现的文本重复问题。
 - 口述时手动编辑现在会被保留。
-- 设置窗口重新设计：右上角关闭按钮 (X)，更简洁的布局。
+- 设置窗口重新设计：关闭按钮 (X)，更简洁的布局。
 
 **版本 2.2**  
-- 语音识别可靠性提高 — 暂停和恢复说话时不再覆盖已完成的文本。
-- 完整的国际化：扩展界面、工具提示、设置窗口和 Chrome Web Store 描述现在支持英语、俄语、西班牙语、乌克兰语、中文、韩语、法语、葡萄牙语和印地语，并自动回退。
-- 设置窗口布局优化：全选/取消全选 和 居中麦克风/居中面板 按钮现在是紧凑的内联行。
-- 一键通（对讲机）模式按键处理和视觉反馈改进。
+- 语音识别可靠性提高。
+- 完整国际化支持：英语、俄语、西班牙语、乌克兰语、中文、韩语、法语、葡萄牙语、印地语。
+- 设置窗口布局优化。
+- 一键通（对讲机）处理改进。
 
-版本 2.1  
-- 静音自动发送（测试版）— 设置倒计时（2-30秒）。停止说话后消息将自动发送。点击倒计时器可随时暂停或恢复。
-- 可折叠浮动面板 — 将控制面板折叠成细条以节省屏幕空间；需要时展开。
-- 可拖动并保存位置 — 将面板拖动到任意位置；位置会在会话间记住。
-- 语音口述 — 免提语音转文字，支持多语言和实时转录。
-
-版本 2.0  
-- 浮动面板、设置窗口和按钮采用渐变和动画的现代化设计。
-- 清晰的麦克风状态提示和整洁的快捷键区域。
-- 更可靠的语音输入：安全的启动/停止、强大的自动操作和持久偏好设置。
 
 ---
 
@@ -382,7 +334,7 @@ ChatGPT에서 음성을 텍스트로 변환하세요.
 
 **업데이트 내용**
 
-**버전 2.5**
+**버전 2.5**  
 - 주요 성능 최적화: 더 부드러운 드래그, 더 빠른 음성 인식 렌더링, ChatGPT 스트리밍 중 메인 스레드 작업 감소.
 - 테마 선택기: 라이트 / 다크 / 시스템 — 다크 모드가 완전히 새로 디자인되고 OS를 실시간으로 따릅니다.
 - 음성 문장 부호 명령이 이제 받아쓰기 언어로 작동합니다(~30개 언어) — "쉼표" 또는 "comma"라고 말하면 불필요한 공백 없이 ","가 입력됩니다.
@@ -394,33 +346,23 @@ ChatGPT에서 음성을 텍스트로 변환하세요.
 - 더 이상 사용되지 않는 "자동 계속" 옵션을 제거했습니다.
 
 **버전 2.4**  
-- 설정 모달 UI 개선: 현대적인 헤더, 카드 레이아웃, 2열 언어 그리드, 컴팩트한 푸터.
 - 더 부드러운 중간 음성 인식 간격 — 단어가 인식되는 즉시 공백이 표시되어 최종 변환 후에만 나타나지 않습니다.
 - 보안 및 안정성 강화: 리소스 노출을 줄이고 메시지 핸들러 누수를 수정했습니다.
+- 설정 모달 UI 개선: 현대적인 헤더, 카드 레이아웃, 2열 언어 그리드, 컴팩트한 푸터.
 
 **버전 2.3**  
-- 받아쓰기 중 줄 바꿈 지원 — 마이크가 켜져 있을 때 Shift+Enter를 눌러 새 줄을 삽입하고 다음 줄에서 받아쓰기를 계속하세요.
-- 팁: 줄 바꿈을 삽입하기 전에 현재 텍스트가 적용되도록 잠시 멈추세요. 줄 바꿈 후에는 정상적으로 받아쓰기를 계속할 수 있습니다.
+- 받아쓰기 중 줄 바꿈 지원 — 마이크가 켜져 있을 때 Shift+Enter를 누르세요.
+- 팁: 줄 바꿈을 삽입하기 전에 현재 텍스트가 적용되도록 잠시 멈추세요.
 - 진행 중인 음성 인식 중 재기본화가 발생할 때 발생하던 텍스트 중복 문제를 수정했습니다.
 - 받아쓰기 중 수동 편집이 이제 보존됩니다.
-- 설정 창 재설계: 오른쪽 상단에 닫기 버튼(X), 더 깔끔한 레이아웃.
+- 설정 창 재설계: 닫기 버튼(X), 더 깔끔한 레이아웃.
 
 **버전 2.2**  
-- 음성 인식 안정성 향상 — 말을 멈추고 다시 시작할 때 완성된 텍스트가 더 이상 덮어쓰이지 않습니다.
-- 완전한 i18n 지역화: 확장 프로그램 UI, 툴팁, 설정 모달 및 Chrome Web Store 설명이 이제 영어, 러시아어, 스페인어, 우크라이나어, 중국어, 한국어, 프랑스어, 포르투갈어 및 힌디어를 지원하며 자동 폴백이 가능합니다。
-- 설정 모달 레이아웃 개선: 모두 선택/모두 선택 해제 및 마이크 중앙 정렬/패널 중앙 정렬 버튼이 이제 컴팩트한 인라인 행입니다.
-- 푸시 투 토크(무전기) 키 조합 처리 및 시각적 피드백 개선.
+- 음성 인식 안정성 향상.
+- 완전한 i18n 지역화: 영어, 러시아어, 스페인어, 우크라이나어, 중국어, 한국어, 프랑스어, 포르투갈어, 힌디어.
+- 설정 모달 레이아웃 개선.
+- 푸시 투 토크 처리 개선.
 
-버전 2.1  
-- 침묵 시 자동 전송(베타) — 카운트다운 타이머(2-30초)를 설정하세요. 말을 멈추면 메시지가 자동으로 전송됩니다. 언제든지 타이머를 클릭하여 일시 중지 또는 재개할 수 있습니다.
-- 접이식 플로팅 패널 — 제어 패널을 가늘게 접어 화면 공간을 절약하세요. 필요할 때 펼치세요.
-- 드래그 및 저장된 위치 — 패널을 어디로나 드래그하세요. 위치는 세션 간에 기억됩니다.
-- 음성 받아쓰기 — 다국어 지원 및 실시간 전사가 가능한 핸즈프리 음성 텍스트 변환.
-
-버전 2.0  
-- 그라데이션과 애니메이션이 적용된 현대적인 플로팅 패널, 설정 모달 및 버튼.
-- 명확한 마이크 상태 신호 및 정돈된 단축키 섹션.
-- 더 안정적인 음성 입력: 안전한 시작/중지, 강력한 자동 작업 및 지속적인 설정.
 
 ---
 
@@ -452,7 +394,7 @@ Vos données vocales ne quittent jamais votre appareil. Tout le traitement s'eff
 
 **Nouveautés**
 
-**Version 2.5**
+**Version 2.5**  
 - Optimisation majeure des performances : glisser plus fluide, rendu plus rapide de la reconnaissance vocale et moins de travail sur le thread principal pendant le streaming de ChatGPT.
 - Sélecteur de thème : Clair / Sombre / Système — le mode sombre est entièrement restylé et suit l'OS en temps réel.
 - Les commandes vocales de ponctuation fonctionnent désormais dans votre langue de dictée (~30 langues) — dites « virgule » ou "comma" et obtenez « , » sans espace superflu.
@@ -464,33 +406,23 @@ Vos données vocales ne quittent jamais votre appareil. Tout le traitement s'eff
 - Suppression de l'option obsolète « Continuer automatiquement ».
 
 **Version 2.4**  
-- Modal des paramètres rafraîchi visuellement : en-tête moderne, disposition en cartes, grille de langues sur deux colonnes et pied de page compact.
-- Espacement plus fluide des résultats intermédiaires de reconnaissance vocale — les espaces apparaissent au fur et à mesure que les mots sont reconnus, au lieu de n'apparaître qu'après finalisation.
+- Espacement plus fluide des résultats intermédiaires de reconnaissance vocale — les espaces apparaissent au fur et à mesure que les mots sont reconnus, au lieu d'apparaître après finalisation.
 - Renforcement de la sécurité et de la fiabilité : exposition des ressources réduite et fuites de gestionnaires de messages corrigées.
+- Modal des paramètres rafraîchi visuellement : en-tête moderne, disposition en cartes, grille de langues sur deux colonnes et pied de page compact.
 
 **Version 2.3**  
-- Prise en charge des sauts de ligne pendant la dictée — appuyez sur Shift+Entrée pendant que le micro est allumé pour insérer une nouvelle ligne et continuer à dicter sur la ligne suivante.
-- Conseil : faites une courte pause avant d'insérer un saut de ligne pour que le texte actuel soit appliqué. Après le saut de ligne, vous pouvez continuer à dicter normalement.
-- Correction de la duplication de texte lors du rebasing pendant la reconnaissance vocale en cours.
+- Prise en charge des sauts de ligne pendant la dictée — appuyez sur Shift+Entrée pendant que le micro est allumé.
+- Conseil : faites une courte pause avant d'insérer un saut de ligne pour que le texte actuel soit appliqué.
+- Correction de la duplication de texte lors du rebasing pendant la reconnaissance vocale.
 - Les éditions manuelles sont désormais conservées pendant la dictée.
-- Redesign du modal des paramètres : bouton de fermeture (X) dans le coin supérieur droit, section des raccourcis relocalisée, mise en page plus propre.
+- Redesign du modal des paramètres : bouton de fermeture (X), mise en page plus propre.
 
 **Version 2.2**  
-- Fiabilité de la reconnaissance vocale améliorée — le texte finalisé n'est plus écrasé lorsque vous faites une pause et reprenez la parole.
-- Localisation i18n complète : l'interface de l'extension, les tooltips, le modal des paramètres et la fiche Chrome Web Store sont désormais disponibles en anglais, russe, espagnol, ukrainien, chinois, coréen, français, portugais et hindi avec fallback automatique.
-- Mise en page du modal de paramètres affinée : les boutons Tout sélectionner / Tout désélectionner et Centrer le micro / Centrer le panneau sont désormais des rangées compactes en ligne.
-- Gestion des raccourcis du mode Push-to-Talk (talkie-walkie) améliorée et rétroaction visuelle.
+- Fiabilité de la reconnaissance vocale améliorée.
+- Localisation i18n complète : EN, RU, ES, UK, ZH, KO, FR, PT, HI.
+- Mise en page du modal de paramètres affinée.
+- Gestion du Push-to-Talk améliorée.
 
-Version 2.1  
-- Envoi automatique en cas de silence (Bêta) — Définissez un compte à rebours (2-30s). Cessez de parler et votre message sera envoyé automatiquement. Cliquez sur le compte à rebours pour le mettre en pause ou le reprendre à tout moment.
-- Panneau flottant pliable — Réduisez le panneau de commande à une fine bande pour économiser l'espace ; développez-le au besoin.
-- Position glissante et enregistrée — Faites glisser le panneau n'importe où ; sa position est mémorisée entre les sessions.
-- Dictée vocale — Conversion mains libres de la voix en texte avec support multilingue et transcription en temps réel.
-
-Version 2.0  
-- Panneau flottant, modal de paramètres et boutons modernisés avec dégradés et animations.
-- Indicateurs d'état du micro clairs et section de raccourcis épurée.
-- Entrée vocale plus fiable : démarrage/arrêt sécurisé, actions automatiques robustes et préférences persistantes.
 
 ---
 
@@ -522,7 +454,7 @@ Seus dados de voz nunca saem do seu dispositivo. Todo o processamento ocorre den
 
 **Novidades**
 
-**Versão 2.5**
+**Versão 2.5**  
 - Otimização importante de desempenho: arrasto mais suave, renderização mais rápida do reconhecimento de voz e menos trabalho na thread principal durante o streaming do ChatGPT.
 - Seletor de tema: Claro / Escuro / Sistema — o modo escuro foi totalmente reformulado e segue o SO em tempo real.
 - Comandos de pontuação por voz agora funcionam no seu idioma de ditado (~30 idiomas) — diga "vírgula" ou "comma" e obtenha "," sem espaço extra.
@@ -534,33 +466,23 @@ Seus dados de voz nunca saem do seu dispositivo. Todo o processamento ocorre den
 - Removida a opção obsoleta "Continuar automaticamente".
 
 **Versão 2.4**  
-- Modal de configurações renovado visualmente: cabeçalho moderno, layout em cartões, grade de idiomas em duas colunas e rodapé compacto.
 - Espaçamento mais suave dos resultados intermediários de reconhecimento de voz — os espaços aparecem à medida que as palavras são reconhecidas, em vez de só após a finalização.
 - Endurecimento de segurança e confiabilidade: exposição de recursos reduzida e vazamentos de manipuladores de mensagens corrigidos.
+- Modal de configurações renovado visualmente: cabeçalho moderno, layout em cartões, grade de idiomas em duas colunas e rodapé compacto.
 
 **Versão 2.3**  
-- Suporte a quebra de linha durante o ditado — pressione Shift+Enter enquanto o microfone está ligado para inserir uma nova linha e continuar ditando na próxima linha.
-- Dica: faça uma breve pausa antes de inserir uma quebra de linha para que o texto atual seja aplicado. Após a quebra de linha, você pode continuar ditando normalmente.
-- Corrigida a duplicação de texto que ocorria durante o reconhecimento de voz em andamento.
+- Suporte a quebra de linha durante a ditado — pressione Shift+Enter enquanto o microfone está ligado.
+- Dica: faça uma breve pausa antes de inserir uma quebra de linha para que o texto atual seja aplicado.
+- Corrigida a duplicação de texto que ocorria durante o reconhecimento de voz.
 - As edições manuais agora são preservadas durante o ditado.
-- Redesign do modal de configurações: botão de fechar (X) no canto superior direito, informações de atalhos reordenadas, layout mais limpo.
+- Redesign do modal de configurações: botão de fechar (X), layout mais limpo.
 
 **Versão 2.2**  
-- Reconhecimento de voz mais confiável — o texto finalizado não é mais sobrescrito quando você faz uma pausa e retoma a fala.
-- Localização i18n completa: a interface da extensão, tooltips, modal de configurações e a ficha do Chrome Web Store agora estão disponíveis em inglês, russo, espanhol, ucraniano, chinês, coreano, francês, português e hindi com fallback automático.
-- Layout do modal de configurações refinado: os botões Selecionar tudo / Desmarcar tudo e Centralizar microfone / Centralizar painel agora são linhas compactas em linha.
-- Gerenciamento de atalhos do modo Push-to-Talk (rádio) melhorado e feedback visual.
+- Confiabilidade do reconhecimento de voz aprimorada.
+- Localização i18n completa: EN, RU, ES, UK, ZH, KO, FR, PT, HI.
+- Layout do modal de configurações refinado.
+- Manuseio do Push-to-Talk aprimorado.
 
-Versão 2.1  
-- Envio automático em silêncio (Beta) — Configure um temporizador (2-30s). Pare de falar e sua mensagem será enviada automaticamente. Clique no temporizador para pausar ou retomar a qualquer momento.
-- Painel flutuante dobrável — Reduza o painel de controle a uma faixa fina para economizar espaço na tela; expanda quando necessário.
-- Posição arrastável e salva — Arraste o painel para qualquer lugar; sua posição é lembrada entre as sessões.
-- Ditado por voz — Conversão de voz para texto mãos livres com suporte a vários idiomas e transcrição em tempo real.
-
-Versão 2.0  
-- Painel flutuante, modal de configurações e botões modernizados com gradientes e animações.
-- Indicadores claros de status do microfone e seção de atalhos organizada.
-- Entrada de voz mais confiável: início/fim seguro, ações automáticas robustas e preferências persistentes.
 
 ---
 
@@ -592,7 +514,7 @@ ChatGPT के लिए वॉइस टाइपिंग
 
 **नया क्या है**
 
-**संस्करण 2.5**
+**संस्करण 2.5**  
 - प्रमुख प्रदर्शन अनुकूलन: अधिक सहज ड्रैगिंग, तेज़ भाषण पहचान रेंडरिंग, और ChatGPT स्ट्रीमिंग के दौरान कम मेन-थ्रेड कार्य।
 - थीम चयनकर्ता: लाइट / डार्क / सिस्टम — डार्क मोड पूरी तरह नया है और OS को रीयल-टाइम में फ़ॉलो करता है।
 - वॉइस विराम चिह्न कमांड अब आपकी डिक्टेशन भाषा में काम करती हैं (~30 भाषाएँ) — "comma" या "अल्पविराम" बोलें और बिना अतिरिक्त स्पेस के "," पाएँ।
@@ -604,33 +526,22 @@ ChatGPT के लिए वॉइस टाइपिंग
 - अप्रचलित "ऑटो कंटिन्यू" विकल्प हटा दिया गया।
 
 **संस्करण 2.4**  
-- सेटिंग्स मोडल को दिखने में नया रूप दिया गया: आधुनिक हेडर, कार्ड लेआउट, दो-कॉलम भाषा ग्रिड और कॉम्पैक्ट फुटर।
 - अंतरिम भाषण पहचान में अधिक सहज जगह — शब्द पहचानते ही स्पेस दिखाई देते हैं, अंतिम रूप देने के बाद नहीं।
 - सुरक्षा और विश्वसनीयता में सुधार: संसाधन एक्सपोज़र कड़ा किया गया और संदेश हैंडलर लीक ठीक किए गए।
+- सेटिंग्स मोडल को दिखने में नया रूप दिया गया: आधुनिक हेडर, कार्ड लेआउट, दो-कॉलम भाषा ग्रिड और कॉम्पैक्ट फुटर।
 
 **संस्करण 2.3**  
-- डिक्टेशन के दौरान लाइन ब्रेक सहायता — माइक्रोफ़ोन चालू होने पर नई लाइन डालने और अगली लाइन पर डिक्टेट करना जारी रखने के लिए Shift+Enter दबाएँ।
-- टिप: लाइन ब्रेक डालने से पहले थोड़ा रुकें ताकि मौजूदा टेक्स्ट लागू हो सके। लाइन ब्रेक के बाद आप सामान्य रूप से डिक्टेट करना जारी रख सकते हैं।
-- चल रहे स्पीच रिकग्निशन के दौरान रीबेस होने पर होने वाली टेक्स्ट डुप्लीकेट की समस्या ठीक की गई।
+- डिक्टेशन के दौरान लाइन ब्रेक सहायता — माइक्रोफ़ोन चालू होने पर Shift+Enter दबाएँ।
+- टिप: लाइन ब्रेक डालने से पहले थोड़ा रुकें ताकि मौजूदा टेक्स्ट लागू हो सके।
+- स्पीच रिकग्निशन के दौरान रीबेस होने पर टेक्स्ट डुप्लीकेट की समस्या ठीक की गई।
 - डिक्टेशन के दौरान मैन्युअल एडिट्स अब सुरक्षित रहेंगे।
-- सेटिंग्स मोडल का पुनर्डिज़ाइन: ऊपरी दाएँ कोने में बंद करें बटन (X), शॉर्टकट जानकारी स्थानांतरित की गई, साफ-सुथरा लेआउट।
+- सेटिंग्स मोडल का पुनर्डिज़ाइन: बंद करें बटन (X), साफ-सुथरा लेआउट।
 
 **संस्करण 2.2**  
-- स्पीच रिकग्निशन की विश्वसनीयता में सुधार — रुकने और फिर से बोलने पर अंतिम टेक्स्ट अब ओवरराइट नहीं होता।
-- पूर्ण i18n लोकलाइज़ेशन: एक्सटेंशन UI, टूलटिप्स, सेटिंग्स मोडल और Chrome Web Store लिस्टिंग अब अंग्रेज़ी, रूसी, स्पेनिश, यूक्रेनियन, चीनी, कोरियाई, फ्रेंच, पुर्तगाली और हिंदी का समर्थन करते हैं और स्वचालित फॉलबैक है।
-- सेटिंग्स मोडल लेआउट को बेहतर बनाया गया: सभी चुनें / सभी अचयनित करें और माइक्रोफ़ोन केंद्रित करें / पैनल केंद्रित करें बटन अब कॉम्पैक्ट इनलाइन पंक्तियाँ हैं।
-- पुश-टू-टॉक (वॉकी-टॉकी) मोड कुंजी संयोजन हैंडलिंग और विज़ुअल फीडबैक में सुधार।
-
-संस्करण 2.1  
-- शांति पर ऑटो-सेंड (बीटा) — एक काउंटडाउन टाइमर (2-30 सेकंड) सेट करें। बोलना बंद करें और आपका संदेश स्वचालित रूप से भेज दिया जाएगा। किसी भी समय टाइमर पर क्लिक करके इसे रोकें या फिर से शुरू करें।
-- फोल्डेबल फ्लोटिंग पैनल — कंट्रोल पैनल को स्क्रीन स्थान बचाने के लिए पतली पट्टी में फोल्ड करें; ज़रूरत पड़ने पर विस्तृत करें।
-- ड्रैग करें और स्थिति सहेजें — पैनल को कहीं भी खींचें; इसकी स्थिति सत्रों के बीच याद रखी जाती है।
-- वॉइस डिक्टेशन — कई भाषाओं के समर्थन और रीयल-टाइम ट्रांसक्रिप्शन के साथ हैंड्स-फ्री स्पीच-टू-टेक्स्ट।
-
-संस्करण 2.0  
-- ग्रेडिएंट और गति के साथ आधुनिक फ्लोटिंग पैनल, सेटिंग्स मोडल और बटन।
-- स्पष्ट माइक्रोफ़ोन स्थिति संकेत और साफ-सुथरा शॉर्टकट अनुभाग।
-- और अधिक विश्वसनीय वॉइस इनपुट: सुरक्षित प्रारंभ/समाप्ति, मज़बूत ऑटो-एक्शन और लगातार प्राथमिकताएँ।
+- स्पीच रिकग्निशन की विश्वसनीयता में सुधार।
+- पूर्ण i18n लोकलाइज़ेशन: EN, RU, ES, UK, ZH, KO, FR, PT, HI।
+- सेटिंग्स मोडल लेआउट को बेहतर बनाया गया।
+- पुश-टू-टॉक हैंडलिंग में सुधार।
 
 ---
 
@@ -638,6 +549,7 @@ ChatGPT के लिए वॉइस टाइपिंग
 
 1. Create `_locales/<lang>/messages.json` (e.g. `_locales/de/messages.json`).
 2. Copy the structure from `_locales/en/messages.json` and translate every `message` field.
-3. Add the same locale in the Chrome Web Store Dashboard under **Store listing → Add a language**.
-4. Paste the localized title, short description, and full description into the Dashboard fields.
-5. Chrome will automatically pick the locale that matches the user’s browser language and fall back to `default_locale` (English) for missing keys.
+3. Add the locale's static copy to `LISTING` in `generate-store-listing.mjs` and changelog entries to `changelog.js`.
+4. Add the same locale in the Chrome Web Store Dashboard under **Store listing → Add a language**.
+5. Re-run `node generate-store-listing.mjs` and paste the localized title, short description, and full description into the Dashboard fields.
+6. Chrome will automatically pick the locale that matches the user’s browser language and fall back to `default_locale` (English) for missing keys.
