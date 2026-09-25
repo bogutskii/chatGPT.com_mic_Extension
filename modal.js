@@ -33,6 +33,38 @@ export const createModalOverlay = () => {
 
 export const setupModal = async (modal, favoriteLanguages, updateLanguageSelector, container, updateFloatingButtonPosition, floatingButtonContainer) => {
   const state = getState();
+
+  // Small ⓘ icon that reveals a hint on hover or click — keeps the settings
+  // compact instead of stacking permanent hint blocks under every option.
+  const createHintIcon = (text) => {
+    const icon = document.createElement('span');
+    icon.classList.add('hint-icon');
+    icon.textContent = 'ⓘ';
+    icon.setAttribute('role', 'button');
+    icon.setAttribute('aria-label', 'Info');
+    icon.setAttribute('tabindex', '0');
+    const tip = document.createElement('span');
+    tip.classList.add('hint-tooltip');
+    tip.textContent = text;
+    icon.appendChild(tip);
+    // preventDefault stops a wrapping <label> from toggling its checkbox.
+    icon.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      tip.classList.toggle('show');
+    });
+    return icon;
+  };
+
+  const makeLabelText = (text, hint) => {
+    const span = document.createElement('span');
+    span.classList.add('label-text-with-hint');
+    span.textContent = text;
+    if (hint) {
+      span.appendChild(createHintIcon(hint));
+    }
+    return span;
+  };
   // column container
   const columnsContainer = document.createElement('div');
   columnsContainer.classList.add('columns');
@@ -134,14 +166,15 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const widthSliderContainer = document.createElement('div');
   widthSliderContainer.classList.add('width-slider-container', 'settings-card');
 
-  const widthSliderLabel = document.createElement('label');
+  // A <label> would forward clicks to its first labelable descendant —
+  // which would be the reset button, not the slider — so use a div here.
+  const widthSliderLabel = document.createElement('div');
   widthSliderLabel.classList.add('width-slider-label');
-  widthSliderLabel.textContent = t('adjustContentWidth');
+  widthSliderLabel.appendChild(makeLabelText(t('adjustContentWidth'), t('contentWidthHint')));
 
   const widthSliderValue = document.createElement('span');
   widthSliderValue.classList.add('width-slider-value');
   widthSliderValue.textContent = `${state.contentWidth}%`;
-  widthSliderLabel.appendChild(widthSliderValue);
 
   const widthSlider = document.createElement('input');
   widthSlider.type = 'range';
@@ -151,13 +184,26 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   widthSlider.step = '5';
   widthSlider.value = state.contentWidth;
 
-  const widthSliderHint = document.createElement('div');
-  widthSliderHint.classList.add('setting-hint', 'info');
-  widthSliderHint.textContent = t('contentWidthHint');
+  // Restores the default 100% width. Reuses the slider's own 'input' event
+  // so the rollback goes through the same path as a manual drag: the
+  // override is removed and 100 is persisted.
+  const widthResetButton = document.createElement('button');
+  widthResetButton.type = 'button';
+  widthResetButton.classList.add('width-reset-button');
+  widthResetButton.textContent = t('resetWidth');
+  widthResetButton.addEventListener('click', () => {
+    widthSlider.value = '100';
+    widthSlider.dispatchEvent(new Event('input', {bubbles: true}));
+  });
+
+  const widthSliderLabelRight = document.createElement('span');
+  widthSliderLabelRight.classList.add('width-slider-label-right');
+  widthSliderLabelRight.appendChild(widthSliderValue);
+  widthSliderLabelRight.appendChild(widthResetButton);
+  widthSliderLabel.appendChild(widthSliderLabelRight);
 
   widthSliderContainer.appendChild(widthSliderLabel);
   widthSliderContainer.appendChild(widthSlider);
-  widthSliderContainer.appendChild(widthSliderHint);
   settingsContainer.appendChild(widthSliderContainer);
 
   widthSlider.addEventListener('input', () => {
@@ -172,7 +218,8 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const autoSendOnSilenceInfo = document.createElement('label');
   autoSendOnSilenceInfo.classList.add('autogeneration-info');
-  autoSendOnSilenceInfo.textContent = t('autoSendOnSilence');
+  autoSendOnSilenceInfo.appendChild(makeLabelText(t('autoSendOnSilence'),
+    `${t('autoSendBeta')}\n\n${t('autoSendHint')}`));
 
   const autoSendOnSilenceCheckbox = document.createElement('input');
   autoSendOnSilenceCheckbox.type = 'checkbox';
@@ -200,14 +247,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const autoSendOnSilenceWarning = document.createElement('div');
   autoSendOnSilenceWarning.classList.add('silence-delay-warning', 'setting-hint', 'warning');
   autoSendOnSilenceWarning.textContent = t('autoSendWarning');
-
-  const autoSendOnSilenceBeta = document.createElement('div');
-  autoSendOnSilenceBeta.classList.add('silence-delay-beta', 'setting-hint', 'beta');
-  autoSendOnSilenceBeta.textContent = t('autoSendBeta');
-
-  const autoSendOnSilenceHint = document.createElement('div');
-  autoSendOnSilenceHint.classList.add('silence-delay-hint', 'setting-hint');
-  autoSendOnSilenceHint.textContent = t('autoSendHint');
 
   const getNormalizedDelay = (rawDelay) => {
     const parsedDelay = Number(rawDelay);
@@ -244,8 +283,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   autoSendOnSilenceRow.appendChild(autoSendOnSilenceDelayControl);
   autoSendOnSilenceContainer.appendChild(autoSendOnSilenceRow);
   autoSendOnSilenceContainer.appendChild(autoSendOnSilenceWarning);
-  autoSendOnSilenceContainer.appendChild(autoSendOnSilenceBeta);
-  autoSendOnSilenceContainer.appendChild(autoSendOnSilenceHint);
 
   // Keep microphone on after auto-send — allows continuous dictation.
   const keepMicOnRow = document.createElement('div');
@@ -253,7 +290,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const keepMicOnLabel = document.createElement('label');
   keepMicOnLabel.classList.add('autogeneration-info');
-  keepMicOnLabel.textContent = t('keepMicOnAfterAutoSend');
+  keepMicOnLabel.appendChild(makeLabelText(t('keepMicOnAfterAutoSend'), t('keepMicOnAfterAutoSendHint')));
 
   const keepMicOnCheckbox = document.createElement('input');
   keepMicOnCheckbox.type = 'checkbox';
@@ -268,13 +305,8 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
     setState({keepMicOnAfterAutoSend: keepMicOnCheckbox.checked});
   });
 
-  const keepMicOnHint = document.createElement('div');
-  keepMicOnHint.classList.add('setting-hint', 'info');
-  keepMicOnHint.textContent = t('keepMicOnAfterAutoSendHint');
-
   keepMicOnRow.appendChild(keepMicOnLabel);
   autoSendOnSilenceContainer.appendChild(keepMicOnRow);
-  autoSendOnSilenceContainer.appendChild(keepMicOnHint);
 
   // Sound on auto-send option
   const soundRow = document.createElement('div');
@@ -282,7 +314,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const soundLabel = document.createElement('label');
   soundLabel.classList.add('autogeneration-info');
-  soundLabel.textContent = t('soundOnAutoSend');
+  soundLabel.appendChild(makeLabelText(t('soundOnAutoSend'), t('soundOnAutoSendHint')));
 
   const soundCheckbox = document.createElement('input');
   soundCheckbox.type = 'checkbox';
@@ -297,13 +329,8 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
     setState({soundOnAutoSend: soundCheckbox.checked});
   });
 
-  const soundHint = document.createElement('div');
-  soundHint.classList.add('setting-hint', 'info');
-  soundHint.textContent = t('soundOnAutoSendHint');
-
   soundRow.appendChild(soundLabel);
   autoSendOnSilenceContainer.appendChild(soundRow);
-  autoSendOnSilenceContainer.appendChild(soundHint);
   settingsContainer.appendChild(autoSendOnSilenceContainer);
   renderAutoSendOnSilenceDelay();
 
@@ -315,7 +342,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const pttInfo = document.createElement('label');
   pttInfo.classList.add('autogeneration-info');
-  pttInfo.textContent = t('pushToTalk');
+  pttInfo.appendChild(makeLabelText(t('pushToTalk'), t('pushToTalkHint')));
 
   const pttCheckbox = document.createElement('input');
   pttCheckbox.type = 'checkbox';
@@ -356,10 +383,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   pttKeyControl.appendChild(pttComboSelect);
 
-  const pttHint = document.createElement('div');
-  pttHint.classList.add('silence-delay-hint', 'setting-hint', 'info');
-  pttHint.textContent = t('pushToTalkHint');
-
   const renderPttState = () => {
     pttComboSelect.disabled = !pttCheckbox.checked;
   };
@@ -376,7 +399,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   pttRow.appendChild(pttInfo);
   pttRow.appendChild(pttKeyControl);
   pttContainer.appendChild(pttRow);
-  pttContainer.appendChild(pttHint);
   settingsContainer.appendChild(pttContainer);
   renderPttState();
 
@@ -389,7 +411,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const punctuationLabel = document.createElement('label');
   punctuationLabel.classList.add('autogeneration-info');
-  punctuationLabel.textContent = t('voicePunctuation');
+  punctuationLabel.appendChild(makeLabelText(t('voicePunctuation'), t('voicePunctuationHint')));
 
   const punctuationCheckbox = document.createElement('input');
   punctuationCheckbox.type = 'checkbox';
@@ -404,13 +426,8 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
     setState({isVoicePunctuationEnabled: punctuationCheckbox.checked});
   });
 
-  const punctuationHint = document.createElement('div');
-  punctuationHint.classList.add('setting-hint', 'info');
-  punctuationHint.textContent = t('voicePunctuationHint');
-
   punctuationRow.appendChild(punctuationLabel);
   punctuationContainer.appendChild(punctuationRow);
-  punctuationContainer.appendChild(punctuationHint);
   settingsContainer.appendChild(punctuationContainer);
 
   // Word replacements dictionary
@@ -420,10 +437,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const replacementsTitle = document.createElement('div');
   replacementsTitle.classList.add('language-list-info');
   replacementsTitle.textContent = t('wordReplacements');
-
-  const replacementsHint = document.createElement('div');
-  replacementsHint.classList.add('setting-hint', 'info');
-  replacementsHint.textContent = t('wordReplacementsHint');
+  replacementsTitle.appendChild(createHintIcon(t('wordReplacementsHint')));
 
   const replacementsList = document.createElement('div');
   replacementsList.classList.add('replacements-list');
@@ -489,7 +503,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   });
 
   replacementsContainer.appendChild(replacementsTitle);
-  replacementsContainer.appendChild(replacementsHint);
   replacementsContainer.appendChild(replacementsList);
   replacementsContainer.appendChild(addReplacementBtn);
   settingsContainer.appendChild(replacementsContainer);
@@ -590,6 +603,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   document.addEventListener('click', () => {
     changelogTooltip.classList.remove('show');
+    modal.querySelectorAll('.hint-tooltip.show').forEach(el => el.classList.remove('show'));
   });
 
   const closeModal = () => {
@@ -625,9 +639,10 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
     const isDark = theme === 'dark' ||
       (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
     const value = isDark ? 'dark' : 'light';
-    // Set on both the modal and the document root so floating elements
-    // (panel, mic, silence timer) get themed too, not only the modal.
-    modal.setAttribute('data-theme', value);
+    // Namespaced attribute on both the modal and the document root: ChatGPT
+    // may put its own data-theme on ancestors, which would make generic
+    // [data-theme="dark"] selectors match permanently and break switching.
+    modal.setAttribute('data-vtt-theme', value);
     document.documentElement.setAttribute('data-vtt-theme', value);
   };
 

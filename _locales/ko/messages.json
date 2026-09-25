@@ -27,6 +27,10 @@
     "message": "이 기능을 사용하려면 ChatGPT 페이지를 새로고침하세요.",
     "description": "Alert shown when the content script is not loaded."
   },
+  "notChatGptAlert": {
+    "message": "이 기능을 사용하려면 ChatGPT 탭을 여세요.",
+    "description": "Alert shown when the active tab is not chatgpt.com."
+  },
   "contextMenuCenterMic": {
     "message": "마이크 중앙 정렬",
     "description": "Context menu item title."
@@ -94,6 +98,10 @@
   "donate": {
     "message": "기부",
     "description": "Link text for donation."
+  },
+  "resetWidth": {
+    "message": "초기화",
+    "description": "콘텐츠 너비를 기본값 100%로 초기화하는 버튼."
   },
   "resetSettings": {
     "message": "설정 초기화",

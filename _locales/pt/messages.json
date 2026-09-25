@@ -27,6 +27,10 @@
     "message": "Recarregue a página do ChatGPT para usar este recurso.",
     "description": "Alert shown when the content script is not loaded."
   },
+  "notChatGptAlert": {
+    "message": "Abra uma aba do ChatGPT para usar este recurso.",
+    "description": "Alerta exibido quando a aba ativa não é chatgpt.com."
+  },
   "contextMenuCenterMic": {
     "message": "Centralizar microfone",
     "description": "Context menu item title."
@@ -94,6 +98,10 @@
   "donate": {
     "message": "Doar",
     "description": "Link text for donation."
+  },
+  "resetWidth": {
+    "message": "Redefinir",
+    "description": "Botão para redefinir a largura do conteúdo para o padrão de 100%."
   },
   "resetSettings": {
     "message": "Redefinir configurações",

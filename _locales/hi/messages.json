@@ -27,6 +27,10 @@
     "message": "इस सुविधा का उपयोग करने के लिए कृपया ChatGPT पेज को रीलोड करें।",
     "description": "Alert shown when the content script is not loaded."
   },
+  "notChatGptAlert": {
+    "message": "इस सुविधा का उपयोग करने के लिए ChatGPT टैब खोलें।",
+    "description": "Alert shown when the active tab is not chatgpt.com."
+  },
   "contextMenuCenterMic": {
     "message": "माइक्रोफ़ोन केंद्रित करें",
     "description": "Context menu item title."
@@ -94,6 +98,10 @@
   "donate": {
     "message": "दान करें",
     "description": "Link text for donation."
+  },
+  "resetWidth": {
+    "message": "रीसेट",
+    "description": "कंटेंट चौड़ाई को डिफ़ॉल्ट 100% पर रीसेट करने का बटन।"
   },
   "resetSettings": {
     "message": "सेटिंग्स रीसेट करें",

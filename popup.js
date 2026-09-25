@@ -13,8 +13,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function sendTabMessage(action) {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (!tabs[0]) return;
-      chrome.tabs.sendMessage(tabs[0].id, { action: action }, () => {
+      const tab = tabs[0];
+      if (!tab) return;
+      // The content script only runs on chatgpt.com — don't message
+      // unrelated tabs (they would fail with "receiving end does not exist").
+      let isChatGptTab = false;
+      try {
+        isChatGptTab = new URL(tab.url || '').hostname === 'chatgpt.com';
+      } catch {
+        // Unparseable URL — treated as non-ChatGPT below.
+      }
+      if (!isChatGptTab) {
+        alert(t('notChatGptAlert'));
+        return;
+      }
+      chrome.tabs.sendMessage(tab.id, { action: action }, () => {
         if (chrome.runtime.lastError) {
           console.warn('Action failed:', chrome.runtime.lastError.message);
           alert(t('reloadPageAlert'));

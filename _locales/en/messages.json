@@ -27,6 +27,10 @@
     "message": "Please reload the ChatGPT page to use this feature.",
     "description": "Alert shown when the content script is not loaded."
   },
+  "notChatGptAlert": {
+    "message": "Open a ChatGPT tab to use this feature.",
+    "description": "Alert shown when the active tab is not chatgpt.com."
+  },
   "contextMenuCenterMic": {
     "message": "Center Microphone",
     "description": "Context menu item title."
@@ -94,6 +98,10 @@
   "donate": {
     "message": "Donate",
     "description": "Link text for donation."
+  },
+  "resetWidth": {
+    "message": "Reset",
+    "description": "Button to reset the content width to the default 100%."
   },
   "resetSettings": {
     "message": "Reset Settings",

@@ -1,5 +1,88 @@
 // Changelog data per version and locale
 const CHANGELOG_DATA = {
+  '2.6': {
+    en: [
+      'Fixed dictation on the redesigned ChatGPT interface — the extension now supports both the old and the new message composer.',
+      'Microphone now retries automatically on network errors instead of silently stopping.',
+      'Theme switching works again — ChatGPT\'s own page theme could lock the settings window in dark mode.',
+      'Checkboxes are now clearly visible in dark mode (native ones were invisible on the new ChatGPT design).',
+      'Settings made more compact: long hints are tucked behind ⓘ tooltips.',
+      'New Reset button next to the content width slider restores the default 100%.',
+      'Note: OpenAI changed ChatGPT\'s interface under the hood. If a future redesign breaks dictation again, we will ship a fix as soon as possible.',
+    ],
+    ru: [
+      'Исправлена диктовка в обновлённом интерфейсе ChatGPT — расширение теперь поддерживает и старый, и новый вариант поля ввода.',
+      'Микрофон теперь автоматически повторяет попытку при сетевых ошибках вместо тихой остановки.',
+      'Переключение темы снова работает — тема самой страницы ChatGPT могла принудительно держать окно настроек в тёмном режиме.',
+      'Чекбоксы теперь хорошо видны в тёмной теме (нативные были невидимы в новом оформлении ChatGPT).',
+      'Настройки стали компактнее: длинные подсказки свернуты в тултипы за значком ⓘ.',
+      'Новая кнопка «Сбросить» рядом со слайдером ширины возвращает значение 100%.',
+      'Важно: OpenAI изменила внутреннее устройство интерфейса ChatGPT. Если после будущих редизайнов диктовка снова сломается — мы выпустим исправление в кратчайшие сроки.',
+    ],
+    es: [
+      'Dictado corregido en la interfaz rediseñada de ChatGPT: la extensión ahora admite el campo de entrada antiguo y el nuevo.',
+      'El micrófono ahora reintenta automáticamente tras errores de red en lugar de detenerse en silencio.',
+      'El selector de tema vuelve a funcionar: el tema de la propia página de ChatGPT podía forzar la ventana de ajustes a modo oscuro.',
+      'Las casillas ahora son claramente visibles en modo oscuro (las nativas eran invisibles con el nuevo diseño de ChatGPT).',
+      'Ajustes más compactos: las ayudas largas se ocultan tras el icono ⓘ.',
+      'Nuevo botón Restablecer junto al control de ancho que devuelve el 100 % predeterminado.',
+      'Nota: OpenAI cambió el diseño interno de ChatGPT. Si un rediseño futuro vuelve a romper el dictado, publicaremos una corrección lo antes posible.',
+    ],
+    fr: [
+      'Dictée corrigée sur la nouvelle interface de ChatGPT — l\'extension prend désormais en charge l\'ancien et le nouveau champ de saisie.',
+      'Le micro retente automatiquement en cas d\'erreur réseau au lieu de s\'arrêter silencieusement.',
+      'Le sélecteur de thème refonctionne — le thème de la page ChatGPT pouvait forcer la fenêtre de réglages en mode sombre.',
+      'Les cases à cocher sont désormais bien visibles en mode sombre (les natives étaient invisibles avec le nouveau design de ChatGPT).',
+      'Réglages plus compacts : les longues aides sont regroupées derrière une icône ⓘ.',
+      'Nouveau bouton Réinitialiser à côté du curseur de largeur pour revenir à 100 %.',
+      'Remarque : OpenAI a modifié la conception interne de ChatGPT. Si un futur redesign casse à nouveau la dictée, nous publierons un correctif au plus vite.',
+    ],
+    hi: [
+      'नए डिज़ाइन किए गए ChatGPT इंटरफ़ेस में डिक्टेशन ठीक किया गया — एक्सटेंशन अब पुराने और नए दोनों इनपुट फ़ील्ड सपोर्ट करता है।',
+      'माइक्रोफ़ोन अब नेटवर्क एरर पर अपने आप फिर से कोशिश करता है, चुपचाप बंद नहीं होता।',
+      'थीम स्विचर फिर से काम करता है — ChatGPT पेज की अपनी थीम सेटिंग्स विंडो को डार्क मोड में लॉक कर सकती थी।',
+      'चेकबॉक्स अब डार्क मोड में साफ़ दिखते हैं (नए ChatGPT डिज़ाइन में नेटिव चेकबॉक्स अदृश्य थे)।',
+      'सेटिंग्स अब ज़्यादा कॉम्पैक्ट: लंबे हिंट ⓘ आइकन के टूलटिप में छिपे हैं।',
+      'कंटेंट चौड़ाई स्लाइडर के पास नया "रीसेट" बटन डिफ़ॉल्ट 100% पर लौटाता है।',
+      'नोट: OpenAI ने ChatGPT का आंतरिक डिज़ाइन बदल दिया है। अगर भविष्य के रीडिज़ाइन से डिक्टेशन फिर टूटे, तो हम जल्द से जल्द फिक्स जारी करेंगे।',
+    ],
+    ko: [
+      '새로 디자인된 ChatGPT 인터페이스에서 받아쓰기 수정 — 확장 프로그램이 이제 이전 및 새 입력 필드를 모두 지원합니다.',
+      '네트워크 오류 시 마이크가 조용히 멈추지 않고 자동으로 재시도합니다.',
+      '테마 전환 다시 작동 — ChatGPT 페이지 자체 테마가 설정 창을 다크 모드로 고정할 수 있었습니다.',
+      '체크박스가 이제 다크 모드에서도 선명하게 보입니다(새 ChatGPT 디자인에서 기본 체크박스는 보이지 않았습니다).',
+      '설정이 더 간결해졌습니다: 긴 힌트는 ⓘ 아이콘의 툴팁으로 이동했습니다.',
+      '콘텐츠 너비 슬라이더 옆에 기본값 100%로 되돌리는 새 "초기화" 버튼이 추가되었습니다.',
+      '참고: OpenAI가 ChatGPT의 내부 디자인을 변경했습니다. 향후 리디자인으로 받아쓰기가 다시 중단되면 최대한 빨리 수정을 배포하겠습니다.',
+    ],
+    pt: [
+      'Ditado corrigido na interface redesenhada do ChatGPT — a extensão agora suporta o campo de entrada antigo e o novo.',
+      'O microfone agora tenta novamente automaticamente em erros de rede em vez de parar silenciosamente.',
+      'O seletor de tema voltou a funcionar — o tema da própria página do ChatGPT podia forçar a janela de configurações para o modo escuro.',
+      'As caixas de seleção agora são claramente visíveis no modo escuro (as nativas eram invisíveis no novo design do ChatGPT).',
+      'Configurações mais compactas: dicas longas foram recolhidas em tooltips atrás do ícone ⓘ.',
+      'Novo botão Redefinir ao lado do controle de largura que volta ao padrão de 100%.',
+      'Nota: a OpenAI mudou o design interno do ChatGPT. Se um redesign futuro quebrar o ditado de novo, publicaremos uma correção o quanto antes.',
+    ],
+    uk: [
+      'Виправлено диктування в оновленому інтерфейсі ChatGPT — розширення тепер підтримує і старе, і нове поле вводу.',
+      'Мікрофон тепер автоматично повторює спробу при мережевих помилках замість тихої зупинки.',
+      'Перемикання теми знову працює — тема самої сторінки ChatGPT могла примусово тримати вікно налаштувань у темному режимі.',
+      'Чекбокси тепер добре видимі в темній темі (нативні були невидимі в новому оформленні ChatGPT).',
+      'Налаштування стали компактнішими: довгі підказки згорнуто в тултипи за значком ⓘ.',
+      'Нова кнопка «Скинути» біля слайдера ширини повертає значення 100%.',
+      'Важливо: OpenAI змінила внутрішню будову інтерфейсу ChatGPT. Якщо після майбутніх редизайнів диктування знову зламається — ми випустимо виправлення найближчим часом.',
+    ],
+    zh: [
+      '修复了重新设计的 ChatGPT 界面上的听写功能 — 扩展现在同时支持旧版和新版输入框。',
+      '麦克风在网络错误时现在会自动重试，而不是静默停止。',
+      '主题切换恢复正常 — ChatGPT 页面自身的主题可能会强制设置窗口为深色模式。',
+      '复选框现在在深色模式下清晰可见（在 ChatGPT 新设计中原生复选框不可见）。',
+      '设置界面更简洁：长提示收起至 ⓘ 图标的工具提示中。',
+      '内容宽度滑块旁新增"重置"按钮，可恢复默认的 100%。',
+      '注意：OpenAI 更改了 ChatGPT 的内部设计。如果未来的改版再次导致听写失效，我们将尽快发布修复。',
+    ],
+  },
   '2.5': {
     en: [
       'Major performance optimization: smoother dragging, faster speech recognition rendering, and reduced main-thread work during ChatGPT streaming.',
@@ -271,7 +354,7 @@ const CHANGELOG_DATA = {
   },
 };
 
-export const CURRENT_VERSION = '2.5';
+export const CURRENT_VERSION = '2.6';
 
 export const VERSIONS = Object.keys(CHANGELOG_DATA).sort().reverse();
 

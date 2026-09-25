@@ -21,18 +21,30 @@ This extension adds a floating microphone panel to the ChatGPT interface, lettin
 
 Key features:
 - Real-time speech-to-text in the ChatGPT input field
-- Auto-send after a configurable silence delay
+- Auto-send after a configurable silence delay — clickable countdown timer
 - Push-to-Talk (walkie-talkie) mode — hold a key, speak, release to stop
-- Collapsible floating panel with drag-and-drop positioning
-- Adjustable ChatGPT content width
+- Collapsible floating panel and mic button — drag anywhere, position saved between sessions
+- Adjustable ChatGPT content width (up to 300%)
 - Light / Dark / System theme selector
 - Voice punctuation commands in your dictation language (~30 languages)
-- Word replacements in any language
+- Word replacements in any language, case-insensitive
+- Favorite languages with instant search picker
+- Sound notification on auto-send
+- Toolbar popup: center controls, open settings
 - Support for multiple recognition languages
 
 Your voice data never leaves your device. All processing happens inside the browser using the built-in Web Speech API.
 
 **What’s New**
+
+**Version 2.6**  
+- Fixed dictation on the redesigned ChatGPT interface — the extension now supports both the old and the new message composer.
+- Microphone now retries automatically on network errors instead of silently stopping.
+- Theme switching works again — ChatGPT's own page theme could lock the settings window in dark mode.
+- Checkboxes are now clearly visible in dark mode (native ones were invisible on the new ChatGPT design).
+- Settings made more compact: long hints are tucked behind ⓘ tooltips.
+- New Reset button next to the content width slider restores the default 100%.
+- Note: OpenAI changed ChatGPT's interface under the hood. If a future redesign breaks dictation again, we will ship a fix as soon as possible.
 
 **Version 2.5**  
 - Major performance optimization: smoother dragging, faster speech recognition rendering, and reduced main-thread work during ChatGPT streaming.
@@ -81,18 +93,30 @@ Your voice data never leaves your device. All processing happens inside the brow
 
 Основные возможности:
 - Распознавание речи в реальном времени в поле ввода ChatGPT
-- Автоотправка после настраиваемой паузы
+- Автоотправка после настраиваемой паузы — таймер с паузой по клику
 - Режим Push-to-Talk (как рация) — зажмите клавишу, говорите, отпустите — запись остановится
-- Сворачиваемая плавающая панель с возможностью перетаскивания
-- Регулировка ширины контента ChatGPT
+- Сворачиваемая плавающая панель и кнопка микрофона — перетаскивание, позиция сохраняется
+- Регулировка ширины контента ChatGPT (до 300%)
 - Выбор темы: светлая / тёмная / системная
 - Голосовые команды пунктуации на языке диктовки (~30 языков)
-- Автозамена слов на любом языке
+- Автозамена слов на любом языке без учёта регистра
+- Избранные языки с мгновенным поиском
+- Звуковое уведомление при автоотправке
+- Popup в тулбаре: центрирование элементов, открытие настроек
 - Поддержка множества языков распознавания
 
 Ваши голосовые данные не покидают устройство. Вся обработка происходит в браузере через встроенный Web Speech API.
 
 **Что нового**
+
+**Версия 2.6**  
+- Исправлена диктовка в обновлённом интерфейсе ChatGPT — расширение теперь поддерживает и старый, и новый вариант поля ввода.
+- Микрофон теперь автоматически повторяет попытку при сетевых ошибках вместо тихой остановки.
+- Переключение темы снова работает — тема самой страницы ChatGPT могла принудительно держать окно настроек в тёмном режиме.
+- Чекбоксы теперь хорошо видны в тёмной теме (нативные были невидимы в новом оформлении ChatGPT).
+- Настройки стали компактнее: длинные подсказки свернуты в тултипы за значком ⓘ.
+- Новая кнопка «Сбросить» рядом со слайдером ширины возвращает значение 100%.
+- Важно: OpenAI изменила внутреннее устройство интерфейса ChatGPT. Если после будущих редизайнов диктовка снова сломается — мы выпустим исправление в кратчайшие сроки.
 
 **Версия 2.5**  
 - Масштабная оптимизация производительности: более плавное перетаскивание, быстрая отрисовка распознавания речи, меньше нагрузки на главный поток при стриминге ChatGPT.
@@ -141,18 +165,30 @@ Esta extensión añade un panel flotante de micrófono a la interfaz de ChatGPT,
 
 Características principales:
 - Conversión de voz a texto en tiempo real en el campo de entrada de ChatGPT
-- Envío automático tras un silencio configurable
+- Envío automático tras un silencio configurable — temporizador con pausa al hacer clic
 - Modo Push-to-Talk (walkie-talkie) — mantén pulsada una tecla, habla, suelta para detener
-- Panel flotante plegable con posición arrastrable
-- Ajuste del ancho de contenido de ChatGPT
+- Panel flotante y botón de micrófono plegables — arrastra donde quieras, posición guardada
+- Ajuste del ancho de contenido de ChatGPT (hasta 300%)
 - Selector de tema: claro / oscuro / sistema
 - Comandos de puntuación por voz en tu idioma de dictado (~30 idiomas)
-- Reemplazos de palabras en cualquier idioma
+- Reemplazos de palabras en cualquier idioma, sin distinguir mayúsculas
+- Idiomas favoritos con búsqueda instantánea
+- Notificación sonora al enviar automáticamente
+- Popup en la barra: centrar controles, abrir ajustes
 - Soporte para múltiples idiomas de reconocimiento
 
 Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza dentro del navegador mediante la API Web Speech integrada.
 
 **Novedades**
+
+**Versión 2.6**  
+- Dictado corregido en la interfaz rediseñada de ChatGPT: la extensión ahora admite el campo de entrada antiguo y el nuevo.
+- El micrófono ahora reintenta automáticamente tras errores de red en lugar de detenerse en silencio.
+- El selector de tema vuelve a funcionar: el tema de la propia página de ChatGPT podía forzar la ventana de ajustes a modo oscuro.
+- Las casillas ahora son claramente visibles en modo oscuro (las nativas eran invisibles con el nuevo diseño de ChatGPT).
+- Ajustes más compactos: las ayudas largas se ocultan tras el icono ⓘ.
+- Nuevo botón Restablecer junto al control de ancho que devuelve el 100 % predeterminado.
+- Nota: OpenAI cambió el diseño interno de ChatGPT. Si un rediseño futuro vuelve a romper el dictado, publicaremos una corrección lo antes posible.
 
 **Versión 2.5**  
 - Optimización importante de rendimiento: arrastre más suave, renderizado de reconocimiento de voz más rápido y menos trabajo en el hilo principal durante el streaming de ChatGPT.
@@ -201,18 +237,30 @@ Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza
 
 Основні можливості:
 - Розпізнавання мови в реальному часі в полі введення ChatGPT
-- Автовідправка після налаштовуваної паузи
+- Автовідправка після налаштовуваної паузи — таймер із паузою за кліком
 - Режим Push-to-Talk (як рація) — затисніть клавішу, говоріть, відпустіть — запис зупиниться
-- Згортна плаваюча панель з можливістю перетягування
-- Регулювання ширини контенту ChatGPT
+- Згортна плаваюча панель і кнопка мікрофона — перетягування, позиція зберігається
+- Регулювання ширини контенту ChatGPT (до 300%)
 - Вибір теми: світла / темна / системна
 - Голосові команди розділових знаків мовою диктування (~30 мов)
-- Автозаміна слів будь-якою мовою
+- Автозаміна слів будь-якою мовою без урахування регістру
+- Обрані мови з миттєвим пошуком
+- Звукове сповіщення при автовідправці
+- Popup у тулбарі: центрування елементів, відкриття налаштувань
 - Підтримка багатьох мов розпізнавання
 
 Ваші голосові дані не залишають пристрій. Уся обробка відбувається в браузері через вбудований Web Speech API.
 
 **Що нового**
+
+**Версія 2.6**  
+- Виправлено диктування в оновленому інтерфейсі ChatGPT — розширення тепер підтримує і старе, і нове поле вводу.
+- Мікрофон тепер автоматично повторює спробу при мережевих помилках замість тихої зупинки.
+- Перемикання теми знову працює — тема самої сторінки ChatGPT могла примусово тримати вікно налаштувань у темному режимі.
+- Чекбокси тепер добре видимі в темній темі (нативні були невидимі в новому оформленні ChatGPT).
+- Налаштування стали компактнішими: довгі підказки згорнуто в тултипи за значком ⓘ.
+- Нова кнопка «Скинути» біля слайдера ширини повертає значення 100%.
+- Важливо: OpenAI змінила внутрішню будову інтерфейсу ChatGPT. Якщо після майбутніх редизайнів диктування знову зламається — ми випустимо виправлення найближчим часом.
 
 **Версія 2.5**  
 - Масштабна оптимізація продуктивності: плавніше перетягування, швидший рендерінг розпізнавання мови, менше навантаження на головний потік під час стрімінгу ChatGPT.
@@ -261,18 +309,30 @@ ChatGPT 语音输入
 
 主要功能：
 - ChatGPT 输入框中的实时语音转文字
-- 可配置的静音后自动发送
+- 可配置的静音后自动发送 — 可点击暂停的倒计时
 - 一键通（对讲机）模式 — 按住按键，说话，松开停止
-- 可折叠的浮动面板，可拖动定位
-- 调整 ChatGPT 内容宽度
+- 可折叠的浮动面板和麦克风按钮 — 随意拖动，位置自动保存
+- 调整 ChatGPT 内容宽度（最高300%）
 - 主题选择器：浅色 / 深色 / 系统
 - 听写语言中的语音标点命令（约30种语言）
-- 任意语言的单词替换
+- 任意语言的单词替换，不区分大小写
+- 收藏语言并支持即时搜索
+- 自动发送时的声音提示
+- 工具栏弹窗：居中控件、打开设置
 - 支持多种识别语言
 
 您的语音数据永远不会离开您的设备。所有处理都在浏览器内通过内置的 Web Speech API 完成。
 
 **更新内容**
+
+**版本 2.6**  
+- 修复了重新设计的 ChatGPT 界面上的听写功能 — 扩展现在同时支持旧版和新版输入框。
+- 麦克风在网络错误时现在会自动重试，而不是静默停止。
+- 主题切换恢复正常 — ChatGPT 页面自身的主题可能会强制设置窗口为深色模式。
+- 复选框现在在深色模式下清晰可见（在 ChatGPT 新设计中原生复选框不可见）。
+- 设置界面更简洁：长提示收起至 ⓘ 图标的工具提示中。
+- 内容宽度滑块旁新增"重置"按钮，可恢复默认的 100%。
+- 注意：OpenAI 更改了 ChatGPT 的内部设计。如果未来的改版再次导致听写失效，我们将尽快发布修复。
 
 **版本 2.5**  
 - 重大性能优化：更流畅的拖拽、更快的语音识别渲染，以及减少 ChatGPT 流式传输期间的主线程工作。
@@ -321,18 +381,30 @@ ChatGPT에서 음성을 텍스트로 변환하세요.
 
 주요 기능:
 - ChatGPT 입력 필드의 실시간 음성 인식
-- 구성 가능한 침묵 후 자동 전송
+- 구성 가능한 침묵 후 자동 전송 — 클릭으로 일시 정지 가능한 카운트다운
 - 푸시 투 토크(무전기) 모드 — 키를 누르고, 말하고, 놓으면 중지
-- 드래그 앤 드롭 위치 지정이 가능한 접이식 플로팅 패널
-- ChatGPT 콘텐츠 너비 조정
+- 접이식 플로팅 패널과 마이크 버튼 — 자유롭게 드래그, 위치 자동 저장
+- ChatGPT 콘텐츠 너비 조정(최대 300%)
 - 테마 선택기: 라이트 / 다크 / 시스템
 - 받아쓰기 언어의 음성 문장 부호 명령(~30개 언어)
-- 모든 언어의 단어 치환
+- 모든 언어의 단어 치환, 대소문자 무관
+- 즉시 검색 가능한 즐겨찾기 언어
+- 자동 전송 시 소리 알림
+- 툴바 팝업: 컨트롤 가운데 정렬, 설정 열기
 - 다양한 인식 언어 지원
 
 음성 데이터는 절대 기기를 떠나지 않습니다. 모든 처리는 내장된 Web Speech API를 사용하여 브라우저 내부에서 이루어집니다.
 
 **업데이트 내용**
+
+**버전 2.6**  
+- 새로 디자인된 ChatGPT 인터페이스에서 받아쓰기 수정 — 확장 프로그램이 이제 이전 및 새 입력 필드를 모두 지원합니다.
+- 네트워크 오류 시 마이크가 조용히 멈추지 않고 자동으로 재시도합니다.
+- 테마 전환 다시 작동 — ChatGPT 페이지 자체 테마가 설정 창을 다크 모드로 고정할 수 있었습니다.
+- 체크박스가 이제 다크 모드에서도 선명하게 보입니다(새 ChatGPT 디자인에서 기본 체크박스는 보이지 않았습니다).
+- 설정이 더 간결해졌습니다: 긴 힌트는 ⓘ 아이콘의 툴팁으로 이동했습니다.
+- 콘텐츠 너비 슬라이더 옆에 기본값 100%로 되돌리는 새 "초기화" 버튼이 추가되었습니다.
+- 참고: OpenAI가 ChatGPT의 내부 디자인을 변경했습니다. 향후 리디자인으로 받아쓰기가 다시 중단되면 최대한 빨리 수정을 배포하겠습니다.
 
 **버전 2.5**  
 - 주요 성능 최적화: 더 부드러운 드래그, 더 빠른 음성 인식 렌더링, ChatGPT 스트리밍 중 메인 스레드 작업 감소.
@@ -381,18 +453,30 @@ Cette extension ajoute un panneau micro flottant à l'interface ChatGPT, vous pe
 
 Fonctionnalités principales :
 - Reconnaissance vocale en temps réel dans le champ de saisie ChatGPT
-- Envoi automatique après une pause configurable
+- Envoi automatique après une pause configurable — minuteur cliquable
 - Mode Push-to-Talk (talkie-walkie) — maintenez la touche, parlez, relâchez pour arrêter
-- Panneau flottant pliable avec position glissante
-- Ajustement de la largeur du contenu ChatGPT
+- Panneau flottant et bouton micro pliables — glissez où vous voulez, position mémorisée
+- Ajustement de la largeur du contenu ChatGPT (jusqu'à 300%)
 - Sélecteur de thème : clair / sombre / système
 - Commandes vocales de ponctuation dans votre langue de dictée (~30 langues)
-- Remplacements de mots dans n'importe quelle langue
+- Remplacements de mots dans n'importe quelle langue, insensible à la casse
+- Langues favorites avec recherche instantanée
+- Notification sonore lors de l'envoi automatique
+- Popup dans la barre d'outils : centrer les contrôles, ouvrir les paramètres
 - Prise en charge de plusieurs langues de reconnaissance
 
 Vos données vocales ne quittent jamais votre appareil. Tout le traitement s'effectue dans le navigateur via l'API Web Speech intégrée.
 
 **Nouveautés**
+
+**Version 2.6**  
+- Dictée corrigée sur la nouvelle interface de ChatGPT — l'extension prend désormais en charge l'ancien et le nouveau champ de saisie.
+- Le micro retente automatiquement en cas d'erreur réseau au lieu de s'arrêter silencieusement.
+- Le sélecteur de thème refonctionne — le thème de la page ChatGPT pouvait forcer la fenêtre de réglages en mode sombre.
+- Les cases à cocher sont désormais bien visibles en mode sombre (les natives étaient invisibles avec le nouveau design de ChatGPT).
+- Réglages plus compacts : les longues aides sont regroupées derrière une icône ⓘ.
+- Nouveau bouton Réinitialiser à côté du curseur de largeur pour revenir à 100 %.
+- Remarque : OpenAI a modifié la conception interne de ChatGPT. Si un futur redesign casse à nouveau la dictée, nous publierons un correctif au plus vite.
 
 **Version 2.5**  
 - Optimisation majeure des performances : glisser plus fluide, rendu plus rapide de la reconnaissance vocale et moins de travail sur le thread principal pendant le streaming de ChatGPT.
@@ -441,18 +525,30 @@ Esta extensão adiciona um painel flutuante de microfone à interface do ChatGPT
 
 Principais recursos:
 - Reconhecimento de voz em tempo real no campo de entrada do ChatGPT
-- Envio automático após uma pausa configurável
+- Envio automático após uma pausa configurável — temporizador clicável
 - Modo Push-to-Talk (rádio) — segure a tecla, fale, solte para parar
-- Painel flutuante dobrável com posição arrastável
-- Ajuste da largura do conteúdo do ChatGPT
+- Painel flutuante e botão de microfone dobráveis — arraste para onde quiser, posição salva
+- Ajuste da largura do conteúdo do ChatGPT (até 300%)
 - Seletor de tema: claro / escuro / sistema
 - Comandos de pontuação por voz no seu idioma de ditado (~30 idiomas)
-- Substituições de palavras em qualquer idioma
+- Substituições de palavras em qualquer idioma, sem distinção de maiúsculas
+- Idiomas favoritos com busca instantânea
+- Notificação sonora ao enviar automaticamente
+- Popup na barra de ferramentas: centralizar controles, abrir configurações
 - Suporte a vários idiomas de reconhecimento
 
 Seus dados de voz nunca saem do seu dispositivo. Todo o processamento ocorre dentro do navegador usando a API Web Speech integrada.
 
 **Novidades**
+
+**Versão 2.6**  
+- Ditado corrigido na interface redesenhada do ChatGPT — a extensão agora suporta o campo de entrada antigo e o novo.
+- O microfone agora tenta novamente automaticamente em erros de rede em vez de parar silenciosamente.
+- O seletor de tema voltou a funcionar — o tema da própria página do ChatGPT podia forçar a janela de configurações para o modo escuro.
+- As caixas de seleção agora são claramente visíveis no modo escuro (as nativas eram invisíveis no novo design do ChatGPT).
+- Configurações mais compactas: dicas longas foram recolhidas em tooltips atrás do ícone ⓘ.
+- Novo botão Redefinir ao lado do controle de largura que volta ao padrão de 100%.
+- Nota: a OpenAI mudou o design interno do ChatGPT. Se um redesign futuro quebrar o ditado de novo, publicaremos uma correção o quanto antes.
 
 **Versão 2.5**  
 - Otimização importante de desempenho: arrasto mais suave, renderização mais rápida do reconhecimento de voz e menos trabalho na thread principal durante o streaming do ChatGPT.
@@ -501,18 +597,30 @@ ChatGPT के लिए वॉइस टाइपिंग
 
 मुख्य विशेषताएँ:
 - ChatGPT इनपुट फ़ील्ड में रीयल-टाइम स्पीच रिकग्निशन
-- कॉन्फ़िगर करने योग्य पॉज़ के बाद ऑटो-सेंड
+- कॉन्फ़िगर करने योग्य पॉज़ के बाद ऑटो-सेंड — क्लिक करने योग्य काउंटडाउन टाइमर
 - पुश-टू-टॉक (वॉकी-टॉकी) मोड — कुंजी दबाएँ, बोलें, छोड़ें — रिकॉर्डिंग बंद
-- ड्रैग करने योग्य स्थिति के साथ फोल्डेबल फ्लोटिंग पैनल
-- ChatGPT सामग्री की चौड़ाई को समायोजित करें
+- फोल्डेबल फ्लोटिंग पैनल और माइक बटन — कहीं भी ड्रैग करें, स्थिति सहेजी जाती है
+- ChatGPT सामग्री की चौड़ाई समायोजित करें (300% तक)
 - थीम चयनकर्ता: लाइट / डार्क / सिस्टम
 - आपकी डिक्टेशन भाषा में वॉइस विराम चिह्न कमांड (~30 भाषाएँ)
-- किसी भी भाषा में शब्द प्रतिस्थापन
+- किसी भी भाषा में शब्द प्रतिस्थापन, अपरकेस अनदेखा
+- इंस्टेंट खोज के साथ पसंदीदा भाषाएँ
+- ऑटो-सेंड पर ध्वनि सूचना
+- टूलबार पॉपअप: कंट्रोल केंद्रित करें, सेटिंग्स खोलें
 - कई रिकग्निशन भाषाओं का समर्थन
 
 आपकी आवाज़ का डेटा कभी भी आपके डिवाइस को नहीं छोड़ता। सारी प्रोसेसिंग बिल्ट-इन Web Speech API के माध्यम से ब्राउज़र के अंदर होती है।
 
 **नया क्या है**
+
+**संस्करण 2.6**  
+- नए डिज़ाइन किए गए ChatGPT इंटरफ़ेस में डिक्टेशन ठीक किया गया — एक्सटेंशन अब पुराने और नए दोनों इनपुट फ़ील्ड सपोर्ट करता है।
+- माइक्रोफ़ोन अब नेटवर्क एरर पर अपने आप फिर से कोशिश करता है, चुपचाप बंद नहीं होता।
+- थीम स्विचर फिर से काम करता है — ChatGPT पेज की अपनी थीम सेटिंग्स विंडो को डार्क मोड में लॉक कर सकती थी।
+- चेकबॉक्स अब डार्क मोड में साफ़ दिखते हैं (नए ChatGPT डिज़ाइन में नेटिव चेकबॉक्स अदृश्य थे)।
+- सेटिंग्स अब ज़्यादा कॉम्पैक्ट: लंबे हिंट ⓘ आइकन के टूलटिप में छिपे हैं।
+- कंटेंट चौड़ाई स्लाइडर के पास नया "रीसेट" बटन डिफ़ॉल्ट 100% पर लौटाता है।
+- नोट: OpenAI ने ChatGPT का आंतरिक डिज़ाइन बदल दिया है। अगर भविष्य के रीडिज़ाइन से डिक्टेशन फिर टूटे, तो हम जल्द से जल्द फिक्स जारी करेंगे।
 
 **संस्करण 2.5**  
 - प्रमुख प्रदर्शन अनुकूलन: अधिक सहज ड्रैगिंग, तेज़ भाषण पहचान रेंडरिंग, और ChatGPT स्ट्रीमिंग के दौरान कम मेन-थ्रेड कार्य।

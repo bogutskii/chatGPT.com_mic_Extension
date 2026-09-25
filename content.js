@@ -6,6 +6,8 @@ let isRecognitionRunning = false;
 let recognition;
 let shouldAutoRestart = false;
 let pendingLanguageChange = null;
+let networkRetryCount = 0;
+let networkRetryTimer = null;
 let currentTabId = null;
 
 // Check if extension context is valid, reload page if not
@@ -35,24 +37,42 @@ const MIC_IMG_OFF_URL = `url(${micButtonImgOff})`;
 const MIC_IMG_ON_URL = `url(${getExtensionUrl('/img/mic_ON.png')})`;
 const MIC_IMG_ERR_URL = `url(${getExtensionUrl('/img/mic_ERR.png')})`;
 
-const INPUT_SELECTOR = '#prompt-textarea';
-const SEND_BUTTON_SELECTOR = '[data-testid="send-button"]';
+const INPUT_SELECTOR = '#prompt-textarea, [data-composer-markdown], #mobile-composer-prompt, textarea[name="prompt"], form [contenteditable="true"]';
+const SEND_BUTTON_SELECTOR = '[data-testid="send-button"], [data-composer-submit]';
 const INPUT_BOUND_ATTR = 'data-voice-input-bound';
 const SEND_BOUND_ATTR = 'data-voice-send-bound';
 const AUTO_SEND_SILENCE_MIN_SEC = 2;
 const AUTO_SEND_SILENCE_MAX_SEC = 30;
 const AUTO_SEND_SILENCE_DEFAULT_SEC = 10;
 
+// 'network' errors are usually transient (Chrome streams audio to a
+// server-side speech service) — retry with exponential backoff, then give up.
+const NETWORK_RETRY_BASE_DELAY_MS = 1000;
+const NETWORK_RETRY_MAX_DELAY_MS = 15000;
+const NETWORK_RETRY_MAX_ATTEMPTS = 5;
+
 // Cached input field — querySelector is expensive in hot paths (onresult fires
 // several times per second). Invalidated when ChatGPT re-renders the textarea.
 let cachedInputField = null;
 let cachedInputFieldValid = false;
 
+// Prefer the first visible match — ChatGPT can render several composer
+// candidates (e.g. hidden responsive variants); writing into a hidden
+// duplicate would look like "dictation inserts nothing".
+const pickVisible = (nodeList) => {
+  for (const el of nodeList) {
+    if (el.getClientRects().length > 0) {
+      return el;
+    }
+  }
+  return nodeList[0] || null;
+};
+
 const getInputField = () => {
   if (cachedInputFieldValid && cachedInputField && document.contains(cachedInputField)) {
     return cachedInputField;
   }
-  cachedInputField = document.querySelector(INPUT_SELECTOR);
+  cachedInputField = pickVisible(document.querySelectorAll(INPUT_SELECTOR));
   cachedInputFieldValid = true;
   return cachedInputField;
 };
@@ -70,35 +90,72 @@ const readInputValue = () => {
     return input.value;
   }
   if (input.isContentEditable) {
-    return (input.innerText || '').replace(/\n\n+/g, '\n');
+    const raw = input.innerText || '';
+    // An empty ProseMirror doc renders as <p><br></p> and innerText reads
+    // '\n' — treat it as empty, otherwise dictation starts with a stray
+    // line break.
+    if (!raw.trim()) {
+      return '';
+    }
+    return raw.replace(/\n\n+/g, '\n');
   }
   return input.textContent || '';
+};
+
+// ChatGPT's composer is a React-controlled field. React wraps the element's
+// own `value` property to track changes, so `input.value = x` updates the
+// tracker too and the following input event is treated as "no change" —
+// the text shows but React state stays empty and may revert it. Calling the
+// prototype setter bypasses the tracker, so the event registers as a real
+// change and the send button enables.
+const setNativeValue = (input, value) => {
+  const proto = input instanceof HTMLTextAreaElement
+    ? HTMLTextAreaElement.prototype
+    : input instanceof HTMLInputElement
+      ? HTMLInputElement.prototype
+      : null;
+  const setter = proto && Object.getOwnPropertyDescriptor(proto, 'value')?.set;
+  if (setter) {
+    setter.call(input, value);
+  } else {
+    input.value = value;
+  }
+};
+
+const describeElement = (el) => {
+  if (!el) return 'null';
+  const id = el.id ? `#${el.id}` : '';
+  const name = el.getAttribute('name') ? `[name=${el.getAttribute('name')}]` : '';
+  const ce = el.isContentEditable ? '[contenteditable]' : '';
+  return `${el.tagName.toLowerCase()}${id}${name}${ce}`;
 };
 
 const writeInputValue = (value) => {
   const input = getInputField();
   if (!input) {
+    console.warn('[VoiceToText] Input field NOT found — text has nowhere to go:', JSON.stringify(value));
     return;
   }
+  console.log('[VoiceToText] write →', describeElement(input), JSON.stringify(value));
   if ('value' in input) {
-    input.value = value;
+    setNativeValue(input, value);
     input.setSelectionRange(value.length, value.length);
     const event = new Event('input', {bubbles: true});
     input.dispatchEvent(event);
   } else if (input.isContentEditable) {
-    // Avoid deprecated execCommand (selectAll/delete/insertText) which forces
-    // a layout reflow on every speech result. Instead, set the text content
-    // directly and dispatch an input event that ChatGPT's editor listens to.
     input.focus();
-    input.textContent = value;
-    // Place caret at the end so subsequent typing appends correctly.
+    const selection = window.getSelection();
     const range = document.createRange();
     range.selectNodeContents(input);
-    range.collapse(false);
-    const selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
-    input.dispatchEvent(new InputEvent('input', {bubbles: true, data: value, inputType: 'insertText'}));
+    if (value) {
+      document.execCommand('insertText', false, value);
+    } else {
+      // Empty string via insertText may not fire beforeinput — delete fires
+      // a real deleteContentBackward that ProseMirror applies to its state.
+      document.execCommand('delete', false);
+    }
   } else {
     input.textContent = value;
     const event = new Event('input', {bubbles: true});
@@ -287,7 +344,7 @@ const resolveCurrentTabId = async () => {
     if (cachedSendButton && document.contains(cachedSendButton)) {
       return cachedSendButton;
     }
-    cachedSendButton = document.querySelector(SEND_BUTTON_SELECTOR);
+    cachedSendButton = pickVisible(document.querySelectorAll(SEND_BUTTON_SELECTOR));
     return cachedSendButton;
   };
 
@@ -351,11 +408,24 @@ const resolveCurrentTabId = async () => {
   };
 
   const stopRecognitionLocally = () => {
-    if (!isRecognitionRunning || !recognition) {
+    if (!recognition) {
       return;
     }
     shouldAutoRestart = false;
-    recognition.stop();
+    networkRetryCount = 0;
+    if (networkRetryTimer) {
+      clearTimeout(networkRetryTimer);
+      networkRetryTimer = null;
+    }
+    // Call stop() unconditionally: after a 'network' error the flag is already
+    // false while the object may still be stopping — skipping stop() would
+    // make a later start() throw InvalidStateError.
+    try {
+      recognition.stop();
+    } catch {
+      // Already stopped — nothing to do. Without this the exception aborts
+      // the caller's click handler and the mic looks stuck ON.
+    }
     isRecognitionRunning = false;
     stopSilenceCountdown();
     setState({isListening: false});
@@ -378,6 +448,31 @@ const resolveCurrentTabId = async () => {
   };
 
   let isAutoSending = false;
+  let autoSendAudioCtx = null;
+
+  // Reuse one AudioContext — creating it per send leaks contexts and can
+  // hit the browser's limit after repeated auto-sends.
+  const playAutoSendBeep = () => {
+    try {
+      autoSendAudioCtx = autoSendAudioCtx ||
+        new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = autoSendAudioCtx;
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.2);
+    } catch (e) {
+      // AudioContext may not be available — silently ignore.
+    }
+  };
 
   const attemptAutoSendOnSilence = () => {
     if (isAutoSending) {
@@ -414,20 +509,7 @@ const resolveCurrentTabId = async () => {
 
     // Play a short beep if the sound option is enabled.
     if (Boolean(getState().soundOnAutoSend)) {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.value = 880;
-        gain.gain.setValueAtTime(0.15, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.2);
-      } catch (e) {
-        // AudioContext may not be available — silently ignore.
-      }
+      playAutoSendBeep();
     }
 
     sendButton.click();
@@ -1037,7 +1119,9 @@ const resolveCurrentTabId = async () => {
     const theme = getState().theme || 'system';
     const isDark = theme === 'dark' ||
       (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    modal.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    // Keep in sync with applyTheme() in modal.js — same namespaced attribute.
+    modal.setAttribute('data-vtt-theme', isDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-vtt-theme', isDark ? 'dark' : 'light');
     modal.style.display = 'block';
     modalOverlay.style.display = 'block';
     // Trigger entrance animation on the next frame so display:block applies first.
@@ -1102,10 +1186,14 @@ const resolveCurrentTabId = async () => {
 
   const toggleRecognition = () => {
     const inputField = getInputField();
-    if (isRecognitionRunning) {
+    // shouldAutoRestart stays true while a network retry is pending — treat
+    // the session as active so a click during the backoff still stops the mic.
+    if (isRecognitionRunning || shouldAutoRestart) {
+      console.log('[VoiceToText] Mic clicked — stopping');
       stopRecognitionLocally();
       floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
     } else {
+      console.log('[VoiceToText] Mic clicked — starting, input:', describeElement(inputField));
       baseTranscript = inputField ? readInputValue() : '';
       finalTranscript = '';
       interimTranscript = '';
@@ -1117,6 +1205,12 @@ const resolveCurrentTabId = async () => {
             void chrome.runtime.lastError;
           });
         } catch (error) {
+          // Extension was reloaded/updated — this content script is dead.
+          // Reload so the user gets the fresh one instead of a broken mic.
+          if (String(error).includes('Extension context invalidated')) {
+            location.reload();
+            return;
+          }
           console.warn('Failed to send voice-stop-other-tabs:', error);
         }
       }
@@ -1127,6 +1221,20 @@ const resolveCurrentTabId = async () => {
         floatingMicButton.style.backgroundImage = MIC_IMG_ON_URL;
         startSilenceCountdown();
       } catch (error) {
+        if (error && error.name === 'InvalidStateError') {
+          // start() raced with a recognizer that is still stopping — force it
+          // to end and let onend perform the restart instead of dropping the
+          // click.
+          shouldAutoRestart = true;
+          setState({isListening: true});
+          floatingMicButton.style.backgroundImage = MIC_IMG_ON_URL;
+          try {
+            recognition.stop();
+          } catch {
+            // Already stopped — onend either ran or won't; nothing to restart.
+          }
+          return;
+        }
         console.warn('Failed to start recognition:', error);
         isRecognitionRunning = false;
         shouldAutoRestart = false;
@@ -1161,6 +1269,21 @@ const resolveCurrentTabId = async () => {
       floatingMicButton.classList.add('ptt-active');
       startSilenceCountdown();
     } catch (error) {
+      if (error && error.name === 'InvalidStateError') {
+        // Recognizer still stopping — force it to end; onend restarts it while
+        // the key stays held (isPushToTalkActive remains true, so release still
+        // stops the session via stopPushToTalk).
+        shouldAutoRestart = true;
+        setState({isListening: true});
+        floatingMicButton.style.backgroundImage = MIC_IMG_ON_URL;
+        floatingMicButton.classList.add('ptt-active');
+        try {
+          recognition.stop();
+        } catch {
+          // Already stopped — nothing to restart.
+        }
+        return;
+      }
       console.warn('Failed to start PTT recognition:', error);
       isPushToTalkActive = false;
       isRecognitionRunning = false;
@@ -1179,7 +1302,11 @@ const resolveCurrentTabId = async () => {
       return; // Don't stop if mic was already on before PTT
     }
     shouldAutoRestart = false;
-    recognition.stop();
+    try {
+      recognition.stop();
+    } catch {
+      // Already stopped.
+    }
     isRecognitionRunning = false;
     stopSilenceCountdown();
     setState({isListening: false});
@@ -1377,25 +1504,64 @@ const resolveCurrentTabId = async () => {
 
   const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+  // \b only understands ASCII — wrap with Unicode letter/number boundaries
+  // so Cyrillic, Hangul, Arabic, Devanagari etc. commands also match.
+  const withBoundary = (inner, useBoundary) => useBoundary
+    ? `(?<![\\p{L}\\p{N}])${inner}(?![\\p{L}\\p{N}])`
+    : inner;
+
+  // Compiled regex caches — onresult fires several times per second, so
+  // rebuilding ~20 RegExp objects on every result is wasteful.
+  let punctCacheKey = null;
+  let punctCacheEntries = [];
+  let replCacheKey = null;
+  let replCacheEntries = [];
+
+  const getPunctuationEntries = (lang, useBoundary) => {
+    const key = `${lang}|${useBoundary}`;
+    if (key !== punctCacheKey) {
+      // English commands always work; the dictation language adds its own.
+      const map = {...PUNCTUATION_MAP.en, ...(PUNCTUATION_MAP[lang] || {})};
+      punctCacheEntries = Object.entries(map)
+        .sort((a, b) => b[0].length - a[0].length)
+        .map(([command, punct]) => [
+          new RegExp(withBoundary(escapeRegExp(command), useBoundary), 'giu'),
+          punct,
+        ]);
+      punctCacheKey = key;
+    }
+    return punctCacheEntries;
+  };
+
+  const getReplacementEntries = (lang, useBoundary) => {
+    const replacements = getState().wordReplacements || [];
+    const key = `${lang}|${useBoundary}|${JSON.stringify(replacements)}`;
+    if (key !== replCacheKey) {
+      replCacheEntries = replacements
+        .filter(rep => (rep.from || '').trim() && rep.to != null && rep.to !== '')
+        .map(rep => [
+          new RegExp(
+            withBoundary(escapeRegExp(rep.from.trim()).replace(/\s+/g, '\\s+'), useBoundary),
+            'giu'
+          ),
+          rep.to,
+        ]);
+      replCacheKey = key;
+    }
+    return replCacheEntries;
+  };
+
   // Apply voice punctuation commands and word replacements to a transcript fragment.
   const processTranscript = (text) => {
     let result = text;
 
     const lang = (getState().recognitionLanguage || 'en-US').split('-')[0];
     const useBoundary = !NO_WORD_BOUNDARY_LANGS.has(lang);
-    // \b only understands ASCII — wrap with Unicode letter/number boundaries
-    // so Cyrillic, Hangul, Arabic, Devanagari etc. commands also match.
-    const withBoundary = (inner) => useBoundary
-      ? `(?<![\\p{L}\\p{N}])${inner}(?![\\p{L}\\p{N}])`
-      : inner;
 
     // Voice punctuation: replace spoken commands with punctuation marks.
     if (Boolean(getState().isVoicePunctuationEnabled)) {
-      // English commands always work; the dictation language adds its own.
-      const map = {...PUNCTUATION_MAP.en, ...(PUNCTUATION_MAP[lang] || {})};
-      const entries = Object.entries(map).sort((a, b) => b[0].length - a[0].length);
-      for (const [command, punct] of entries) {
-        result = result.replace(new RegExp(withBoundary(escapeRegExp(command)), 'giu'), punct);
+      for (const [re, punct] of getPunctuationEntries(lang, useBoundary)) {
+        result = result.replace(re, punct);
       }
       // Tidy spacing around the inserted marks: no space before closing
       // punctuation, none after opening brackets, none around newlines.
@@ -1408,14 +1574,9 @@ const resolveCurrentTabId = async () => {
     // Word replacements: left side → right side, case-insensitive, with
     // flexible whitespace inside the "from" phrase and Unicode boundaries
     // so it works in any language, not just Latin scripts.
-    const replacements = getState().wordReplacements || [];
-    for (const rep of replacements) {
-      const from = (rep.from || '').trim();
-      if (from && rep.to != null && rep.to !== '') {
-        const pattern = escapeRegExp(from).replace(/\s+/g, '\\s+');
-        // Function replacer keeps "$" and other chars in "to" literal.
-        result = result.replace(new RegExp(withBoundary(pattern), 'giu'), () => rep.to);
-      }
+    // Function replacer keeps "$" and other chars in "to" literal.
+    for (const [re, to] of getReplacementEntries(lang, useBoundary)) {
+      result = result.replace(re, () => to);
     }
 
     return result;
@@ -1424,7 +1585,9 @@ const resolveCurrentTabId = async () => {
   recognition.onresult = (event) => {
     // Pick up manual edits made between speech results
     const currentValue = readInputValue();
-    const expectedValue = [baseTranscript, finalTranscript, interimTranscript].filter(Boolean).join(' ');
+    const expectedValue = [baseTranscript, finalTranscript, interimTranscript]
+      .filter(Boolean)
+      .reduce(joinTranscriptParts, '');
     if (currentValue !== expectedValue && isRecognitionRunning) {
       rebaseTranscriptsFromCurrentInput();
     }
@@ -1472,6 +1635,16 @@ const resolveCurrentTabId = async () => {
       return;
     }
 
+    if (event.error === 'network') {
+      // The speech service was unreachable — usually a transient connectivity
+      // or service hiccup. Keep the session alive; onend retries with backoff.
+      networkRetryCount += 1;
+      console.warn(`Speech recognition network error (retry ${networkRetryCount}/${NETWORK_RETRY_MAX_ATTEMPTS})`);
+      isRecognitionRunning = false;
+      stopSilenceCountdown();
+      return;
+    }
+
     console.error('Speech recognition error', event);
     isRecognitionRunning = false;
     shouldAutoRestart = false;
@@ -1489,7 +1662,34 @@ const resolveCurrentTabId = async () => {
   recognition.onend = () => {
     isRecognitionRunning = false;
     stopSilenceCountdown();
-    if (shouldAutoRestart) {
+    console.log('[VoiceToText] Recognition ended (autoRestart:', shouldAutoRestart, ')');
+    if (!shouldAutoRestart) {
+      floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
+      setState({isListening: false});
+      return;
+    }
+    if (networkRetryCount > NETWORK_RETRY_MAX_ATTEMPTS) {
+      // Service stayed unreachable through all retries — give up.
+      console.error('Speech recognition unreachable, giving up after retries');
+      shouldAutoRestart = false;
+      networkRetryCount = 0;
+      setState({isListening: false});
+      floatingMicButton.style.backgroundImage = MIC_IMG_ERR_URL;
+      setTimeout(() => {
+        if (!getState().isListening) {
+          floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
+        }
+      }, 1000);
+      return;
+    }
+    const delay = networkRetryCount > 0
+      ? Math.min(NETWORK_RETRY_BASE_DELAY_MS * 2 ** (networkRetryCount - 1), NETWORK_RETRY_MAX_DELAY_MS)
+      : 0;
+    networkRetryTimer = setTimeout(() => {
+      networkRetryTimer = null;
+      if (!shouldAutoRestart || isRecognitionRunning) {
+        return;
+      }
       try {
         recognition.start();
         isRecognitionRunning = true;
@@ -1501,10 +1701,7 @@ const resolveCurrentTabId = async () => {
         floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
         setState({isListening: false});
       }
-    } else {
-      floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
-      setState({isListening: false});
-    }
+    }, delay);
   };
 
   floatingMicButton.addEventListener('click', (event) => {
@@ -1521,7 +1718,11 @@ const resolveCurrentTabId = async () => {
       if (isRecognitionRunning) {
         pendingLanguageChange = selectedLanguage;
         shouldAutoRestart = true;
-        recognition.stop();
+        try {
+          recognition.stop();
+        } catch {
+          // Already stopped — onstart of the next run applies the new lang.
+        }
       } else {
         recognition.lang = selectedLanguage;
       }
@@ -1530,8 +1731,11 @@ const resolveCurrentTabId = async () => {
 
   recognition.onstart = () => {
     shouldAutoRestart = true;
+    // A successful start proves the service is reachable — clear backoff state.
+    networkRetryCount = 0;
     isTimerPaused = false;
     const inputField = getInputField();
+    console.log('[VoiceToText] Recognition started — input:', describeElement(inputField));
     baseTranscript = inputField ? readInputValue() : '';
     finalTranscript = '';
     interimTranscript = '';
@@ -1748,6 +1952,9 @@ const resolveCurrentTabId = async () => {
 
   checkButtonPosition();
   checkPanelPosition();
+
+  // Confirms the freshly-built content script is running (not a stale one).
+  console.log('[VoiceToText] Content script initialized, input field:', describeElement(getInputField()));
 
   // First-run onboarding tooltip — shows once, then never again.
   if (!getState().hasSeenOnboarding) {
