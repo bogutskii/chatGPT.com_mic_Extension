@@ -122,21 +122,11 @@ const setNativeValue = (input, value) => {
   }
 };
 
-const describeElement = (el) => {
-  if (!el) return 'null';
-  const id = el.id ? `#${el.id}` : '';
-  const name = el.getAttribute('name') ? `[name=${el.getAttribute('name')}]` : '';
-  const ce = el.isContentEditable ? '[contenteditable]' : '';
-  return `${el.tagName.toLowerCase()}${id}${name}${ce}`;
-};
-
 const writeInputValue = (value) => {
   const input = getInputField();
   if (!input) {
-    console.warn('[VoiceToText] Input field NOT found — text has nowhere to go:', JSON.stringify(value));
     return;
   }
-  console.log('[VoiceToText] write →', describeElement(input), JSON.stringify(value));
   if ('value' in input) {
     setNativeValue(input, value);
     input.setSelectionRange(value.length, value.length);
@@ -1189,11 +1179,9 @@ const resolveCurrentTabId = async () => {
     // shouldAutoRestart stays true while a network retry is pending — treat
     // the session as active so a click during the backoff still stops the mic.
     if (isRecognitionRunning || shouldAutoRestart) {
-      console.log('[VoiceToText] Mic clicked — stopping');
       stopRecognitionLocally();
       floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
     } else {
-      console.log('[VoiceToText] Mic clicked — starting, input:', describeElement(inputField));
       baseTranscript = inputField ? readInputValue() : '';
       finalTranscript = '';
       interimTranscript = '';
@@ -1616,7 +1604,6 @@ const resolveCurrentTabId = async () => {
 
     if (nonCriticalErrors.includes(event.error)) {
       // Expected when user is silent or manually stops — no visual error state
-      // console.log('[VoiceToText] Speech recognition:', event.error);
       isRecognitionRunning = false;
       stopSilenceCountdown();
       return;
@@ -1662,7 +1649,6 @@ const resolveCurrentTabId = async () => {
   recognition.onend = () => {
     isRecognitionRunning = false;
     stopSilenceCountdown();
-    console.log('[VoiceToText] Recognition ended (autoRestart:', shouldAutoRestart, ')');
     if (!shouldAutoRestart) {
       floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
       setState({isListening: false});
@@ -1735,7 +1721,6 @@ const resolveCurrentTabId = async () => {
     networkRetryCount = 0;
     isTimerPaused = false;
     const inputField = getInputField();
-    console.log('[VoiceToText] Recognition started — input:', describeElement(inputField));
     baseTranscript = inputField ? readInputValue() : '';
     finalTranscript = '';
     interimTranscript = '';
@@ -1952,9 +1937,6 @@ const resolveCurrentTabId = async () => {
 
   checkButtonPosition();
   checkPanelPosition();
-
-  // Confirms the freshly-built content script is running (not a stale one).
-  console.log('[VoiceToText] Content script initialized, input field:', describeElement(getInputField()));
 
   // First-run onboarding tooltip — shows once, then never again.
   if (!getState().hasSeenOnboarding) {
