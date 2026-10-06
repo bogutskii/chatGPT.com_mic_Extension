@@ -9,6 +9,8 @@ let state = {
   pushToTalkCombo: 'Control+Shift',
   contentWidth: 100,
   soundOnAutoSend: false,
+  soundOnCountdownWarning: false,
+  countdownWarningSec: 3,
   isVoicePunctuationEnabled: false,
   wordReplacements: [],
   hasSeenOnboarding: false,

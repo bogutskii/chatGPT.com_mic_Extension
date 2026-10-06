@@ -980,7 +980,13 @@ input[type="range"]::-moz-range-thumb:hover {
     bottom: auto !important;
 }
 
-/* Changelog badge + floating tooltip in settings modal */
+/* Site badges + floating tooltip in settings modal */
+.site-badges {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
 .site-badge {
     display: inline-block;
     padding: 4px 12px;
@@ -991,7 +997,50 @@ input[type="range"]::-moz-range-thumb:hover {
     border: 1px solid rgba(100, 116, 139, 0.25);
     border-radius: 20px;
     white-space: nowrap;
+    position: relative;
     pointer-events: none;
+}
+
+.site-badge--active {
+    color: #7c3aed;
+    background: rgba(139, 92, 246, 0.1);
+    border-color: rgba(139, 92, 246, 0.35);
+}
+
+.site-badge--inactive {
+    opacity: 0.5;
+    border-style: dashed;
+    pointer-events: auto;
+    cursor: help;
+}
+
+.site-badge-tooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    background: #333;
+    color: #fff;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.45;
+    text-align: center;
+    white-space: normal;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 100002;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.site-badge--inactive:hover .site-badge-tooltip,
+.site-badge--inactive:focus .site-badge-tooltip {
+    opacity: 1;
+    visibility: visible;
 }
 
 .changelog-badge {
@@ -1474,6 +1523,18 @@ input[type="range"]::-moz-range-thumb:hover {
     color: #94a3b8;
     background: rgba(148, 163, 184, 0.12);
     border-color: rgba(148, 163, 184, 0.3);
+}
+
+[data-vtt-theme="dark"] .site-badge--active {
+    color: #a78bfa;
+    background: rgba(139, 92, 246, 0.18);
+    border-color: rgba(139, 92, 246, 0.45);
+}
+
+[data-vtt-theme="dark"] .site-badge-tooltip {
+    background: #252535;
+    color: #e8e8f5;
+    border: 1px solid #4a4a5a;
 }
 
 [data-vtt-theme="dark"] .changelog-badge:hover {

@@ -39,7 +39,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   // manipulates ChatGPT's --thread-content-max-width variables) are only
   // shown on the site they apply to.
   const SITE_ID = location.hostname === 'chat.deepseek.com' ? 'deepseek' : 'chatgpt';
-  const SITE_LABEL = SITE_ID === 'deepseek' ? 'DeepSeek' : 'ChatGPT';
 
   // Small ⓘ icon that reveals a hint on hover or click — keeps the settings
   // compact instead of stacking permanent hint blocks under every option.
@@ -342,6 +341,51 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   soundRow.appendChild(soundLabel);
   autoSendOnSilenceContainer.appendChild(soundRow);
+
+  // Countdown warning beep — pips on the last 3 seconds before auto-send.
+  const countdownSoundRow = document.createElement('div');
+  countdownSoundRow.classList.add('silence-autosend-row', 'sound-row');
+
+  const countdownSoundLabel = document.createElement('label');
+  countdownSoundLabel.classList.add('autogeneration-info');
+  countdownSoundLabel.appendChild(makeLabelText(t('soundOnCountdownWarning'), t('soundOnCountdownWarningHint')));
+
+  const countdownSoundCheckbox = document.createElement('input');
+  countdownSoundCheckbox.type = 'checkbox';
+  countdownSoundCheckbox.id = 'soundOnCountdownWarningCheckbox';
+  countdownSoundCheckbox.checked = Boolean(state.soundOnCountdownWarning);
+  const countdownSoundControl = document.createElement('span');
+  countdownSoundControl.classList.add('control-group');
+  countdownSoundControl.appendChild(countdownSoundCheckbox);
+  countdownSoundLabel.appendChild(countdownSoundControl);
+
+  const countdownSecControl = document.createElement('div');
+  countdownSecControl.classList.add('silence-delay-control');
+
+  const countdownSecSelect = document.createElement('select');
+  countdownSecSelect.classList.add('ptt-key-select');
+  [3, 5].forEach(sec => {
+    const option = document.createElement('option');
+    option.value = String(sec);
+    option.textContent = `${sec}s`;
+    countdownSecSelect.appendChild(option);
+  });
+  countdownSecSelect.value = String(state.countdownWarningSec || 3);
+  countdownSecSelect.disabled = !countdownSoundCheckbox.checked;
+  countdownSecControl.appendChild(countdownSecSelect);
+
+  countdownSoundCheckbox.addEventListener('change', () => {
+    setState({soundOnCountdownWarning: countdownSoundCheckbox.checked});
+    countdownSecSelect.disabled = !countdownSoundCheckbox.checked;
+  });
+
+  countdownSecSelect.addEventListener('change', () => {
+    setState({countdownWarningSec: Number(countdownSecSelect.value)});
+  });
+
+  countdownSoundRow.appendChild(countdownSoundLabel);
+  countdownSoundRow.appendChild(countdownSecControl);
+  autoSendOnSilenceContainer.appendChild(countdownSoundRow);
   settingsContainer.appendChild(autoSendOnSilenceContainer);
   renderAutoSendOnSilenceDelay();
 
@@ -635,12 +679,29 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const headerActions = document.createElement('div');
   headerActions.classList.add('modal-header-actions');
 
-  // Which site this content script is running on — helps the user confirm
-  // they see the right (site-specific) set of options.
-  const siteBadge = document.createElement('span');
-  siteBadge.classList.add('site-badge');
-  siteBadge.textContent = SITE_LABEL;
-  headerActions.appendChild(siteBadge);
+  // Both site badges are always shown. The current site's badge is active;
+  // the other one is dimmed with a hint to switch to that site's tab —
+  // site-specific options are only editable while on the site itself.
+  const siteBadges = document.createElement('div');
+  siteBadges.classList.add('site-badges');
+  [
+    {id: 'chatgpt', label: 'ChatGPT'},
+    {id: 'deepseek', label: 'DeepSeek'},
+  ].forEach(({id, label}) => {
+    const badge = document.createElement('span');
+    const isCurrent = id === SITE_ID;
+    badge.classList.add('site-badge', isCurrent ? 'site-badge--active' : 'site-badge--inactive');
+    badge.textContent = label;
+    if (!isCurrent) {
+      badge.setAttribute('tabindex', '0');
+      const tip = document.createElement('span');
+      tip.classList.add('site-badge-tooltip');
+      tip.textContent = t('switchToSiteTabHint', label);
+      badge.appendChild(tip);
+    }
+    siteBadges.appendChild(badge);
+  });
+  headerActions.appendChild(siteBadges);
 
   headerActions.appendChild(changelogBadge);
 

@@ -226,5 +226,22 @@
   "openSettings": {
     "message": "설정 열기",
     "description": "Button in the extension popup that opens the settings modal."
+  },
+  "switchToSiteTabHint": {
+    "message": "이 설정을 변경하려면 $site$ 탭을 여세요.",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    },
+    "description": "Tooltip on the inactive site badge telling the user to switch to that site's tab."
+  },
+  "soundOnCountdownWarning": {
+    "message": "카운트다운 경고음",
+    "description": "Checkbox label: beep during the last 3 seconds of the silence countdown."
+  },
+  "soundOnCountdownWarningHint": {
+    "message": "자동 전송 전 마지막 몇 초에 알림음이 울립니다 — 3초 또는 5초 경고를 선택하세요.",
+    "description": "Hint for the countdown warning sound option."
   }
 }

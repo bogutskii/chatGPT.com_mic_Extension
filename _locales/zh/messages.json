@@ -226,5 +226,22 @@
   "openSettings": {
     "message": "打开设置",
     "description": "Button in the extension popup that opens the settings modal."
+  },
+  "switchToSiteTabHint": {
+    "message": "要更改这些设置，请打开 $site$ 标签页。",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    },
+    "description": "Tooltip on the inactive site badge telling the user to switch to that site's tab."
+  },
+  "soundOnCountdownWarning": {
+    "message": "倒计时警告音",
+    "description": "Checkbox label: beep during the last 3 seconds of the silence countdown."
+  },
+  "soundOnCountdownWarningHint": {
+    "message": "在自动发送前的最后几秒发出提示音——可选3秒或5秒警告。",
+    "description": "Hint for the countdown warning sound option."
   }
 }

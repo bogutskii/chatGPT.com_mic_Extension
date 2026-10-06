@@ -450,6 +450,7 @@ const resolveCurrentTabId = async () => {
     }
     silenceDeadlineTimestamp = null;
     isTimerPaused = false;
+    lastCountdownBeepSec = null;
     hideSilenceTimerIndicator();
   };
 
@@ -504,7 +505,7 @@ const resolveCurrentTabId = async () => {
 
   // Reuse one AudioContext — creating it per send leaks contexts and can
   // hit the browser's limit after repeated auto-sends.
-  const playAutoSendBeep = () => {
+  const playAutoSendBeep = (frequency = 880) => {
     try {
       autoSendAudioCtx = autoSendAudioCtx ||
         new (window.AudioContext || window.webkitAudioContext)();
@@ -516,7 +517,7 @@ const resolveCurrentTabId = async () => {
       const gain = ctx.createGain();
       osc.connect(gain);
       gain.connect(ctx.destination);
-      osc.frequency.value = 880;
+      osc.frequency.value = frequency;
       gain.gain.setValueAtTime(0.15, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
       osc.start();
@@ -579,6 +580,12 @@ const resolveCurrentTabId = async () => {
   };
 
   let lastSilenceCountdownRender = 0;
+  let lastCountdownBeepSec = null;
+
+  // Countdown warning: a short beep on each of the last N seconds before the
+  // auto-send fires (N = 3 or 5, configurable). Pitch rises toward the end —
+  // the final second is 1100Hz, each earlier second is 100Hz lower.
+  const getCountdownBeepFrequency = (remainingSec) => 1100 - (remainingSec - 1) * 100;
 
   const startSilenceCountdown = () => {
     if (!isRecognitionRunning || !isAutoSendOnSilenceEnabled()) {
@@ -593,11 +600,26 @@ const resolveCurrentTabId = async () => {
 
     const delaySec = getNormalizedAutoSendSilenceDelaySec();
     silenceDeadlineTimestamp = Date.now() + delaySec * 1000;
+    lastCountdownBeepSec = null;
 
     if (!silenceCountdownIntervalId) {
       silenceCountdownIntervalId = setInterval(() => {
         renderSilenceTimer();
-        if (silenceDeadlineTimestamp && Date.now() >= silenceDeadlineTimestamp) {
+        if (!silenceDeadlineTimestamp) {
+          return;
+        }
+        if (Boolean(getState().soundOnCountdownWarning)) {
+          const warningSec = Number(getState().countdownWarningSec) || 3;
+          const remainingSec = Math.ceil(Math.max(0, silenceDeadlineTimestamp - Date.now()) / 1000);
+          // remainingSec < lastCountdownBeepSec keeps one beep per second even
+          // if a 1s interval tick lands late and skips a number.
+          if (remainingSec >= 1 && remainingSec <= warningSec &&
+              (lastCountdownBeepSec === null || remainingSec < lastCountdownBeepSec)) {
+            lastCountdownBeepSec = remainingSec;
+            playAutoSendBeep(getCountdownBeepFrequency(remainingSec));
+          }
+        }
+        if (Date.now() >= silenceDeadlineTimestamp) {
           attemptAutoSendOnSilence();
         }
       }, 1000);
@@ -1255,6 +1277,82 @@ const resolveCurrentTabId = async () => {
   recognition.continuous = true;
   recognition.interimResults = true;
 
+  // Any mic activation mutes dictation on every other supported tab
+  // (chatgpt.com + chat.deepseek.com) — only one mic at a time.
+  // SpeechRecognition is a single shared audio session per browser profile:
+  // start() must wait until other tabs acknowledged their stop, plus a small
+  // delay so their onend can fire and release the audio — otherwise start()
+  // can silently hang while another tab still owns the session.
+  const TAB_HANDOFF_DELAY_MS = 150;
+
+  const notifyOtherTabsToStop = (onDone) => {
+    const done = typeof onDone === 'function' ? onDone : () => {};
+    if (typeof currentTabId !== 'number') {
+      done();
+      return;
+    }
+    try {
+      chrome.runtime.sendMessage({action: 'voice-stop-other-tabs', currentTabId}, () => {
+        const error = chrome.runtime.lastError;
+        if (error) {
+          if (String(error.message).includes('Extension context invalidated')) {
+            location.reload();
+            return;
+          }
+          console.warn('Failed to stop other tabs:', error.message);
+        }
+        done();
+      });
+    } catch (error) {
+      // Extension was reloaded/updated — this content script is dead.
+      // Reload so the user gets the fresh one instead of a broken mic.
+      if (String(error).includes('Extension context invalidated')) {
+        location.reload();
+        return;
+      }
+      console.warn('Failed to send voice-stop-other-tabs:', error);
+      done();
+    }
+  };
+
+  const startRecognitionSession = ({pushToTalk = false} = {}) => {
+    try {
+      recognition.start();
+      isRecognitionRunning = true;
+      setState({isListening: true});
+      floatingMicButton.style.backgroundImage = MIC_IMG_ON_URL;
+      if (pushToTalk) {
+        floatingMicButton.classList.add('ptt-active');
+      }
+      startSilenceCountdown();
+    } catch (error) {
+      if (error && error.name === 'InvalidStateError') {
+        // start() raced with a recognizer that is still stopping — force it
+        // to end and let onend perform the restart instead of dropping the
+        // click.
+        shouldAutoRestart = true;
+        setState({isListening: true});
+        floatingMicButton.style.backgroundImage = MIC_IMG_ON_URL;
+        if (pushToTalk) {
+          floatingMicButton.classList.add('ptt-active');
+        }
+        try {
+          recognition.stop();
+        } catch {
+          // Already stopped — onend either ran or won't; nothing to restart.
+        }
+        return;
+      }
+      console.warn('Failed to start recognition:', error);
+      isRecognitionRunning = false;
+      shouldAutoRestart = false;
+      isPushToTalkActive = false;
+      setState({isListening: false});
+      floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
+      floatingMicButton.classList.remove('ptt-active');
+    }
+  };
+
   const toggleRecognition = () => {
     const inputField = getInputField();
     // shouldAutoRestart stays true while a network retry is pending — treat
@@ -1268,47 +1366,14 @@ const resolveCurrentTabId = async () => {
       interimTranscript = '';
       shouldAutoRestart = true;
       isTimerPaused = false;
-      if (typeof currentTabId === 'number') {
-        try {
-          chrome.runtime.sendMessage({action: 'voice-stop-other-tabs', currentTabId}, () => {
-            void chrome.runtime.lastError;
-          });
-        } catch (error) {
-          // Extension was reloaded/updated — this content script is dead.
-          // Reload so the user gets the fresh one instead of a broken mic.
-          if (String(error).includes('Extension context invalidated')) {
-            location.reload();
-            return;
-          }
-          console.warn('Failed to send voice-stop-other-tabs:', error);
-        }
-      }
-      try {
-        recognition.start();
-        isRecognitionRunning = true;
-        setState({isListening: true});
-        floatingMicButton.style.backgroundImage = MIC_IMG_ON_URL;
-        startSilenceCountdown();
-      } catch (error) {
-        if (error && error.name === 'InvalidStateError') {
-          // start() raced with a recognizer that is still stopping — force it
-          // to end and let onend perform the restart instead of dropping the
-          // click.
-          shouldAutoRestart = true;
-          setState({isListening: true});
-          floatingMicButton.style.backgroundImage = MIC_IMG_ON_URL;
-          try {
-            recognition.stop();
-          } catch {
-            // Already stopped — onend either ran or won't; nothing to restart.
-          }
-          return;
-        }
-        console.warn('Failed to start recognition:', error);
-        isRecognitionRunning = false;
-        shouldAutoRestart = false;
-        setState({isListening: false});
-      }
+      notifyOtherTabsToStop(() => {
+        // The handoff grants the other tab's onend a beat to release audio.
+        setTimeout(() => {
+          // A second click during the wait already stopped the session.
+          if (!shouldAutoRestart || isRecognitionRunning) return;
+          startRecognitionSession();
+        }, TAB_HANDOFF_DELAY_MS);
+      });
     }
   };
 
@@ -1328,34 +1393,13 @@ const resolveCurrentTabId = async () => {
     interimTranscript = '';
     shouldAutoRestart = false; // Don't auto-restart in PTT mode
     isTimerPaused = false;
-    try {
-      recognition.start();
-      isRecognitionRunning = true;
-      setState({isListening: true});
-      floatingMicButton.style.backgroundImage = MIC_IMG_ON_URL;
-      floatingMicButton.classList.add('ptt-active');
-      startSilenceCountdown();
-    } catch (error) {
-      if (error && error.name === 'InvalidStateError') {
-        // Recognizer still stopping — force it to end; onend restarts it while
-        // the key stays held (isPushToTalkActive remains true, so release still
-        // stops the session via stopPushToTalk).
-        shouldAutoRestart = true;
-        setState({isListening: true});
-        floatingMicButton.style.backgroundImage = MIC_IMG_ON_URL;
-        floatingMicButton.classList.add('ptt-active');
-        try {
-          recognition.stop();
-        } catch {
-          // Already stopped — nothing to restart.
-        }
-        return;
-      }
-      console.warn('Failed to start PTT recognition:', error);
-      isPushToTalkActive = false;
-      isRecognitionRunning = false;
-      setState({isListening: false});
-    }
+    notifyOtherTabsToStop(() => {
+      setTimeout(() => {
+        // Key released during the handoff — nothing to start.
+        if (!isPushToTalkActive || isRecognitionRunning) return;
+        startRecognitionSession({pushToTalk: true});
+      }, TAB_HANDOFF_DELAY_MS);
+    });
   };
 
   const stopPushToTalk = () => {

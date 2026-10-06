@@ -226,5 +226,22 @@
   "openSettings": {
     "message": "Open Settings",
     "description": "Button in the extension popup that opens the settings modal."
+  },
+  "switchToSiteTabHint": {
+    "message": "To change these settings, open a $site$ tab.",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    },
+    "description": "Tooltip on the inactive site badge telling the user to switch to that site's tab."
+  },
+  "soundOnCountdownWarning": {
+    "message": "Countdown warning sound",
+    "description": "Checkbox label: beep during the last 3 seconds of the silence countdown."
+  },
+  "soundOnCountdownWarningHint": {
+    "message": "Beeps on each of the last seconds before the auto-send fires — pick a 3s or 5s warning.",
+    "description": "Hint for the countdown warning sound option."
   }
 }

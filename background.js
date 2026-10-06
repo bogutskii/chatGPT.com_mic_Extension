@@ -45,15 +45,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.action === 'voice-stop-other-tabs') {
     const currentTabId = Number(message.currentTabId);
     chrome.tabs.query({ url: ['*://chatgpt.com/*', '*://chat.deepseek.com/*'] }, (tabs) => {
-      tabs.forEach((tab) => {
+      // Respond only after every other tab acknowledged the stop — the caller
+      // delays its own recognition.start() until the audio session is free.
+      const stops = tabs.map((tab) => new Promise((resolve) => {
         if (!tab?.id || tab.id === currentTabId) {
+          resolve();
           return;
         }
         chrome.tabs.sendMessage(tab.id, { action: 'stopRecognitionIfActive' }, () => {
           void chrome.runtime.lastError;
+          resolve();
         });
-      });
-      sendResponse({ success: true });
+      }));
+      Promise.all(stops).then(() => sendResponse({ success: true }));
     });
     return true;
   }

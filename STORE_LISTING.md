@@ -41,6 +41,8 @@ Your voice data never leaves your device. All processing happens inside the brow
 - New: dictation now works on DeepSeek (chat.deepseek.com) — microphone, auto-send, Push-to-Talk and voice punctuation are supported there too.
 - Settings are now site-aware — options that only apply to ChatGPT (like content width) are hidden on DeepSeek.
 - The popup notice now names both supported sites.
+- Site badges in the settings header show which site's options you are editing — the inactive badge suggests switching to that site's tab.
+- New option: warning beeps on the last seconds of the silence countdown — pick a 3s or 5s warning.
 
 **Version 2.6**  
 - Fixed dictation on the redesigned ChatGPT interface — the extension now supports both the old and the new message composer.
@@ -121,6 +123,8 @@ Your voice data never leaves your device. All processing happens inside the brow
 - Новое: диктовка теперь работает в DeepSeek (chat.deepseek.com) — там тоже поддерживаются микрофон, авто-отправка, Push-to-Talk и голосовая пунктуация.
 - Настройки теперь зависят от сайта — опции, относящиеся только к ChatGPT (например, ширина контента), скрыты на DeepSeek.
 - Уведомление во всплывающем окне теперь называет оба поддерживаемых сайта.
+- Плашки сайтов в шапке настроек показывают, чьи опции вы редактируете — неактивная подсказывает переключиться на её вкладку.
+- Новая опция: звуковой отсчёт последних секунд перед автоотправкой — на выбор 3 или 5 секунд.
 
 **Версия 2.6**  
 - Исправлена диктовка в обновлённом интерфейсе ChatGPT — расширение теперь поддерживает и старый, и новый вариант поля ввода.
@@ -201,6 +205,8 @@ Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza
 - Nuevo: el dictado ahora también funciona en DeepSeek (chat.deepseek.com), con micrófono, envío automático, Push-to-Talk y puntuación por voz.
 - La configuración ahora depende del sitio: las opciones exclusivas de ChatGPT (como el ancho del contenido) se ocultan en DeepSeek.
 - El aviso de la ventana emergente ahora menciona ambos sitios compatibles.
+- Las insignias de sitio en el encabezado de ajustes muestran qué sitio estás editando — la inactiva sugiere cambiar a su pestaña.
+- Nueva opción: pitidos de aviso en los últimos segundos de la cuenta atrás — aviso de 3 s o 5 s.
 
 **Versión 2.6**  
 - Dictado corregido en la interfaz rediseñada de ChatGPT: la extensión ahora admite el campo de entrada antiguo y el nuevo.
@@ -281,6 +287,8 @@ Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza
 - Нове: диктовка тепер працює і в DeepSeek (chat.deepseek.com) — там також підтримуються мікрофон, автовідправка, Push-to-Talk і голосова пунктуація.
 - Налаштування тепер залежать від сайту — опції, які стосуються лише ChatGPT (наприклад, ширина контенту), приховані на DeepSeek.
 - Сповіщення у спливаючому вікні тепер називає обидва підтримувані сайти.
+- Плашки сайтів у шапці налаштувань показують, чиї опції ви редагуєте — неактивна підказує перейти на її вкладку.
+- Нова опція: звуковий відлік останніх секунд перед автовідправкою — на вибір 3 або 5 секунд.
 
 **Версія 2.6**  
 - Виправлено диктування в оновленому інтерфейсі ChatGPT — розширення тепер підтримує і старе, і нове поле вводу.
@@ -361,6 +369,8 @@ ChatGPT 和 DeepSeek 语音输入
 - 新增：听写现在也可在 DeepSeek（chat.deepseek.com）上使用——麦克风、自动发送、按键说话和语音标点均已支持。
 - 设置现在按站点显示——仅适用于 ChatGPT 的选项（如内容宽度）在 DeepSeek 上隐藏。
 - 弹出窗口提示现在会列出两个受支持的网站。
+- 设置标题栏中的站点徽章显示您正在编辑哪个站点的选项——未激活的徽章提示切换到其标签页。
+- 新选项：倒计时最后几秒发出警告提示音——可选3秒或5秒警告。
 
 **版本 2.6**  
 - 修复了重新设计的 ChatGPT 界面上的听写功能 — 扩展现在同时支持旧版和新版输入框。
@@ -441,6 +451,8 @@ ChatGPT 및 DeepSeek에서 음성을 텍스트로 변환하세요.
 - 신규: DeepSeek(chat.deepseek.com)에서도 받아쓰기가 작동합니다 — 마이크, 자동 전송, Push-to-Talk, 음성 문장 부호 모두 지원됩니다.
 - 설정이 이제 사이트에 따라 표시됩니다 — 콘텐츠 너비처럼 ChatGPT 전용 옵션은 DeepSeek에서 숨겨집니다.
 - 팝업 안내에 이제 지원되는 두 사이트가 모두 표시됩니다.
+- 설정 헤더의 사이트 배지가 현재 편집 중인 사이트를 표시합니다 — 비활성 배지는 해당 탭으로 전환하라고 안내합니다.
+- 새 옵션: 카운트다운 마지막 몇 초에 경고음 — 3초 또는 5초 경고 선택 가능.
 
 **버전 2.6**  
 - 새로 디자인된 ChatGPT 인터페이스에서 받아쓰기 수정 — 확장 프로그램이 이제 이전 및 새 입력 필드를 모두 지원합니다.
@@ -521,6 +533,8 @@ Vos données vocales ne quittent jamais votre appareil. Tout le traitement s'eff
 - Nouveau : la dictée fonctionne désormais aussi sur DeepSeek (chat.deepseek.com) — micro, envoi automatique, Push-to-Talk et ponctuation vocale inclus.
 - Les réglages dépendent désormais du site : les options propres à ChatGPT (comme la largeur du contenu) sont masquées sur DeepSeek.
 - La notification de la fenêtre contextuelle mentionne désormais les deux sites pris en charge.
+- Les badges de site dans l'en-tête des réglages indiquent quel site vous modifiez — le badge inactif suggère de basculer sur son onglet.
+- Nouvelle option : bips d'avertissement sur les dernières secondes du compte à rebours — avertissement de 3 s ou 5 s.
 
 **Version 2.6**  
 - Dictée corrigée sur la nouvelle interface de ChatGPT — l'extension prend désormais en charge l'ancien et le nouveau champ de saisie.
@@ -601,6 +615,8 @@ Seus dados de voz nunca saem do seu dispositivo. Todo o processamento ocorre den
 - Novo: o ditado agora também funciona no DeepSeek (chat.deepseek.com) — com microfone, envio automático, Push-to-Talk e pontuação por voz.
 - As configurações agora dependem do site — opções exclusivas do ChatGPT (como a largura do conteúdo) ficam ocultas no DeepSeek.
 - O aviso do popup agora menciona os dois sites suportados.
+- Os selos de site no cabeçalho das configurações mostram qual site você está editando — o selo inativo sugere trocar para a aba dele.
+- Nova opção: bipes de aviso nos últimos segundos da contagem regressiva — aviso de 3 s ou 5 s.
 
 **Versão 2.6**  
 - Ditado corrigido na interface redesenhada do ChatGPT — a extensão agora suporta o campo de entrada antigo e o novo.
@@ -681,6 +697,8 @@ ChatGPT और DeepSeek के लिए वॉइस टाइपिंग
 - नया: डिक्टेशन अब DeepSeek (chat.deepseek.com) पर भी काम करता है — वहां भी माइक्रोफ़ोन, ऑटो-सेंड, Push-to-Talk और वॉइस विराम-चिह्न समर्थित हैं।
 - सेटिंग्स अब साइट के अनुसार दिखती हैं — केवल ChatGPT के लिए विकल्प (जैसे कंटेंट चौड़ाई) DeepSeek पर छिपी रहती हैं।
 - पॉपअप सूचना अब दोनों समर्थित साइटों के नाम बताती है।
+- सेटिंग हेडर में साइट बैज दिखाते हैं कि आप किस साइट की सेटिंग्स बदल रहे हैं — निष्क्रिय बैज उस टैब पर जाने का सुझाव देता है।
+- नया विकल्प: काउंटडाउन के अंतिम सेकंडों पर चेतावनी बीप — 3s या 5s चेतावनी चुनें।
 
 **संस्करण 2.6**  
 - नए डिज़ाइन किए गए ChatGPT इंटरफ़ेस में डिक्टेशन ठीक किया गया — एक्सटेंशन अब पुराने और नए दोनों इनपुट फ़ील्ड सपोर्ट करता है।

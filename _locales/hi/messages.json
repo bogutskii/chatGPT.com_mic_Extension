@@ -226,5 +226,22 @@
   "openSettings": {
     "message": "सेटिंग्स खोलें",
     "description": "Button in the extension popup that opens the settings modal."
+  },
+  "switchToSiteTabHint": {
+    "message": "इन सेटिंग्स को बदलने के लिए $site$ टैब खोलें।",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    },
+    "description": "Tooltip on the inactive site badge telling the user to switch to that site's tab."
+  },
+  "soundOnCountdownWarning": {
+    "message": "काउंटडाउन चेतावनी ध्वनि",
+    "description": "Checkbox label: beep during the last 3 seconds of the silence countdown."
+  },
+  "soundOnCountdownWarningHint": {
+    "message": "ऑटो-सेंड से पहले अंतिम सेकंडों पर बीप करता है — 3s या 5s चेतावनी चुनें।",
+    "description": "Hint for the countdown warning sound option."
   }
 }
