@@ -981,6 +981,19 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 /* Changelog badge + floating tooltip in settings modal */
+.site-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    background: rgba(100, 116, 139, 0.1);
+    border: 1px solid rgba(100, 116, 139, 0.25);
+    border-radius: 20px;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
 .changelog-badge {
     position: relative;
     display: inline-block;
@@ -1455,6 +1468,12 @@ input[type="range"]::-moz-range-thumb:hover {
     color: #c4b5fd;
     background: rgba(139, 92, 246, 0.18);
     border-color: rgba(139, 92, 246, 0.4);
+}
+
+[data-vtt-theme="dark"] .site-badge {
+    color: #94a3b8;
+    background: rgba(148, 163, 184, 0.12);
+    border-color: rgba(148, 163, 184, 0.3);
 }
 
 [data-vtt-theme="dark"] .changelog-badge:hover {

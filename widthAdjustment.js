@@ -65,6 +65,7 @@ export const setupWidthAdjustment = (modal) => {
 
   const SEED_SELECTORS = [
     '#prompt-textarea',
+    '#chat-input',
     'form [contenteditable="true"]',
     'form textarea',
     '[data-testid^="conversation-turn"]',

@@ -34,6 +34,13 @@ export const createModalOverlay = () => {
 export const setupModal = async (modal, favoriteLanguages, updateLanguageSelector, container, updateFloatingButtonPosition, floatingButtonContainer) => {
   const state = getState();
 
+  // Site-aware settings: the extension runs on ChatGPT and DeepSeek.
+  // Options tied to a specific site's layout (e.g. content width, which
+  // manipulates ChatGPT's --thread-content-max-width variables) are only
+  // shown on the site they apply to.
+  const SITE_ID = location.hostname === 'chat.deepseek.com' ? 'deepseek' : 'chatgpt';
+  const SITE_LABEL = SITE_ID === 'deepseek' ? 'DeepSeek' : 'ChatGPT';
+
   // Small ⓘ icon that reveals a hint on hover or click — keeps the settings
   // compact instead of stacking permanent hint blocks under every option.
   const createHintIcon = (text) => {
@@ -163,6 +170,9 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const settingsContainer = document.createElement('div');
   settingsContainer.classList.add('column');
 
+  // Content width is a ChatGPT-only feature — it scales ChatGPT's
+  // --thread-content-max-width variables and has no effect on DeepSeek.
+  if (SITE_ID === 'chatgpt') {
   const widthSliderContainer = document.createElement('div');
   widthSliderContainer.classList.add('width-slider-container', 'settings-card');
 
@@ -209,6 +219,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   widthSlider.addEventListener('input', () => {
     widthSliderValue.textContent = `${widthSlider.value}%`;
   });
+  }
 
   const autoSendOnSilenceContainer = document.createElement('div');
   autoSendOnSilenceContainer.classList.add('silence-autosend-container', 'settings-card');
@@ -623,6 +634,14 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const headerActions = document.createElement('div');
   headerActions.classList.add('modal-header-actions');
+
+  // Which site this content script is running on — helps the user confirm
+  // they see the right (site-specific) set of options.
+  const siteBadge = document.createElement('span');
+  siteBadge.classList.add('site-badge');
+  siteBadge.textContent = SITE_LABEL;
+  headerActions.appendChild(siteBadge);
+
   headerActions.appendChild(changelogBadge);
 
   const closeButton = document.createElement('button');

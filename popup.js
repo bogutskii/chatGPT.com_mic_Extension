@@ -15,15 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const tab = tabs[0];
       if (!tab) return;
-      // The content script only runs on chatgpt.com — don't message
-      // unrelated tabs (they would fail with "receiving end does not exist").
-      let isChatGptTab = false;
+      // The content script only runs on supported chat sites — don't
+      // message unrelated tabs (they would fail with "receiving end does
+      // not exist").
+      const SUPPORTED_HOSTS = new Set(['chatgpt.com', 'chat.deepseek.com']);
+      let isSupportedTab = false;
       try {
-        isChatGptTab = new URL(tab.url || '').hostname === 'chatgpt.com';
+        isSupportedTab = SUPPORTED_HOSTS.has(new URL(tab.url || '').hostname);
       } catch {
-        // Unparseable URL — treated as non-ChatGPT below.
+        // Unparseable URL — treated as unsupported below.
       }
-      if (!isChatGptTab) {
+      if (!isSupportedTab) {
         alert(t('notChatGptAlert'));
         return;
       }

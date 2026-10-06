@@ -1,5 +1,52 @@
 // Changelog data per version and locale
 const CHANGELOG_DATA = {
+  '2.7': {
+    en: [
+      'New: dictation now works on DeepSeek (chat.deepseek.com) — microphone, auto-send, Push-to-Talk and voice punctuation are supported there too.',
+      'Settings are now site-aware — options that only apply to ChatGPT (like content width) are hidden on DeepSeek.',
+      'The popup notice now names both supported sites.',
+    ],
+    ru: [
+      'Новое: диктовка теперь работает в DeepSeek (chat.deepseek.com) — там тоже поддерживаются микрофон, авто-отправка, Push-to-Talk и голосовая пунктуация.',
+      'Настройки теперь зависят от сайта — опции, относящиеся только к ChatGPT (например, ширина контента), скрыты на DeepSeek.',
+      'Уведомление во всплывающем окне теперь называет оба поддерживаемых сайта.',
+    ],
+    es: [
+      'Nuevo: el dictado ahora también funciona en DeepSeek (chat.deepseek.com), con micrófono, envío automático, Push-to-Talk y puntuación por voz.',
+      'La configuración ahora depende del sitio: las opciones exclusivas de ChatGPT (como el ancho del contenido) se ocultan en DeepSeek.',
+      'El aviso de la ventana emergente ahora menciona ambos sitios compatibles.',
+    ],
+    fr: [
+      'Nouveau : la dictée fonctionne désormais aussi sur DeepSeek (chat.deepseek.com) — micro, envoi automatique, Push-to-Talk et ponctuation vocale inclus.',
+      'Les réglages dépendent désormais du site : les options propres à ChatGPT (comme la largeur du contenu) sont masquées sur DeepSeek.',
+      'La notification de la fenêtre contextuelle mentionne désormais les deux sites pris en charge.',
+    ],
+    hi: [
+      'नया: डिक्टेशन अब DeepSeek (chat.deepseek.com) पर भी काम करता है — वहां भी माइक्रोफ़ोन, ऑटो-सेंड, Push-to-Talk और वॉइस विराम-चिह्न समर्थित हैं।',
+      'सेटिंग्स अब साइट के अनुसार दिखती हैं — केवल ChatGPT के लिए विकल्प (जैसे कंटेंट चौड़ाई) DeepSeek पर छिपी रहती हैं।',
+      'पॉपअप सूचना अब दोनों समर्थित साइटों के नाम बताती है।',
+    ],
+    ko: [
+      '신규: DeepSeek(chat.deepseek.com)에서도 받아쓰기가 작동합니다 — 마이크, 자동 전송, Push-to-Talk, 음성 문장 부호 모두 지원됩니다.',
+      '설정이 이제 사이트에 따라 표시됩니다 — 콘텐츠 너비처럼 ChatGPT 전용 옵션은 DeepSeek에서 숨겨집니다.',
+      '팝업 안내에 이제 지원되는 두 사이트가 모두 표시됩니다.',
+    ],
+    pt: [
+      'Novo: o ditado agora também funciona no DeepSeek (chat.deepseek.com) — com microfone, envio automático, Push-to-Talk e pontuação por voz.',
+      'As configurações agora dependem do site — opções exclusivas do ChatGPT (como a largura do conteúdo) ficam ocultas no DeepSeek.',
+      'O aviso do popup agora menciona os dois sites suportados.',
+    ],
+    uk: [
+      'Нове: диктовка тепер працює і в DeepSeek (chat.deepseek.com) — там також підтримуються мікрофон, автовідправка, Push-to-Talk і голосова пунктуація.',
+      'Налаштування тепер залежать від сайту — опції, які стосуються лише ChatGPT (наприклад, ширина контенту), приховані на DeepSeek.',
+      'Сповіщення у спливаючому вікні тепер називає обидва підтримувані сайти.',
+    ],
+    zh: [
+      '新增：听写现在也可在 DeepSeek（chat.deepseek.com）上使用——麦克风、自动发送、按键说话和语音标点均已支持。',
+      '设置现在按站点显示——仅适用于 ChatGPT 的选项（如内容宽度）在 DeepSeek 上隐藏。',
+      '弹出窗口提示现在会列出两个受支持的网站。',
+    ],
+  },
   '2.6': {
     en: [
       'Fixed dictation on the redesigned ChatGPT interface — the extension now supports both the old and the new message composer.',
@@ -381,7 +428,7 @@ const CHANGELOG_DATA = {
   },
 };
 
-export const CURRENT_VERSION = '2.6';
+export const CURRENT_VERSION = '2.7';
 
 export const VERSIONS = Object.keys(CHANGELOG_DATA).sort().reverse();
 

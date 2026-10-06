@@ -1,10 +1,10 @@
 {
   "extensionName": {
-    "message": "ChatGPT 语音输入",
+    "message": "ChatGPT 和 DeepSeek 语音输入",
     "description": "Extension name shown in Chrome toolbar and Web Store."
   },
   "extensionDescription": {
-    "message": "说话代替打字。静音自动发送、一键通、浮动麦克风面板等。",
+    "message": "在 ChatGPT 和 DeepSeek 上说话代替打字。静音自动发送、一键通、浮动麦克风面板等。",
     "description": "Short description for Chrome Web Store and extension management page."
   },
   "settingsTitle": {
@@ -28,7 +28,7 @@
     "description": "Alert shown when the content script is not loaded."
   },
   "notChatGptAlert": {
-    "message": "请打开 ChatGPT 标签页以使用此功能。",
+    "message": "请打开 ChatGPT 或 DeepSeek 标签页以使用此功能。",
     "description": "Alert shown when the active tab is not chatgpt.com."
   },
   "contextMenuCenterMic": {

@@ -1,10 +1,10 @@
 {
   "extensionName": {
-    "message": "Voice to Text for ChatGPT",
+    "message": "Voice to Text for ChatGPT & DeepSeek",
     "description": "Extension name shown in Chrome toolbar and Web Store."
   },
   "extensionDescription": {
-    "message": "Speak instead of typing. Auto-send on silence, push-to-talk, floating mic panel, and more.",
+    "message": "Speak instead of typing on ChatGPT and DeepSeek. Auto-send on silence, push-to-talk, floating mic panel, and more.",
     "description": "Short description for Chrome Web Store and extension management page."
   },
   "settingsTitle": {
@@ -28,7 +28,7 @@
     "description": "Alert shown when the content script is not loaded."
   },
   "notChatGptAlert": {
-    "message": "Open a ChatGPT tab to use this feature.",
+    "message": "Open a ChatGPT or DeepSeek tab to use this feature.",
     "description": "Alert shown when the active tab is not chatgpt.com."
   },
   "contextMenuCenterMic": {

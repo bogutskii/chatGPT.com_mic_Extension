@@ -1,10 +1,10 @@
 {
   "extensionName": {
-    "message": "Голосовой ввод для ChatGPT",
+    "message": "Голосовой ввод для ChatGPT и DeepSeek",
     "description": "Название расширения в панели Chrome и Web Store."
   },
   "extensionDescription": {
-    "message": "Говорите вместо того, чтобы печатать. Автоотправка по тишине, рация, плавающая панель микрофона и многое другое.",
+    "message": "Говорите вместо того, чтобы печатать — в ChatGPT и DeepSeek. Автоотправка по тишине, рация, плавающий микрофон.",
     "description": "Краткое описание для Chrome Web Store и страницы управления расширениями."
   },
   "settingsTitle": {
@@ -28,7 +28,7 @@
     "description": "Предупреждение, если content script не загружен."
   },
   "notChatGptAlert": {
-    "message": "Откройте вкладку с ChatGPT, чтобы использовать эту функцию.",
+    "message": "Откройте вкладку с ChatGPT или DeepSeek, чтобы использовать эту функцию.",
     "description": "Предупреждение, если активная вкладка — не chatgpt.com."
   },
   "contextMenuCenterMic": {

@@ -1,10 +1,10 @@
 {
   "extensionName": {
-    "message": "Dictée vocale pour ChatGPT",
+    "message": "Dictée vocale pour ChatGPT et DeepSeek",
     "description": "Extension name shown in Chrome toolbar and Web Store."
   },
   "extensionDescription": {
-    "message": "Parlez au lieu de taper. Envoi automatique en cas de silence, mode talkie-walkie, panneau micro flottant et plus encore.",
+    "message": "Parlez au lieu de taper sur ChatGPT et DeepSeek. Envoi automatique en silence, talkie-walkie, micro flottant.",
     "description": "Short description for Chrome Web Store and extension management page."
   },
   "settingsTitle": {
@@ -28,7 +28,7 @@
     "description": "Alert shown when the content script is not loaded."
   },
   "notChatGptAlert": {
-    "message": "Ouvrez un onglet ChatGPT pour utiliser cette fonctionnalité.",
+    "message": "Ouvrez un onglet ChatGPT ou DeepSeek pour utiliser cette fonctionnalité.",
     "description": "Alerte affichée quand l'onglet actif n'est pas chatgpt.com."
   },
   "contextMenuCenterMic": {

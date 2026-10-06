@@ -1,6 +1,4 @@
 chrome.runtime.onInstalled.addListener(async () => {
-  console.log('Extension installed');
-
   // Avoid duplicate menu items after extension updates
   await chrome.contextMenus.removeAll();
 
@@ -46,7 +44,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message?.action === 'voice-stop-other-tabs') {
     const currentTabId = Number(message.currentTabId);
-    chrome.tabs.query({ url: '*://chatgpt.com/*' }, (tabs) => {
+    chrome.tabs.query({ url: ['*://chatgpt.com/*', '*://chat.deepseek.com/*'] }, (tabs) => {
       tabs.forEach((tab) => {
         if (!tab?.id || tab.id === currentTabId) {
           return;

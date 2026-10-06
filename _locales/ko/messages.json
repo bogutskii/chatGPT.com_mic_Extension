@@ -1,10 +1,10 @@
 {
   "extensionName": {
-    "message": "ChatGPT 음성 입력",
+    "message": "ChatGPT 및 DeepSeek용 음성 입력",
     "description": "Extension name shown in Chrome toolbar and Web Store."
   },
   "extensionDescription": {
-    "message": "타이핑 대신 말하세요. 침묵 시 자동 전송, 푸시 투 토크, 플로팅 마이크 패널 등.",
+    "message": "ChatGPT와 DeepSeek에서 타이핑 대신 말하세요. 침묵 시 자동 전송, 푸시 투 토크, 플로팅 마이크 패널 등.",
     "description": "Short description for Chrome Web Store and extension management page."
   },
   "settingsTitle": {
@@ -28,7 +28,7 @@
     "description": "Alert shown when the content script is not loaded."
   },
   "notChatGptAlert": {
-    "message": "이 기능을 사용하려면 ChatGPT 탭을 여세요.",
+    "message": "이 기능을 사용하려면 ChatGPT 또는 DeepSeek 탭을 여세요.",
     "description": "Alert shown when the active tab is not chatgpt.com."
   },
   "contextMenuCenterMic": {

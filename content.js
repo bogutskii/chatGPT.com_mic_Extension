@@ -2,6 +2,10 @@ let finalTranscript = '';
 let interimTranscript = '';
 let baseTranscript = '';
 let lastFinalResultIndex = -1;
+// Set when transcript state is reset while the session keeps running
+// (send with "keep mic on"): the next onresult must skip every final result
+// still buffered in event.results, otherwise sent text would be re-inserted.
+let skipBufferedFinals = false;
 let isRecognitionRunning = false;
 let recognition;
 let shouldAutoRestart = false;
@@ -15,6 +19,7 @@ const isExtensionContextValid = () => {
   try {
     return !!chrome.runtime?.id;
   } catch {
+    return false;
   }
 };
 
@@ -37,8 +42,15 @@ const MIC_IMG_OFF_URL = `url(${micButtonImgOff})`;
 const MIC_IMG_ON_URL = `url(${getExtensionUrl('/img/mic_ON.png')})`;
 const MIC_IMG_ERR_URL = `url(${getExtensionUrl('/img/mic_ERR.png')})`;
 
-const INPUT_SELECTOR = '#prompt-textarea, [data-composer-markdown], #mobile-composer-prompt, textarea[name="prompt"], form [contenteditable="true"]';
-const SEND_BUTTON_SELECTOR = '[data-testid="send-button"], [data-composer-submit]';
+// ChatGPT: #prompt-textarea / ProseMirror composer / mobile textarea.
+// DeepSeek: a scroll-area textarea — id="chat-input" in older builds, but the
+// current one is textarea[name="search"]/textarea.ds-scroll-area (visible
+// text is rendered by a sibling mirror div, the textarea is the real input).
+const INPUT_SELECTOR = '#prompt-textarea, [data-composer-markdown], #mobile-composer-prompt, #chat-input, textarea[name="prompt"], textarea[name="search"], textarea.ds-scroll-area, textarea[placeholder*="DeepSeek" i], form [contenteditable="true"]';
+// ChatGPT: data-testid send button. DeepSeek: a div.ds-icon-button whose
+// hashed class changes between releases — aria-label / aria-disabled are
+// the stable markers (there is also a position fallback in getSendButton).
+const SEND_BUTTON_SELECTOR = '[data-testid="send-button"], [data-composer-submit], div[role="button"][aria-label="Send"], button[aria-label="Send"], div.ds-icon-button[role="button"][aria-disabled]';
 const INPUT_BOUND_ATTR = 'data-voice-input-bound';
 const SEND_BOUND_ATTR = 'data-voice-send-bound';
 const AUTO_SEND_SILENCE_MIN_SEC = 2;
@@ -129,7 +141,7 @@ const writeInputValue = (value) => {
   }
   if ('value' in input) {
     setNativeValue(input, value);
-    input.setSelectionRange(value.length, value.length);
+    input.setSelectionRange?.(value.length, value.length);
     const event = new Event('input', {bubbles: true});
     input.dispatchEvent(event);
   } else if (input.isContentEditable) {
@@ -179,6 +191,7 @@ const clearRecognizedText = () => {
   finalTranscript = '';
   interimTranscript = '';
   lastFinalResultIndex = -1;
+  skipBufferedFinals = true;
   applyTranscriptsToInput();
 };
 
@@ -187,6 +200,7 @@ const resetTranscriptState = () => {
   finalTranscript = '';
   interimTranscript = '';
   lastFinalResultIndex = -1;
+  skipBufferedFinals = true;
 };
 
 const rebaseTranscriptsFromCurrentInput = () => {
@@ -258,6 +272,11 @@ const resolveCurrentTabId = async () => {
 
   await initializeState();
   await resolveCurrentTabId();
+
+  // Which supported site this script is running on — lets settings and any
+  // future per-site CSS distinguish ChatGPT from DeepSeek.
+  const SITE_ID = location.hostname === 'chat.deepseek.com' ? 'deepseek' : 'chatgpt';
+  document.documentElement.setAttribute('data-vtt-site', SITE_ID);
   let state = getState();
   let silenceCountdownIntervalId = null;
   let silenceDeadlineTimestamp = null;
@@ -265,6 +284,10 @@ const resolveCurrentTabId = async () => {
   let silenceTimerProgress = null;
   let silenceTimerValue = null;
   let isTimerPaused = false;
+  // Declared before the awaits below — message/recognition handlers may run
+  // while setupModal is still awaiting, and TDZ access would throw.
+  let isPushToTalkActive = false;
+  let wasAlreadyListeningBeforePTT = false;
 
   const isAutoSendOnSilenceEnabled = () => Boolean(state.isAutoSendOnSilenceEnabled);
 
@@ -335,6 +358,39 @@ const resolveCurrentTabId = async () => {
       return cachedSendButton;
     }
     cachedSendButton = pickVisible(document.querySelectorAll(SEND_BUTTON_SELECTOR));
+    if (!cachedSendButton) {
+      // DeepSeek: the send button is a div.ds-icon-button whose hashed class
+      // and aria attributes change between releases. Find button-like
+      // controls near the composer — send sits at its bottom-right corner —
+      // and take the closest visible one.
+      const input = getInputField();
+      let scope = input?.closest('form') || null;
+      if (!scope) {
+        for (let el = input?.parentElement; el && el !== document.body; el = el.parentElement) {
+          if (el.querySelector('.ds-icon-button, [role="button"], button')) {
+            scope = el;
+            break;
+          }
+        }
+      }
+      const candidates = [
+        ...(scope || document).querySelectorAll('.ds-icon-button, [role="button"], button'),
+      ].filter(b => b.getClientRects().length > 0);
+      if (input && candidates.length) {
+        const rect = input.getBoundingClientRect();
+        let best = null;
+        let bestDist = Infinity;
+        for (const b of candidates) {
+          const r = b.getBoundingClientRect();
+          const d = Math.hypot(r.right - rect.right, r.top - rect.bottom);
+          if (d < bestDist) {
+            bestDist = d;
+            best = b;
+          }
+        }
+        cachedSendButton = best;
+      }
+    }
     return cachedSendButton;
   };
 
@@ -417,6 +473,12 @@ const resolveCurrentTabId = async () => {
       // the caller's click handler and the mic looks stuck ON.
     }
     isRecognitionRunning = false;
+    // If a PTT session is stopped via mic click / send / another tab, clear
+    // its flags too — otherwise keyup would hit the early-return path and
+    // the 'ptt-active' class would linger on the button.
+    isPushToTalkActive = false;
+    wasAlreadyListeningBeforePTT = false;
+    floatingMicButton.classList.remove('ptt-active');
     stopSilenceCountdown();
     setState({isListening: false});
   };
@@ -845,8 +907,6 @@ const resolveCurrentTabId = async () => {
   // Message listener for position changes from modal
   try {
     chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
-      // console.log('[VoiceToText] Received message:', request.action, request);
-
       switch (request.action) {
         case 'centerPanel':
           container.classList.add('position-custom', 'draggable');
@@ -891,6 +951,10 @@ const resolveCurrentTabId = async () => {
   let dragInitialLeft, dragInitialTop;
   let dragDeltaX = 0;
   let dragDeltaY = 0;
+  // A real drag ends with a click event on the button — suppress that click
+  // so repositioning the mic never toggles dictation or clears the input.
+  let suppressClickAfterDrag = false;
+  const DRAG_CLICK_THRESHOLD_PX = 4;
 
   floatingButtonContainer.addEventListener('mousedown', (e) => {
     isDragging = true;
@@ -900,6 +964,9 @@ const resolveCurrentTabId = async () => {
     dragInitialTop = floatingButtonContainer.offsetTop;
     dragDeltaX = 0;
     dragDeltaY = 0;
+    // If a previous drag ended without a click (released off-element), the
+    // flag would stay armed and swallow the next real click — reset here.
+    suppressClickAfterDrag = false;
     floatingButtonContainer.classList.add('dragging');
     floatingButtonContainer.style.willChange = 'transform';
   });
@@ -915,6 +982,8 @@ const resolveCurrentTabId = async () => {
   document.addEventListener('mouseup', () => {
     if (isDragging) {
       isDragging = false;
+      suppressClickAfterDrag = Math.abs(dragDeltaX) > DRAG_CLICK_THRESHOLD_PX ||
+        Math.abs(dragDeltaY) > DRAG_CLICK_THRESHOLD_PX;
 
       // Commit final position: base + delta, clamped to viewport.
       const finalX = dragInitialLeft + dragDeltaX;
@@ -953,12 +1022,14 @@ const resolveCurrentTabId = async () => {
     sendButton.setAttribute(SEND_BOUND_ATTR, 'true');
     sendButton.addEventListener('click', () => {
       // Keep microphone on after auto-send if the option is enabled.
-      if (isRecognitionRunning) {
-        const keepMicOn = isAutoSending && Boolean(getState().keepMicOnAfterAutoSend);
-        if (!keepMicOn) {
-          stopRecognitionLocally();
-          floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
-        }
+      // shouldAutoRestart also counts as "on": between onend and the deferred
+      // restart isRecognitionRunning is false while a restart timer is armed —
+      // stopping only on the flag would let the mic resurrect itself.
+      const sessionActive = isRecognitionRunning || shouldAutoRestart;
+      const keepMicOn = sessionActive && isAutoSending && Boolean(getState().keepMicOnAfterAutoSend);
+      if (sessionActive && !keepMicOn) {
+        stopRecognitionLocally();
+        floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
       }
       stopSilenceCountdown();
       resetTranscriptState();
@@ -974,7 +1045,7 @@ const resolveCurrentTabId = async () => {
     input.setAttribute(INPUT_BOUND_ATTR, 'true');
     input.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
-        if (isRecognitionRunning) {
+        if (isRecognitionRunning || shouldAutoRestart) {
           stopRecognitionLocally();
           floatingMicButton.style.backgroundImage = MIC_IMG_OFF_URL;
         }
@@ -1011,11 +1082,21 @@ const resolveCurrentTabId = async () => {
   const mutationObserver = new MutationObserver(scheduleRebind);
   const observeTarget = document.querySelector('main') || document.body;
   mutationObserver.observe(observeTarget, {childList: true, subtree: true});
+  // If ChatGPT ever replaces <main> entirely (SPA remount) the subtree
+  // observer above would go dead on a detached node — watching body's direct
+  // children is cheap (rare mutations) and catches the swap.
+  if (observeTarget !== document.body) {
+    mutationObserver.observe(document.body, {childList: true});
+  }
 
   bindSendButtonClearIfNeeded();
   bindInputEnterIfNeeded();
 
   floatingClearButton.addEventListener('click', () => {
+    if (suppressClickAfterDrag) {
+      suppressClickAfterDrag = false;
+      return;
+    }
     clearRecognizedText();
     const input = getInputField();
     if (!input) {
@@ -1023,7 +1104,7 @@ const resolveCurrentTabId = async () => {
     }
     input.focus();
     if ('value' in input) {
-      input.setSelectionRange(input.value.length, input.value.length);
+      input.setSelectionRange?.(input.value.length, input.value.length);
     } else {
       const range = document.createRange();
       range.selectNodeContents(input);
@@ -1231,10 +1312,8 @@ const resolveCurrentTabId = async () => {
     }
   };
 
-  // Push-to-Talk mode (walkie-talkie) — hold Insert to record, release to stop
-  let isPushToTalkActive = false;
-  let wasAlreadyListeningBeforePTT = false;
-
+  // Push-to-Talk mode (walkie-talkie) — hold the configured combo to record,
+  // release to stop.
   const startPushToTalk = () => {
     if (isPushToTalkActive) return;
     if (isRecognitionRunning) {
@@ -1576,8 +1655,25 @@ const resolveCurrentTabId = async () => {
     const expectedValue = [baseTranscript, finalTranscript, interimTranscript]
       .filter(Boolean)
       .reduce(joinTranscriptParts, '');
-    if (currentValue !== expectedValue && isRecognitionRunning) {
+    // ProseMirror may normalize a trailing line break (trailingBreak <br>);
+    // tolerate that difference — a false-positive rebase would fold the
+    // in-flight interim text into baseTranscript and then append it again.
+    const differs = currentValue.replace(/\n+$/, '') !== expectedValue.replace(/\n+$/, '');
+    if (differs && isRecognitionRunning) {
       rebaseTranscriptsFromCurrentInput();
+    }
+
+    // The recognizer's result list is cumulative and may still contain finals
+    // emitted before a send/clear reset — mark the last buffered final as
+    // consumed so only genuinely new finals get appended.
+    if (skipBufferedFinals) {
+      for (let i = event.results.length - 1; i >= 0; i--) {
+        if (event.results[i].isFinal) {
+          lastFinalResultIndex = i;
+          break;
+        }
+      }
+      skipBufferedFinals = false;
     }
 
     let finalTranscriptFragment = '';
@@ -1692,6 +1788,10 @@ const resolveCurrentTabId = async () => {
 
   floatingMicButton.addEventListener('click', (event) => {
     event.preventDefault();
+    if (suppressClickAfterDrag) {
+      suppressClickAfterDrag = false;
+      return;
+    }
     toggleRecognition();
   });
 
@@ -1716,7 +1816,9 @@ const resolveCurrentTabId = async () => {
   });
 
   recognition.onstart = () => {
-    shouldAutoRestart = true;
+    // Do NOT set shouldAutoRestart here — the flag is owned by whoever called
+    // start(). A late onstart arriving after a manual stop would otherwise
+    // re-arm auto-restart and the mic would resurrect itself.
     // A successful start proves the service is reachable — clear backoff state.
     networkRetryCount = 0;
     isTimerPaused = false;

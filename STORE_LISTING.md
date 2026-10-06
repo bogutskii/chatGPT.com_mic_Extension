@@ -9,18 +9,18 @@ Paste these into the Chrome Web Store Dashboard under the **Store listing** tab 
 ## English (en)
 
 **Title**  
-Voice to Text for ChatGPT
+Voice to Text for ChatGPT & DeepSeek
 
 **Short description**  
 Speak instead of typing. Hands-free dictation with auto-send on silence, push-to-talk, and a floating microphone panel.
 
 **Full description**  
-Turn your voice into text on ChatGPT.
+Turn your voice into text on ChatGPT and DeepSeek.
 
-This extension adds a floating microphone panel to the ChatGPT interface, letting you dictate messages hands-free. No extra apps or cloud services required — everything runs locally in your browser.
+This extension adds a floating microphone panel to the ChatGPT and DeepSeek interface, letting you dictate messages hands-free. No extra apps or cloud services required — everything runs locally in your browser.
 
 Key features:
-- Real-time speech-to-text in the ChatGPT input field
+- Real-time speech-to-text in the ChatGPT or DeepSeek input field
 - Auto-send after a configurable silence delay — clickable countdown timer
 - Push-to-Talk (walkie-talkie) mode — hold a key, speak, release to stop
 - Collapsible floating panel and mic button — drag anywhere, position saved between sessions
@@ -36,6 +36,11 @@ Key features:
 Your voice data never leaves your device. All processing happens inside the browser using the built-in Web Speech API.
 
 **What’s New**
+
+**Version 2.7**  
+- New: dictation now works on DeepSeek (chat.deepseek.com) — microphone, auto-send, Push-to-Talk and voice punctuation are supported there too.
+- Settings are now site-aware — options that only apply to ChatGPT (like content width) are hidden on DeepSeek.
+- The popup notice now names both supported sites.
 
 **Version 2.6**  
 - Fixed dictation on the redesigned ChatGPT interface — the extension now supports both the old and the new message composer.
@@ -84,18 +89,18 @@ Your voice data never leaves your device. All processing happens inside the brow
 ## Russian (ru)
 
 **Title**  
-Голосовой ввод для ChatGPT
+Голосовой ввод для ChatGPT и DeepSeek
 
 **Short description**  
 Говорите вместо печати. Диктовка с автоотправкой по тишине, режим рации и плавающая панель микрофона.
 
 **Full description**  
-Превратите свой голос в текст прямо в ChatGPT.
+Превратите свой голос в текст прямо в ChatGPT или DeepSeek.
 
-Расширение добавляет плавающую панель микрофона в интерфейс ChatGPT, позволяя диктовать сообщения без помощи рук. Никаких сторонних приложений или облачных сервисов — всё работает локально в браузере.
+Расширение добавляет плавающую панель микрофона в интерфейс ChatGPT и DeepSeek, позволяя диктовать сообщения без помощи рук. Никаких сторонних приложений или облачных сервисов — всё работает локально в браузере.
 
 Основные возможности:
-- Распознавание речи в реальном времени в поле ввода ChatGPT
+- Распознавание речи в реальном времени в поле ввода ChatGPT или DeepSeek
 - Автоотправка после настраиваемой паузы — таймер с паузой по клику
 - Режим Push-to-Talk (как рация) — зажмите клавишу, говорите, отпустите — запись остановится
 - Сворачиваемая плавающая панель и кнопка микрофона — перетаскивание, позиция сохраняется
@@ -111,6 +116,11 @@ Your voice data never leaves your device. All processing happens inside the brow
 Ваши голосовые данные не покидают устройство. Вся обработка происходит в браузере через встроенный Web Speech API.
 
 **Что нового**
+
+**Версия 2.7**  
+- Новое: диктовка теперь работает в DeepSeek (chat.deepseek.com) — там тоже поддерживаются микрофон, авто-отправка, Push-to-Talk и голосовая пунктуация.
+- Настройки теперь зависят от сайта — опции, относящиеся только к ChatGPT (например, ширина контента), скрыты на DeepSeek.
+- Уведомление во всплывающем окне теперь называет оба поддерживаемых сайта.
 
 **Версия 2.6**  
 - Исправлена диктовка в обновлённом интерфейсе ChatGPT — расширение теперь поддерживает и старый, и новый вариант поля ввода.
@@ -159,18 +169,18 @@ Your voice data never leaves your device. All processing happens inside the brow
 ## Spanish (es)
 
 **Title**  
-Dictado por voz para ChatGPT
+Dictado por voz para ChatGPT y DeepSeek
 
 **Short description**  
 Habla en vez de escribir. Dictado manos libres con envío automático tras silencio, modo walkie-talkie y panel flotante de micrófono.
 
 **Full description**  
-Convierte tu voz en texto directamente en ChatGPT.
+Convierte tu voz en texto directamente en ChatGPT y DeepSeek.
 
-Esta extensión añade un panel flotante de micrófono a la interfaz de ChatGPT, permitiéndote dictar mensajes manos libres. No necesitas apps adicionales ni servicios en la nube — todo funciona localmente en tu navegador.
+Esta extensión añade un panel flotante de micrófono a la interfaz de ChatGPT y DeepSeek, permitiéndote dictar mensajes manos libres. No necesitas apps adicionales ni servicios en la nube — todo funciona localmente en tu navegador.
 
 Características principales:
-- Conversión de voz a texto en tiempo real en el campo de entrada de ChatGPT
+- Conversión de voz a texto en tiempo real en el campo de entrada de ChatGPT o DeepSeek
 - Envío automático tras un silencio configurable — temporizador con pausa al hacer clic
 - Modo Push-to-Talk (walkie-talkie) — mantén pulsada una tecla, habla, suelta para detener
 - Panel flotante y botón de micrófono plegables — arrastra donde quieras, posición guardada
@@ -186,6 +196,11 @@ Características principales:
 Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza dentro del navegador mediante la API Web Speech integrada.
 
 **Novedades**
+
+**Versión 2.7**  
+- Nuevo: el dictado ahora también funciona en DeepSeek (chat.deepseek.com), con micrófono, envío automático, Push-to-Talk y puntuación por voz.
+- La configuración ahora depende del sitio: las opciones exclusivas de ChatGPT (como el ancho del contenido) se ocultan en DeepSeek.
+- El aviso de la ventana emergente ahora menciona ambos sitios compatibles.
 
 **Versión 2.6**  
 - Dictado corregido en la interfaz rediseñada de ChatGPT: la extensión ahora admite el campo de entrada antiguo y el nuevo.
@@ -234,18 +249,18 @@ Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza
 ## Ukrainian (uk)
 
 **Title**  
-Голосове введення для ChatGPT
+Голосове введення для ChatGPT і DeepSeek
 
 **Short description**  
 Говоріть замість друкування. Диктування з автовідправкою за тишею, режим рації та плаваюча панель мікрофона.
 
 **Full description**  
-Перетворіть свій голос на текст прямо в ChatGPT.
+Перетворіть свій голос на текст прямо в ChatGPT або DeepSeek.
 
-Розширення додає плаваючу панель мікрофона до інтерфейсу ChatGPT, дозволяючи диктувати повідомлення без допомоги рук. Жодних сторонніх додатків чи хмарних сервісів — усе працює локально в браузері.
+Розширення додає плаваючу панель мікрофона до інтерфейсу ChatGPT і DeepSeek, дозволяючи диктувати повідомлення без допомоги рук. Жодних сторонніх додатків чи хмарних сервісів — усе працює локально в браузері.
 
 Основні можливості:
-- Розпізнавання мови в реальному часі в полі введення ChatGPT
+- Розпізнавання мови в реальному часі в полі введення ChatGPT або DeepSeek
 - Автовідправка після налаштовуваної паузи — таймер із паузою за кліком
 - Режим Push-to-Talk (як рація) — затисніть клавішу, говоріть, відпустіть — запис зупиниться
 - Згортна плаваюча панель і кнопка мікрофона — перетягування, позиція зберігається
@@ -261,6 +276,11 @@ Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza
 Ваші голосові дані не залишають пристрій. Уся обробка відбувається в браузері через вбудований Web Speech API.
 
 **Що нового**
+
+**Версія 2.7**  
+- Нове: диктовка тепер працює і в DeepSeek (chat.deepseek.com) — там також підтримуються мікрофон, автовідправка, Push-to-Talk і голосова пунктуація.
+- Налаштування тепер залежать від сайту — опції, які стосуються лише ChatGPT (наприклад, ширина контенту), приховані на DeepSeek.
+- Сповіщення у спливаючому вікні тепер називає обидва підтримувані сайти.
 
 **Версія 2.6**  
 - Виправлено диктування в оновленому інтерфейсі ChatGPT — розширення тепер підтримує і старе, і нове поле вводу.
@@ -309,18 +329,18 @@ Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza
 ## Chinese (zh)
 
 **Title**  
-ChatGPT 语音输入
+ChatGPT 和 DeepSeek 语音输入
 
 **Short description**  
 说话代替打字。静音自动发送、一键通模式、浮动麦克风面板。
 
 **Full description**  
-将您的声音转换为 ChatGPT 中的文本。
+将您的声音转换为 ChatGPT 和 DeepSeek 中的文本。
 
-此扩展程序在 ChatGPT 界面中添加了浮动麦克风面板，让您可以免提口述消息。无需额外的应用程序或云服务 — 一切都在浏览器中本地运行。
+此扩展程序在 ChatGPT 和 DeepSeek 界面中添加了浮动麦克风面板，让您可以免提口述消息。无需额外的应用程序或云服务 — 一切都在浏览器中本地运行。
 
 主要功能：
-- ChatGPT 输入框中的实时语音转文字
+- ChatGPT 或 DeepSeek 输入框中的实时语音转文字
 - 可配置的静音后自动发送 — 可点击暂停的倒计时
 - 一键通（对讲机）模式 — 按住按键，说话，松开停止
 - 可折叠的浮动面板和麦克风按钮 — 随意拖动，位置自动保存
@@ -336,6 +356,11 @@ ChatGPT 语音输入
 您的语音数据永远不会离开您的设备。所有处理都在浏览器内通过内置的 Web Speech API 完成。
 
 **更新内容**
+
+**版本 2.7**  
+- 新增：听写现在也可在 DeepSeek（chat.deepseek.com）上使用——麦克风、自动发送、按键说话和语音标点均已支持。
+- 设置现在按站点显示——仅适用于 ChatGPT 的选项（如内容宽度）在 DeepSeek 上隐藏。
+- 弹出窗口提示现在会列出两个受支持的网站。
 
 **版本 2.6**  
 - 修复了重新设计的 ChatGPT 界面上的听写功能 — 扩展现在同时支持旧版和新版输入框。
@@ -384,18 +409,18 @@ ChatGPT 语音输入
 ## Korean (ko)
 
 **Title**  
-ChatGPT 음성 입력
+ChatGPT 및 DeepSeek 음성 입력
 
 **Short description**  
 타이핑 대신 말하세요. 침묵 시 자동 전송, 무전기 모드 및 플로팅 마이크 패널.
 
 **Full description**  
-ChatGPT에서 음성을 텍스트로 변환하세요.
+ChatGPT 및 DeepSeek에서 음성을 텍스트로 변환하세요.
 
-이 확장 프로그램은 ChatGPT 인터페이스에 플로팅 마이크 패널을 추가하여 핸즈프리로 메시지를 받아쓸 수 있게 해줍니다. 추가 앱이나 클라우드 서비스가 필요 없습니다 — 모든 것이 브라우저에서 로컬로 실행됩니다.
+이 확장 프로그램은 ChatGPT 및 DeepSeek 인터페이스에 플로팅 마이크 패널을 추가하여 핸즈프리로 메시지를 받아쓸 수 있게 해줍니다. 추가 앱이나 클라우드 서비스가 필요 없습니다 — 모든 것이 브라우저에서 로컬로 실행됩니다.
 
 주요 기능:
-- ChatGPT 입력 필드의 실시간 음성 인식
+- ChatGPT 또는 DeepSeek 입력 필드의 실시간 음성 인식
 - 구성 가능한 침묵 후 자동 전송 — 클릭으로 일시 정지 가능한 카운트다운
 - 푸시 투 토크(무전기) 모드 — 키를 누르고, 말하고, 놓으면 중지
 - 접이식 플로팅 패널과 마이크 버튼 — 자유롭게 드래그, 위치 자동 저장
@@ -411,6 +436,11 @@ ChatGPT에서 음성을 텍스트로 변환하세요.
 음성 데이터는 절대 기기를 떠나지 않습니다. 모든 처리는 내장된 Web Speech API를 사용하여 브라우저 내부에서 이루어집니다.
 
 **업데이트 내용**
+
+**버전 2.7**  
+- 신규: DeepSeek(chat.deepseek.com)에서도 받아쓰기가 작동합니다 — 마이크, 자동 전송, Push-to-Talk, 음성 문장 부호 모두 지원됩니다.
+- 설정이 이제 사이트에 따라 표시됩니다 — 콘텐츠 너비처럼 ChatGPT 전용 옵션은 DeepSeek에서 숨겨집니다.
+- 팝업 안내에 이제 지원되는 두 사이트가 모두 표시됩니다.
 
 **버전 2.6**  
 - 새로 디자인된 ChatGPT 인터페이스에서 받아쓰기 수정 — 확장 프로그램이 이제 이전 및 새 입력 필드를 모두 지원합니다.
@@ -459,18 +489,18 @@ ChatGPT에서 음성을 텍스트로 변환하세요.
 ## French (fr)
 
 **Title**  
-Dictée vocale pour ChatGPT
+Dictée vocale pour ChatGPT et DeepSeek
 
 **Short description**  
 Parlez au lieu de taper. Envoi automatique en cas de silence, mode talkie-walkie, panneau micro flottant.
 
 **Full description**  
-Transformez votre voix en texte directement dans ChatGPT.
+Transformez votre voix en texte directement dans ChatGPT et DeepSeek.
 
-Cette extension ajoute un panneau micro flottant à l'interface ChatGPT, vous permettant de dicter vos messages mains libres. Pas d'application supplémentaire ni de service cloud — tout fonctionne localement dans le navigateur.
+Cette extension ajoute un panneau micro flottant à l'interface ChatGPT et DeepSeek, vous permettant de dicter vos messages mains libres. Pas d'application supplémentaire ni de service cloud — tout fonctionne localement dans le navigateur.
 
 Fonctionnalités principales :
-- Reconnaissance vocale en temps réel dans le champ de saisie ChatGPT
+- Reconnaissance vocale en temps réel dans le champ de saisie ChatGPT ou DeepSeek
 - Envoi automatique après une pause configurable — minuteur cliquable
 - Mode Push-to-Talk (talkie-walkie) — maintenez la touche, parlez, relâchez pour arrêter
 - Panneau flottant et bouton micro pliables — glissez où vous voulez, position mémorisée
@@ -486,6 +516,11 @@ Fonctionnalités principales :
 Vos données vocales ne quittent jamais votre appareil. Tout le traitement s'effectue dans le navigateur via l'API Web Speech intégrée.
 
 **Nouveautés**
+
+**Version 2.7**  
+- Nouveau : la dictée fonctionne désormais aussi sur DeepSeek (chat.deepseek.com) — micro, envoi automatique, Push-to-Talk et ponctuation vocale inclus.
+- Les réglages dépendent désormais du site : les options propres à ChatGPT (comme la largeur du contenu) sont masquées sur DeepSeek.
+- La notification de la fenêtre contextuelle mentionne désormais les deux sites pris en charge.
 
 **Version 2.6**  
 - Dictée corrigée sur la nouvelle interface de ChatGPT — l'extension prend désormais en charge l'ancien et le nouveau champ de saisie.
@@ -534,18 +569,18 @@ Vos données vocales ne quittent jamais votre appareil. Tout le traitement s'eff
 ## Portuguese (pt)
 
 **Title**  
-Ditado por voz para ChatGPT
+Ditado por voz para ChatGPT e DeepSeek
 
 **Short description**  
 Fale em vez de digitar. Envio automático em silêncio, modo rádio e painel flutuante de microfone.
 
 **Full description**  
-Transforme sua voz em texto diretamente no ChatGPT.
+Transforme sua voz em texto diretamente no ChatGPT e no DeepSeek.
 
-Esta extensão adiciona um painel flutuante de microfone à interface do ChatGPT, permitindo que você dite mensagens sem usar as mãos. Nenhum aplicativo adicional ou serviço em nuvem — tudo funciona localmente no navegador.
+Esta extensão adiciona um painel flutuante de microfone à interface do ChatGPT e do DeepSeek, permitindo que você dite mensagens sem usar as mãos. Nenhum aplicativo adicional ou serviço em nuvem — tudo funciona localmente no navegador.
 
 Principais recursos:
-- Reconhecimento de voz em tempo real no campo de entrada do ChatGPT
+- Reconhecimento de voz em tempo real no campo de entrada do ChatGPT ou DeepSeek
 - Envio automático após uma pausa configurável — temporizador clicável
 - Modo Push-to-Talk (rádio) — segure a tecla, fale, solte para parar
 - Painel flutuante e botão de microfone dobráveis — arraste para onde quiser, posição salva
@@ -561,6 +596,11 @@ Principais recursos:
 Seus dados de voz nunca saem do seu dispositivo. Todo o processamento ocorre dentro do navegador usando a API Web Speech integrada.
 
 **Novidades**
+
+**Versão 2.7**  
+- Novo: o ditado agora também funciona no DeepSeek (chat.deepseek.com) — com microfone, envio automático, Push-to-Talk e pontuação por voz.
+- As configurações agora dependem do site — opções exclusivas do ChatGPT (como a largura do conteúdo) ficam ocultas no DeepSeek.
+- O aviso do popup agora menciona os dois sites suportados.
 
 **Versão 2.6**  
 - Ditado corrigido na interface redesenhada do ChatGPT — a extensão agora suporta o campo de entrada antigo e o novo.
@@ -609,18 +649,18 @@ Seus dados de voz nunca saem do seu dispositivo. Todo o processamento ocorre den
 ## Hindi (hi)
 
 **Title**  
-ChatGPT के लिए वॉइस टाइपिंग
+ChatGPT और DeepSeek के लिए वॉइस टाइपिंग
 
 **Short description**  
 टाइपिंग के बजाय बोलें। शांति पर ऑटो-सेंड, वॉकी-टॉकी मोड और फ्लोटिंग माइक पैनल।
 
 **Full description**  
-अपनी आवाज़ को सीधे ChatGPT में टेक्स्ट में बदलें।
+अपनी आवाज़ को सीधे ChatGPT और DeepSeek में टेक्स्ट में बदलें।
 
-यह एक्सटेंशन ChatGPT इंटरफेस में एक फ्लोटिंग माइक पैनल जोड़ता है, जिससे आप बिना हाथ लगाए संदेश डिक्टेट कर सकते हैं। कोई अतिरिक्त ऐप या क्लाउड सेवा नहीं — सब कुछ ब्राउज़र में लोकल रूप से काम करता है।
+यह एक्सटेंशन ChatGPT और DeepSeek इंटरफेस में एक फ्लोटिंग माइक पैनल जोड़ता है, जिससे आप बिना हाथ लगाए संदेश डिक्टेट कर सकते हैं। कोई अतिरिक्त ऐप या क्लाउड सेवा नहीं — सब कुछ ब्राउज़र में लोकल रूप से काम करता है।
 
 मुख्य विशेषताएँ:
-- ChatGPT इनपुट फ़ील्ड में रीयल-टाइम स्पीच रिकग्निशन
+- ChatGPT या DeepSeek इनपुट फ़ील्ड में रीयल-टाइम स्पीच रिकग्निशन
 - कॉन्फ़िगर करने योग्य पॉज़ के बाद ऑटो-सेंड — क्लिक करने योग्य काउंटडाउन टाइमर
 - पुश-टू-टॉक (वॉकी-टॉकी) मोड — कुंजी दबाएँ, बोलें, छोड़ें — रिकॉर्डिंग बंद
 - फोल्डेबल फ्लोटिंग पैनल और माइक बटन — कहीं भी ड्रैग करें, स्थिति सहेजी जाती है
@@ -636,6 +676,11 @@ ChatGPT के लिए वॉइस टाइपिंग
 आपकी आवाज़ का डेटा कभी भी आपके डिवाइस को नहीं छोड़ता। सारी प्रोसेसिंग बिल्ट-इन Web Speech API के माध्यम से ब्राउज़र के अंदर होती है।
 
 **नया क्या है**
+
+**संस्करण 2.7**  
+- नया: डिक्टेशन अब DeepSeek (chat.deepseek.com) पर भी काम करता है — वहां भी माइक्रोफ़ोन, ऑटो-सेंड, Push-to-Talk और वॉइस विराम-चिह्न समर्थित हैं।
+- सेटिंग्स अब साइट के अनुसार दिखती हैं — केवल ChatGPT के लिए विकल्प (जैसे कंटेंट चौड़ाई) DeepSeek पर छिपी रहती हैं।
+- पॉपअप सूचना अब दोनों समर्थित साइटों के नाम बताती है।
 
 **संस्करण 2.6**  
 - नए डिज़ाइन किए गए ChatGPT इंटरफ़ेस में डिक्टेशन ठीक किया गया — एक्सटेंशन अब पुराने और नए दोनों इनपुट फ़ील्ड सपोर्ट करता है।

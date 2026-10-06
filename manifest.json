@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "__MSG_extensionName__",
-  "version": "2.6",
+  "version": "2.7",
   "description": "__MSG_extensionDescription__",
   "default_locale": "en",
   "author": "Petr Bogutskii",
@@ -9,6 +9,10 @@
     "storage",
     "contextMenus",
     "activeTab"
+  ],
+  "host_permissions": [
+    "*://chatgpt.com/*",
+    "*://chat.deepseek.com/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -23,7 +27,8 @@
   "content_scripts": [
     {
       "matches": [
-        "*://chatgpt.com/*"
+        "*://chatgpt.com/*",
+        "*://chat.deepseek.com/*"
       ],
       "js": [
         "content.js"
@@ -51,7 +56,8 @@
         "changelog.js"
       ],
       "matches": [
-        "*://chatgpt.com/*"
+        "*://chatgpt.com/*",
+        "*://chat.deepseek.com/*"
       ]
     }
   ]

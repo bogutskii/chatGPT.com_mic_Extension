@@ -1,10 +1,10 @@
 {
   "extensionName": {
-    "message": "ChatGPT के लिए वॉइस टाइपिंग",
+    "message": "ChatGPT और DeepSeek के लिए वॉइस टाइपिंग",
     "description": "Extension name shown in Chrome toolbar and Web Store."
   },
   "extensionDescription": {
-    "message": "टाइपिंग के बजाय बोलें। शांति पर ऑटो-सेंड, पुश-टू-टॉक, फ्लोटिंग माइक पैनल और बहुत कुछ।",
+    "message": "ChatGPT और DeepSeek पर टाइपिंग के बजाय बोलें। शांति पर ऑटो-सेंड, पुश-टू-टॉक, फ्लोटिंग माइक पैनल और बहुत कुछ।",
     "description": "Short description for Chrome Web Store and extension management page."
   },
   "settingsTitle": {
@@ -28,7 +28,7 @@
     "description": "Alert shown when the content script is not loaded."
   },
   "notChatGptAlert": {
-    "message": "इस सुविधा का उपयोग करने के लिए ChatGPT टैब खोलें।",
+    "message": "इस सुविधा का उपयोग करने के लिए ChatGPT या DeepSeek टैब खोलें।",
     "description": "Alert shown when the active tab is not chatgpt.com."
   },
   "contextMenuCenterMic": {
