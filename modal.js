@@ -1,20 +1,28 @@
 import {getState, setState} from './state.js';
-import {t} from './i18n.js';
+import {t, UI_LANGUAGES, getEffectiveUILanguage, getStoreReviewUrl} from './i18n.js';
 import {getChangelog, CURRENT_VERSION} from './changelog.js';
 
 const loadCSS = (url) => {
   const existingLink = document.querySelector(`link[href="${url}"]`);
   if (existingLink) {
-    return;
+    return Promise.resolve();
   }
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.type = 'text/css';
-  link.href = url;
-  document.head.appendChild(link);
+  return new Promise((resolve) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = url;
+    link.onload = () => resolve();
+    link.onerror = () => resolve();
+    document.head.appendChild(link);
+  });
 };
 
-loadCSS(chrome.runtime.getURL('styles.css'));
+// Version query busts the stylesheet cache — chrome-extension:// responses
+// may otherwise be cached across page reloads after an extension update.
+// Positions are measured only after this resolves: without styles the
+// container is full-width and clamping would pin it to the left edge.
+export const stylesReady = loadCSS(`${chrome.runtime.getURL('styles.css')}?v=${chrome.runtime.getManifest().version}`);
 
 export const createModal = () => {
   const modal = document.createElement('div');
@@ -47,7 +55,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
     icon.classList.add('hint-icon');
     icon.textContent = 'ⓘ';
     icon.setAttribute('role', 'button');
-    icon.setAttribute('aria-label', 'Info');
+    icon.setAttribute('aria-label', t('ariaInfo'));
     icon.setAttribute('tabindex', '0');
     const tip = document.createElement('span');
     tip.classList.add('hint-tooltip');
@@ -169,6 +177,38 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const settingsContainer = document.createElement('div');
   settingsContainer.classList.add('column');
 
+  // Interface language override — 'auto' follows the browser UI language.
+  // Changing it writes uiLanguage to state; the content script reloads the
+  // locale messages and rebuilds this modal (see subscribe() in content.js).
+  const uiLangContainer = document.createElement('div');
+  uiLangContainer.classList.add('ui-language-container', 'settings-card');
+
+  const uiLangLabel = document.createElement('div');
+  uiLangLabel.classList.add('width-slider-label');
+  uiLangLabel.appendChild(makeLabelText(t('uiLanguageLabel'), t('uiLanguageHint')));
+
+  const uiLangSelect = document.createElement('select');
+  uiLangSelect.classList.add('ptt-key-select');
+  const uiLangAutoOption = document.createElement('option');
+  uiLangAutoOption.value = 'auto';
+  uiLangAutoOption.textContent = t('uiLanguageAuto');
+  uiLangSelect.appendChild(uiLangAutoOption);
+  UI_LANGUAGES.forEach(lang => {
+    const option = document.createElement('option');
+    option.value = lang.code;
+    option.textContent = lang.name;
+    uiLangSelect.appendChild(option);
+  });
+  uiLangSelect.value = state.uiLanguage || 'auto';
+  uiLangSelect.setAttribute('aria-label', t('uiLanguageLabel'));
+  uiLangSelect.addEventListener('change', () => {
+    setState({uiLanguage: uiLangSelect.value});
+  });
+
+  uiLangContainer.appendChild(uiLangLabel);
+  uiLangContainer.appendChild(uiLangSelect);
+  settingsContainer.appendChild(uiLangContainer);
+
   // Content width is a ChatGPT-only feature — it scales ChatGPT's
   // --thread-content-max-width variables and has no effect on DeepSeek.
   if (SITE_ID === 'chatgpt') {
@@ -228,6 +268,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const autoSendOnSilenceInfo = document.createElement('label');
   autoSendOnSilenceInfo.classList.add('autogeneration-info');
+  autoSendOnSilenceInfo.htmlFor = 'autoSendOnSilenceCheckbox';
   autoSendOnSilenceInfo.appendChild(makeLabelText(t('autoSendOnSilence'),
     `${t('autoSendBeta')}\n\n${t('autoSendHint')}`));
 
@@ -238,7 +279,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const autoSendControl = document.createElement('span');
   autoSendControl.classList.add('control-group');
   autoSendControl.appendChild(autoSendOnSilenceCheckbox);
-  autoSendOnSilenceInfo.appendChild(autoSendControl);
 
   const autoSendOnSilenceDelayControl = document.createElement('div');
   autoSendOnSilenceDelayControl.classList.add('silence-delay-control');
@@ -290,6 +330,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   autoSendOnSilenceDelayControl.appendChild(autoSendOnSilenceDelaySlider);
   autoSendOnSilenceDelayControl.appendChild(autoSendOnSilenceDelayValue);
   autoSendOnSilenceRow.appendChild(autoSendOnSilenceInfo);
+  autoSendOnSilenceRow.appendChild(autoSendControl);
   autoSendOnSilenceRow.appendChild(autoSendOnSilenceDelayControl);
   autoSendOnSilenceContainer.appendChild(autoSendOnSilenceRow);
   autoSendOnSilenceContainer.appendChild(autoSendOnSilenceWarning);
@@ -300,6 +341,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const keepMicOnLabel = document.createElement('label');
   keepMicOnLabel.classList.add('autogeneration-info');
+  keepMicOnLabel.htmlFor = 'keepMicOnCheckbox';
   keepMicOnLabel.appendChild(makeLabelText(t('keepMicOnAfterAutoSend'), t('keepMicOnAfterAutoSendHint')));
 
   const keepMicOnCheckbox = document.createElement('input');
@@ -309,13 +351,13 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const keepMicOnControl = document.createElement('span');
   keepMicOnControl.classList.add('control-group');
   keepMicOnControl.appendChild(keepMicOnCheckbox);
-  keepMicOnLabel.appendChild(keepMicOnControl);
 
   keepMicOnCheckbox.addEventListener('change', () => {
     setState({keepMicOnAfterAutoSend: keepMicOnCheckbox.checked});
   });
 
   keepMicOnRow.appendChild(keepMicOnLabel);
+  keepMicOnRow.appendChild(keepMicOnControl);
   autoSendOnSilenceContainer.appendChild(keepMicOnRow);
 
   // Sound on auto-send option
@@ -324,6 +366,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const soundLabel = document.createElement('label');
   soundLabel.classList.add('autogeneration-info');
+  soundLabel.htmlFor = 'soundOnAutoSendCheckbox';
   soundLabel.appendChild(makeLabelText(t('soundOnAutoSend'), t('soundOnAutoSendHint')));
 
   const soundCheckbox = document.createElement('input');
@@ -333,13 +376,13 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const soundControl = document.createElement('span');
   soundControl.classList.add('control-group');
   soundControl.appendChild(soundCheckbox);
-  soundLabel.appendChild(soundControl);
 
   soundCheckbox.addEventListener('change', () => {
     setState({soundOnAutoSend: soundCheckbox.checked});
   });
 
   soundRow.appendChild(soundLabel);
+  soundRow.appendChild(soundControl);
   autoSendOnSilenceContainer.appendChild(soundRow);
 
   // Countdown warning beep — pips on the last 3 seconds before auto-send.
@@ -348,6 +391,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const countdownSoundLabel = document.createElement('label');
   countdownSoundLabel.classList.add('autogeneration-info');
+  countdownSoundLabel.htmlFor = 'soundOnCountdownWarningCheckbox';
   countdownSoundLabel.appendChild(makeLabelText(t('soundOnCountdownWarning'), t('soundOnCountdownWarningHint')));
 
   const countdownSoundCheckbox = document.createElement('input');
@@ -357,7 +401,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const countdownSoundControl = document.createElement('span');
   countdownSoundControl.classList.add('control-group');
   countdownSoundControl.appendChild(countdownSoundCheckbox);
-  countdownSoundLabel.appendChild(countdownSoundControl);
 
   const countdownSecControl = document.createElement('div');
   countdownSecControl.classList.add('silence-delay-control');
@@ -384,6 +427,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   });
 
   countdownSoundRow.appendChild(countdownSoundLabel);
+  countdownSoundRow.appendChild(countdownSoundControl);
   countdownSoundRow.appendChild(countdownSecControl);
   autoSendOnSilenceContainer.appendChild(countdownSoundRow);
   settingsContainer.appendChild(autoSendOnSilenceContainer);
@@ -397,6 +441,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const pttInfo = document.createElement('label');
   pttInfo.classList.add('autogeneration-info');
+  pttInfo.htmlFor = 'pttCheckbox';
   pttInfo.appendChild(makeLabelText(t('pushToTalk'), t('pushToTalkHint')));
 
   const pttCheckbox = document.createElement('input');
@@ -406,7 +451,6 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const pttControl = document.createElement('span');
   pttControl.classList.add('control-group');
   pttControl.appendChild(pttCheckbox);
-  pttInfo.appendChild(pttControl);
 
   const pttKeyControl = document.createElement('div');
   pttKeyControl.classList.add('silence-delay-control');
@@ -452,6 +496,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   });
 
   pttRow.appendChild(pttInfo);
+  pttRow.appendChild(pttControl);
   pttRow.appendChild(pttKeyControl);
   pttContainer.appendChild(pttRow);
   settingsContainer.appendChild(pttContainer);
@@ -466,6 +511,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
 
   const punctuationLabel = document.createElement('label');
   punctuationLabel.classList.add('autogeneration-info');
+  punctuationLabel.htmlFor = 'voicePunctuationCheckbox';
   punctuationLabel.appendChild(makeLabelText(t('voicePunctuation'), t('voicePunctuationHint')));
 
   const punctuationCheckbox = document.createElement('input');
@@ -475,13 +521,13 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const punctuationControl = document.createElement('span');
   punctuationControl.classList.add('control-group');
   punctuationControl.appendChild(punctuationCheckbox);
-  punctuationLabel.appendChild(punctuationControl);
 
   punctuationCheckbox.addEventListener('change', () => {
     setState({isVoicePunctuationEnabled: punctuationCheckbox.checked});
   });
 
   punctuationRow.appendChild(punctuationLabel);
+  punctuationRow.appendChild(punctuationControl);
   punctuationContainer.appendChild(punctuationRow);
   settingsContainer.appendChild(punctuationContainer);
 
@@ -523,7 +569,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
       const removeBtn = document.createElement('button');
       removeBtn.textContent = '×';
       removeBtn.classList.add('replacement-remove');
-      removeBtn.setAttribute('aria-label', 'Remove');
+      removeBtn.setAttribute('aria-label', t('ariaRemove'));
 
       const updateReplacement = () => {
         const updated = [...getState().wordReplacements || []];
@@ -629,15 +675,15 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const changelogBadge = document.createElement('button');
   changelogBadge.classList.add('changelog-badge');
   changelogBadge.textContent = `v${CURRENT_VERSION}`;
-  changelogBadge.setAttribute('aria-label', 'What\'s new');
+  changelogBadge.setAttribute('aria-label', t('ariaWhatsNew'));
 
   const changelogTooltip = document.createElement('div');
   changelogTooltip.classList.add('changelog-tooltip');
 
   const userLocale = (() => {
     try {
-      const uiLang = chrome.i18n?.getUILanguage?.();
-      if (uiLang) return uiLang.split('-')[0];
+      const uiLang = getEffectiveUILanguage();
+      if (uiLang) return uiLang;
     } catch {}
     return (navigator.language || 'en').split('-')[0];
   })();
@@ -649,7 +695,10 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
     changelogTooltip.appendChild(p);
   });
 
-  changelogBadge.appendChild(changelogTooltip);
+  // The tooltip pins to the viewport's top-right corner (near the extension
+  // toolbar icon), so it must live on <body> — the modal's own transform
+  // would break position:fixed for descendants.
+  document.body.appendChild(changelogTooltip);
 
   changelogBadge.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -664,6 +713,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const closeModal = () => {
     modal.classList.remove('modal-open');
     modal.style.display = 'none';
+    changelogTooltip.classList.remove('show');
     const overlay = document.querySelector('.modal-overlay');
     if (overlay) overlay.style.display = 'none';
   };
@@ -708,7 +758,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const closeButton = document.createElement('button');
   closeButton.classList.add('modal-close-btn');
   closeButton.textContent = '×';
-  closeButton.setAttribute('aria-label', 'Close');
+  closeButton.setAttribute('aria-label', t('ariaClose'));
   closeButton.addEventListener('click', closeModal);
 
   // Theme selector — light / dark / system
@@ -781,6 +831,13 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   const linksContainer = document.createElement('div');
   linksContainer.classList.add('donation-links');
 
+  const reviewLink = document.createElement('a');
+  reviewLink.href = getStoreReviewUrl();
+  reviewLink.target = '_blank';
+  reviewLink.rel = 'noopener noreferrer';
+  reviewLink.classList.add('review-link');
+  reviewLink.textContent = t('rateUs');
+
   const donationLink = document.createElement('a');
   donationLink.href = 'https://buymeacoffee.com/bogutskii';
   donationLink.classList.add('donation-link');
@@ -796,6 +853,7 @@ export const setupModal = async (modal, favoriteLanguages, updateLanguageSelecto
   githubLink.classList.add('github-link');
   githubLink.textContent = 'GitHub';
 
+  linksContainer.appendChild(reviewLink);
   linksContainer.appendChild(donationLink);
   linksContainer.appendChild(LinkedInLink);
   linksContainer.appendChild(githubLink);

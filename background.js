@@ -1,19 +1,40 @@
-chrome.runtime.onInstalled.addListener(async () => {
-  // Avoid duplicate menu items after extension updates
+// Builds the context menus honoring the interface-language override: when
+// the user picked a UI language in settings, menu titles come from that
+// locale's messages.json instead of the browser UI language.
+const buildContextMenus = async () => {
+  let overrideMessages = null;
+  try {
+    const {uiLanguage} = await chrome.storage.local.get('uiLanguage');
+    if (uiLanguage && uiLanguage !== 'auto') {
+      const res = await fetch(chrome.runtime.getURL(`_locales/${uiLanguage}/messages.json`));
+      if (res.ok) overrideMessages = await res.json();
+    }
+  } catch {}
+
+  const title = (key) => overrideMessages?.[key]?.message || chrome.i18n.getMessage(key);
+
+  // Avoid duplicate menu items after extension updates / language switches.
   await chrome.contextMenus.removeAll();
 
-  // Create context menu items
   chrome.contextMenus.create({
     id: 'centerMic',
-    title: chrome.i18n.getMessage('contextMenuCenterMic'),
+    title: title('contextMenuCenterMic'),
     contexts: ['action'],
   });
 
   chrome.contextMenus.create({
     id: 'centerPanel',
-    title: chrome.i18n.getMessage('contextMenuCenterPanel'),
+    title: title('contextMenuCenterPanel'),
     contexts: ['action'],
   });
+};
+
+chrome.runtime.onInstalled.addListener(buildContextMenus);
+chrome.runtime.onStartup.addListener(buildContextMenus);
+
+// Rebuild menus when the interface language changes in settings.
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && changes.uiLanguage) buildContextMenus();
 });
 
 // Handle context menu clicks
@@ -39,6 +60,21 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.action === 'voice-get-tab-id') {
     sendResponse({ tabId: sender?.tab?.id ?? null });
+    return true;
+  }
+
+  // Content scripts cannot always fetch extension resources (page CSP), so
+  // the service worker serves locale files for the UI-language override.
+  if (message?.action === 'getLocaleMessages') {
+    const locale = String(message.locale || '');
+    if (!/^[a-z]{2}$/.test(locale)) {
+      sendResponse(null);
+      return true;
+    }
+    fetch(chrome.runtime.getURL(`_locales/${locale}/messages.json`))
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => sendResponse(json))
+      .catch(() => sendResponse(null));
     return true;
   }
 

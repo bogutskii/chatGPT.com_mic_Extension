@@ -182,7 +182,11 @@ const joinTranscriptParts = (existing, fragment) => {
 };
 
 const applyTranscriptsToInput = () => {
-  const text = [baseTranscript, finalTranscript, interimTranscript].filter(Boolean).reduce(joinTranscriptParts, '');
+  let text = [baseTranscript, finalTranscript, interimTranscript].filter(Boolean).reduce(joinTranscriptParts, '');
+  // Dictating into an empty field — the first sentence starts with a capital.
+  if (!baseTranscript.trim() && text) {
+    text = text.replace(/\p{L}/u, (c) => c.toUpperCase());
+  }
   writeInputValue(text);
 };
 
@@ -230,12 +234,12 @@ const resolveCurrentTabId = async () => {
     return;
   }
 
-  let t;
+  let t, loadLocaleOverride, getEffectiveUILanguage, getStoreReviewUrl;
   let languages;
   let createContainer, createButton, createSelect;
   let initializeState, getState, setState, subscribe;
   let initializeSpeechRecognition;
-  let createModal, createModalOverlay, setupModal;
+  let createModal, createModalOverlay, setupModal, stylesReady;
   let setupWidthAdjustment;
 
   try {
@@ -258,12 +262,12 @@ const resolveCurrentTabId = async () => {
       import(chrome.runtime.getURL('widthAdjustment.js')),
     ]);
 
-    ({t} = i18nModule);
+    ({t, loadLocaleOverride, getEffectiveUILanguage, getStoreReviewUrl} = i18nModule);
     ({languages} = languagesModule);
     ({createContainer, createButton, createSelect} = uiModule);
     ({initializeState, getState, setState, subscribe} = stateModule);
     ({initializeSpeechRecognition} = speechModule);
-    ({createModal, createModalOverlay, setupModal} = modalModule);
+    ({createModal, createModalOverlay, setupModal, stylesReady} = modalModule);
     ({setupWidthAdjustment} = widthModule);
   } catch {
     location.reload();
@@ -271,6 +275,7 @@ const resolveCurrentTabId = async () => {
   }
 
   await initializeState();
+  await loadLocaleOverride(getState().uiLanguage);
   await resolveCurrentTabId();
 
   // Which supported site this script is running on — lets settings and any
@@ -593,6 +598,13 @@ const resolveCurrentTabId = async () => {
       return;
     }
 
+    // Nothing to send — the countdown only makes sense with text in the input.
+    const inputField = getInputField();
+    if (!inputField || !readInputValue().trim()) {
+      stopSilenceCountdown();
+      return;
+    }
+
     if (isTimerPaused) {
       renderSilenceTimer();
       return;
@@ -604,6 +616,12 @@ const resolveCurrentTabId = async () => {
 
     if (!silenceCountdownIntervalId) {
       silenceCountdownIntervalId = setInterval(() => {
+        // Field was cleared manually — no point counting down to send nothing.
+        const currentInput = getInputField();
+        if (!currentInput || !readInputValue().trim()) {
+          stopSilenceCountdown();
+          return;
+        }
         renderSilenceTimer();
         if (!silenceDeadlineTimestamp) {
           return;
@@ -748,6 +766,14 @@ const resolveCurrentTabId = async () => {
     y: Math.max(0, Math.min(y, Math.max(0, window.innerHeight - height))),
   });
 
+  // Drag near a screen edge docks the element flush to it — handy when the
+  // controls get in the way and the user pushes them aside.
+  const SNAP_EDGE_PX = 24;
+  const snapToEdges = (x, y, width, height) => ({
+    x: x <= SNAP_EDGE_PX ? 0 : (x + width >= window.innerWidth - SNAP_EDGE_PX ? window.innerWidth - width : x),
+    y: y <= SNAP_EDGE_PX ? 0 : (y + height >= window.innerHeight - SNAP_EDGE_PX ? window.innerHeight - height : y),
+  });
+
   // Old storage may hold non-numeric leftovers (e.g. "500px" strings or
   // null) — NaN makes style.left an invalid value and the element falls
   // back to its static position on the left edge. Normalize first.
@@ -763,6 +789,26 @@ const resolveCurrentTabId = async () => {
     const x = (window.innerWidth - width) / 2 - shiftX;
     const y = (window.innerHeight - height) / 2;
     return clampToViewport(x, y, width, height);
+  };
+
+  // If the mic would overlap the panel, park it on a free side — preferring
+  // left, then right, then above, then below the panel.
+  const resolveMicPanelOverlap = (x, y, w, h) => {
+    const pr = container.getBoundingClientRect();
+    const overlaps = (px, py) =>
+      !(px + w <= pr.left - 4 || px >= pr.right + 4 || py + h <= pr.top - 4 || py >= pr.bottom + 4);
+    if (!overlaps(x, y)) return {x, y};
+    const candidates = [
+      {x: pr.left - w - 8, y: pr.top + pr.height / 2 - h / 2},
+      {x: pr.right + 8, y: pr.top + pr.height / 2 - h / 2},
+      {x: pr.left + pr.width / 2 - w / 2, y: pr.top - h - 8},
+      {x: pr.left + pr.width / 2 - w / 2, y: pr.bottom + 8},
+    ];
+    for (const c of candidates) {
+      const clamped = clampToViewport(c.x, c.y, w, h);
+      if (!overlaps(clamped.x, clamped.y)) return clamped;
+    }
+    return {x, y};
   };
 
   // Mic defaults to the left of the panel (panel width is unknown until
@@ -782,7 +828,8 @@ const resolveCurrentTabId = async () => {
       // left/top are written together with clearing right/bottom inside
       // updateFloatingButtonPosition; if this throws, the CSS fallback
       // keeps the mic in the bottom-right corner.
-      updateFloatingButtonPosition(target.x, target.y);
+      const resolved = resolveMicPanelOverlap(target.x, target.y, w, h);
+      updateFloatingButtonPosition(resolved.x, resolved.y);
     } catch (e) {
       console.warn('[VoiceToText] Mic init failed, using CSS fallback:', e);
     }
@@ -900,10 +947,13 @@ const resolveCurrentTabId = async () => {
     if (isPanelDragging) {
       isPanelDragging = false;
 
-      // Commit final position: base + delta, clamped to viewport.
+      // Commit final position: base + delta, clamped to viewport, then
+      // snapped to a screen edge when released near one.
       const finalX = panelInitialX + panelDragDeltaX;
       const finalY = panelInitialY + panelDragDeltaY;
-      const { x: constrainedX, y: constrainedY } = constrainPanelPosition(finalX, finalY);
+      const { x: clampedX, y: clampedY } = constrainPanelPosition(finalX, finalY);
+      const { x: constrainedX, y: constrainedY } = snapToEdges(
+        clampedX, clampedY, container.offsetWidth, container.offsetHeight);
 
       // Reset transform BEFORE removing .dragging class so the reset
       // happens with transition disabled (no "snap-back" animation).
@@ -941,12 +991,24 @@ const resolveCurrentTabId = async () => {
           container.style.left = `${centerX}px`;
           container.style.top = `${centerY}px`;
           setState({ panelX: centerX, panelY: centerY });
+          // Centering the panel may drop it onto the mic — move the mic aside.
+          {
+            const micW = floatingButtonContainer.offsetWidth;
+            const micH = floatingButtonContainer.offsetHeight;
+            const resolved = resolveMicPanelOverlap(
+              floatingButtonContainer.offsetLeft, floatingButtonContainer.offsetTop, micW, micH);
+            updateFloatingButtonPosition(resolved.x, resolved.y);
+          }
           sendResponse({ success: true });
           return true;
         case 'centerMic': {
-          const micCenterX = window.innerWidth / 2 - floatingButtonContainer.offsetWidth / 2;
-          const micCenterY = window.innerHeight / 2 - floatingButtonContainer.offsetHeight / 2;
-          updateFloatingButtonPosition(micCenterX, micCenterY);
+          const micW = floatingButtonContainer.offsetWidth;
+          const micH = floatingButtonContainer.offsetHeight;
+          const micCenterX = window.innerWidth / 2 - micW / 2;
+          const micCenterY = window.innerHeight / 2 - micH / 2;
+          // Centering must not drop the mic on top of the panel.
+          const resolved = resolveMicPanelOverlap(micCenterX, micCenterY, micW, micH);
+          updateFloatingButtonPosition(resolved.x, resolved.y);
           sendResponse({ success: true });
           return true;
         }
@@ -1012,8 +1074,9 @@ const resolveCurrentTabId = async () => {
       const finalY = dragInitialTop + dragDeltaY;
       const maxX = window.innerWidth - floatingButtonContainer.offsetWidth;
       const maxY = window.innerHeight - floatingButtonContainer.offsetHeight;
-      const clampedX = Math.max(0, Math.min(finalX, maxX));
-      const clampedY = Math.max(0, Math.min(finalY, maxY));
+      const { x: clampedX, y: clampedY } = snapToEdges(
+        Math.max(0, Math.min(finalX, maxX)), Math.max(0, Math.min(finalY, maxY)),
+        floatingButtonContainer.offsetWidth, floatingButtonContainer.offsetHeight);
 
       // Reset transform BEFORE removing .dragging class so the reset
       // happens with transition disabled (no "snap-back" animation).
@@ -1191,6 +1254,9 @@ const resolveCurrentTabId = async () => {
   container.appendChild(settingsButton);
   document.body.appendChild(container);
 
+  // Wait for the stylesheet before measuring — an unstyled container is
+  // full-width, so clamping a saved position would pin it to the left edge.
+  await stylesReady;
   // Initialize panel position after it's in DOM
   initPanel();
   // Mic sits left of the panel — needs the panel width measured first.
@@ -1261,10 +1327,46 @@ const resolveCurrentTabId = async () => {
     }
   });
 
-  await setupModal(modal, state.favoriteLanguages, (newFavoriteLanguages) => {
-    setState({favoriteLanguages: newFavoriteLanguages});
-    updateLanguageSelector(state);
-  }, container, updateFloatingButtonPosition, floatingButtonContainer);
+  const buildModalContent = () =>
+    setupModal(modal, getState().favoriteLanguages, (newFavoriteLanguages) => {
+      setState({favoriteLanguages: newFavoriteLanguages});
+      updateLanguageSelector(state);
+    }, container, updateFloatingButtonPosition, floatingButtonContainer);
+  await buildModalContent();
+
+  // Interface language switch: reload the override messages, rebuild the
+  // settings modal and refresh the floating panel's localized strings —
+  // all without reloading the page. Triggered both by setState (same tab)
+  // and by storage.onChanged (in case another listener throws first).
+  let appliedUiLanguage = getState().uiLanguage;
+  let relocalizeToken = 0;
+  const handleUiLanguageChange = (lang) => {
+    if (!lang || lang === appliedUiLanguage) return;
+    appliedUiLanguage = lang;
+    const token = ++relocalizeToken;
+    loadLocaleOverride(lang).then(() => {
+      if (token !== relocalizeToken) return;
+      floatingMicButton.setAttribute('aria-label', t('micButtonLabel'));
+      floatingClearButton.setAttribute('aria-label', t('clearButtonLabel'));
+      settingsButton.setAttribute('aria-label', t('settingsButtonLabel'));
+      languageSelector.setAttribute('aria-label', t('languageSelectorLabel'));
+      updateToggleArrow();
+      if (silenceTimerIndicator) silenceTimerIndicator.title = t('timerTitle');
+      // Tooltips appended to <body> (e.g. changelog) belong to the old modal
+      // build — drop them before re-rendering.
+      document.body.querySelectorAll('.changelog-tooltip').forEach(el => el.remove());
+      modal.innerHTML = '';
+      buildModalContent();
+    });
+  };
+  subscribe(() => handleUiLanguageChange(getState().uiLanguage));
+  try {
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area === 'local' && changes.uiLanguage) {
+        handleUiLanguageChange(changes.uiLanguage.newValue);
+      }
+    });
+  } catch {}
 
   await setupWidthAdjustment(modal);
 
@@ -1273,6 +1375,49 @@ const resolveCurrentTabId = async () => {
     console.error('Speech recognition init failed');
     return;
   }
+
+  // One-time review prompt: pops up next to the mic a few seconds after the
+  // first successful dictation start. Store link hl follows the effective UI
+  // language (settings override or browser) when we support it, else English.
+  const showReviewPrompt = () => {
+    setState({hasSeenReviewPrompt: true});
+    const prompt = document.createElement('div');
+    prompt.classList.add('onboarding-tooltip', 'review-prompt');
+
+    const title = document.createElement('div');
+    title.classList.add('onboarding-title');
+    title.textContent = t('reviewPromptTitle');
+
+    const text = document.createElement('div');
+    text.classList.add('onboarding-text');
+    text.textContent = t('reviewPromptText');
+
+    const actions = document.createElement('div');
+    actions.classList.add('review-prompt-actions');
+
+    const reviewLink = document.createElement('a');
+    reviewLink.classList.add('onboarding-button');
+    reviewLink.href = getStoreReviewUrl();
+    reviewLink.target = '_blank';
+    reviewLink.rel = 'noopener noreferrer';
+    reviewLink.textContent = t('reviewPromptButton');
+    reviewLink.addEventListener('click', () => prompt.remove());
+
+    const laterBtn = document.createElement('button');
+    laterBtn.classList.add('review-prompt-later');
+    laterBtn.textContent = t('reviewPromptLater');
+    laterBtn.addEventListener('click', () => prompt.remove());
+
+    actions.appendChild(reviewLink);
+    actions.appendChild(laterBtn);
+    prompt.appendChild(title);
+    prompt.appendChild(text);
+    prompt.appendChild(actions);
+    document.body.appendChild(prompt);
+
+    // Auto-dismiss after 20 seconds.
+    setTimeout(() => prompt.remove(), 20000);
+  };
 
   recognition.continuous = true;
   recognition.interimResults = true;
@@ -1325,6 +1470,9 @@ const resolveCurrentTabId = async () => {
         floatingMicButton.classList.add('ptt-active');
       }
       startSilenceCountdown();
+      if (!getState().hasSeenReviewPrompt) {
+        setTimeout(showReviewPrompt, 4000);
+      }
     } catch (error) {
       if (error && error.name === 'InvalidStateError') {
         // start() raced with a recognizer that is still stopping — force it
@@ -2097,13 +2245,22 @@ const resolveCurrentTabId = async () => {
     onboardingText.classList.add('onboarding-text');
     onboardingText.textContent = t('onboardingText');
 
+    const dismissOnboarding = () => {
+      if (!onboarding.parentNode) return;
+      onboarding.remove();
+      setState({hasSeenOnboarding: true});
+      // Second message: the store-review prompt right after the welcome card
+      // (e.g. after a settings reset) — a short pause lets the first card
+      // animate away instead of instantly swapping.
+      if (!getState().hasSeenReviewPrompt) {
+        setTimeout(showReviewPrompt, 600);
+      }
+    };
+
     const gotItBtn = document.createElement('button');
     gotItBtn.classList.add('onboarding-button');
     gotItBtn.textContent = t('onboardingGotIt');
-    gotItBtn.addEventListener('click', () => {
-      onboarding.remove();
-      setState({hasSeenOnboarding: true});
-    });
+    gotItBtn.addEventListener('click', dismissOnboarding);
 
     onboarding.appendChild(onboardingTitle);
     onboarding.appendChild(onboardingText);
@@ -2111,11 +2268,6 @@ const resolveCurrentTabId = async () => {
     document.body.appendChild(onboarding);
 
     // Auto-dismiss after 15 seconds.
-    setTimeout(() => {
-      if (onboarding.parentNode) {
-        onboarding.remove();
-        setState({hasSeenOnboarding: true});
-      }
-    }, 15000);
+    setTimeout(dismissOnboarding, 15000);
   }
 })();

@@ -243,5 +243,45 @@
   "soundOnCountdownWarningHint": {
     "message": "Сигналить на останніх секундах таймера — оберіть відлік за 3 або 5 секунд.",
     "description": "Hint for the countdown warning sound option."
+  },
+  "reviewPromptTitle": {
+    "message": "Подобається голосове введення?",
+    "description": "Title of the one-time review prompt shown after first dictation."
+  },
+  "reviewPromptText": {
+    "message": "Залиште відгук у Chrome Web Store — у відгуку ви можете також запропонувати функцію, яку хочете бачити в наступній версії.",
+    "description": "Body of the review prompt — explains that reviews can include feature suggestions."
+  },
+  "reviewPromptButton": {
+    "message": "Залишити відгук",
+    "description": "Primary button in the review prompt opening the Chrome Web Store listing."
+  },
+  "reviewPromptLater": {
+    "message": "Можливо, пізніше",
+    "description": "Dismiss button in the review prompt."
+  },
+  "ariaInfo": {
+    "message": "Довідка"
+  },
+  "ariaRemove": {
+    "message": "Видалити"
+  },
+  "ariaClose": {
+    "message": "Закрити"
+  },
+  "ariaWhatsNew": {
+    "message": "Що нового"
+  },
+  "uiLanguageLabel": {
+    "message": "Мова інтерфейсу"
+  },
+  "uiLanguageAuto": {
+    "message": "Авто (браузер)"
+  },
+  "uiLanguageHint": {
+    "message": "Оберіть мову цієї панелі та підказок. «Авто» — мова вашого браузера."
+  },
+  "rateUs": {
+    "message": "Оцінити"
   }
 }

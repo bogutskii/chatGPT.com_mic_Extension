@@ -323,7 +323,8 @@
 
 .donation-link,
 .linkedin-link,
-.github-link {
+.github-link,
+.review-link {
     text-decoration: none;
     color: #6b7280;
     font-weight: 500;
@@ -336,10 +337,18 @@
 
 .donation-link:hover,
 .linkedin-link:hover,
-.github-link:hover {
+.github-link:hover,
+.review-link:hover {
     color: #7c3aed;
     background-color: rgba(139, 92, 246, 0.08);
     border-color: rgba(139, 92, 246, 0.3);
+}
+
+/* Star prefix makes the "Rate us" link stand out among the footer links. */
+.review-link::before {
+    content: '★';
+    margin-right: 4px;
+    color: #f59e0b;
 }
 
 .author {
@@ -455,7 +464,8 @@
     transform: rotate(45deg) scale(1);
 }
 
-.autogeneration-info input[type="checkbox"] {
+.autogeneration-info input[type="checkbox"],
+.control-group input[type="checkbox"] {
     width: 18px;
     height: 18px;
 }
@@ -622,11 +632,55 @@ input[type="range"]::-moz-range-thumb:hover {
     box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5);
 }
 
+/* Three visual columns inside option rows: label | checkbox | extra control.
+   The fixed third column keeps checkboxes vertically aligned across rows. */
 .silence-autosend-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 210px;
+    align-items: center;
+    gap: 12px;
+}
+
+.silence-autosend-container {
+    gap: 10px;
+}
+
+.silence-autosend-row > .silence-delay-control {
+    justify-self: end;
+}
+
+.silence-autosend-row .control-group {
+    justify-self: center;
+    margin-left: 0;
+}
+
+.ui-language-container {
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    padding: 12px 18px;
+}
+
+.ui-language-container select {
+    padding: 5px 26px 5px 10px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    font-size: 13px;
+    color: #1f2937;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 3px center;
+}
+
+.ui-language-container select:hover {
+    border-color: #d1d5db;
 }
 
 .silence-delay-control {
@@ -674,7 +728,7 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 .silence-delay-warning {
-    margin-top: 10px;
+    margin-top: 0;
     font-size: 12px;
     line-height: 1.35;
     color: #9a3412;
@@ -682,15 +736,11 @@ input[type="range"]::-moz-range-thumb:hover {
     border: 1px solid rgba(251, 191, 36, 0.5);
     border-radius: 8px;
     padding: 8px 10px;
-    min-height: 38px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s ease;
+    display: none;
 }
 
 .silence-delay-warning.show {
-    opacity: 1;
-    visibility: visible;
+    display: block;
 }
 
 .silence-send-timer {
@@ -1038,7 +1088,7 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 .site-badge--inactive:hover .site-badge-tooltip,
-.site-badge--inactive:focus .site-badge-tooltip {
+.site-badge--inactive:focus-visible .site-badge-tooltip {
     opacity: 1;
     visibility: visible;
 }
@@ -1063,10 +1113,9 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 .changelog-tooltip {
-    position: absolute;
-    bottom: 130%;
-    left: 50%;
-    transform: translateX(-50%);
+    position: fixed;
+    top: 16px;
+    right: 16px;
     background: #333;
     color: #fff;
     padding: 10px 14px;
@@ -1225,8 +1274,8 @@ input[type="range"]::-moz-range-thumb:hover {
 /* ===== Onboarding tooltip ===== */
 .onboarding-tooltip {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
+    top: 16px;
+    right: 16px;
     z-index: 10001;
     background: #fff;
     border: 1px solid #e5e7eb;
@@ -1238,7 +1287,7 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 @keyframes onboardingSlideIn {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(-16px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
@@ -1271,6 +1320,38 @@ input[type="range"]::-moz-range-thumb:hover {
 .onboarding-button:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(139, 92, 246, 0.35);
+}
+
+/* Review prompt — same card as onboarding, pinned to the top-right corner
+   near the extension toolbar icon. */
+.review-prompt {
+    max-width: 300px;
+}
+
+.review-prompt-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+a.onboarding-button {
+    display: inline-block;
+    text-decoration: none;
+    line-height: 1.4;
+}
+
+.review-prompt-later {
+    background: none;
+    border: none;
+    padding: 8px 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #9aa4b8;
+    cursor: pointer;
+}
+
+.review-prompt-later:hover {
+    color: #6b7280;
 }
 
 /* ===== Dark theme ===== */
@@ -1460,6 +1541,14 @@ input[type="range"]::-moz-range-thumb:hover {
     color: #e0e0e0;
 }
 
+/* The ptt-key-select dark rule above resets `background`, so restore the
+   chevron (light-colored for the dark surface) for the language select. */
+[data-vtt-theme="dark"] .ui-language-container select {
+    background: #1e1e2e url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24'%3E%3Cpath fill='%23aaa' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 3px center;
+    border-color: #3a3a4a;
+    color: #e0e0e0;
+}
+
 [data-vtt-theme="dark"] .silence-delay-control select:hover:not(:disabled) {
     border-color: #8b5cf6;
 }
@@ -1495,14 +1584,16 @@ input[type="range"]::-moz-range-thumb:hover {
 /* Footer links */
 [data-vtt-theme="dark"] .donation-link,
 [data-vtt-theme="dark"] .linkedin-link,
-[data-vtt-theme="dark"] .github-link {
+[data-vtt-theme="dark"] .github-link,
+[data-vtt-theme="dark"] .review-link {
     color: #b0b0c0;
     border-color: #3a3a4a;
 }
 
 [data-vtt-theme="dark"] .donation-link:hover,
 [data-vtt-theme="dark"] .linkedin-link:hover,
-[data-vtt-theme="dark"] .github-link:hover {
+[data-vtt-theme="dark"] .github-link:hover,
+[data-vtt-theme="dark"] .review-link:hover {
     color: #ddd6fe;
     background-color: rgba(139, 92, 246, 0.15);
     border-color: rgba(139, 92, 246, 0.5);

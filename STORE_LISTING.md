@@ -37,6 +37,13 @@ Your voice data never leaves your device. All processing happens inside the brow
 
 **What’s New**
 
+**Version 2.8**  
+- One active microphone across tabs: starting dictation on ChatGPT or DeepSeek mutes the other — no more overlapping sessions.
+- The silence countdown now only runs when there is text to send — an empty input never triggers an auto-send.
+- Dictation into an empty field now starts with a capital letter.
+- After your first dictation a one-time prompt may suggest leaving a Chrome Web Store review — a great place to request the next feature.
+- Interface language selector — the settings panel can now be switched to any of the 9 UI languages regardless of the browser language.
+
 **Version 2.7**  
 - New: dictation now works on DeepSeek (chat.deepseek.com) — microphone, auto-send, Push-to-Talk and voice punctuation are supported there too.
 - Settings are now site-aware — options that only apply to ChatGPT (like content width) are hidden on DeepSeek.
@@ -120,6 +127,13 @@ Your voice data never leaves your device. All processing happens inside the brow
 
 **Что нового**
 
+**Версия 2.8**  
+- Один активный микрофон на все вкладки: запуск диктовки в ChatGPT или DeepSeek выключает её на другой вкладке — сессии больше не пересекаются.
+- Отсчёт по тишине теперь работает только когда есть что отправить — пустое поле не вызовет автоотправку.
+- Диктовка в пустое поле теперь начинается с заглавной буквы.
+- После первой диктовки один раз появится предложение оставить отзыв в Chrome Web Store — там можно и попросить новую фичу.
+- Выбор языка интерфейса — панель настроек можно переключить на любой из 9 языков независимо от языка браузера.
+
 **Версия 2.7**  
 - Новое: диктовка теперь работает в DeepSeek (chat.deepseek.com) — там тоже поддерживаются микрофон, авто-отправка, Push-to-Talk и голосовая пунктуация.
 - Настройки теперь зависят от сайта — опции, относящиеся только к ChatGPT (например, ширина контента), скрыты на DeepSeek.
@@ -201,6 +215,13 @@ Características principales:
 Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza dentro del navegador mediante la API Web Speech integrada.
 
 **Novedades**
+
+**Versión 2.8**  
+- Un solo micrófono activo entre pestañas: iniciar el dictado en ChatGPT o DeepSeek silencia la otra — no más sesiones superpuestas.
+- La cuenta atrás por silencio solo corre cuando hay texto que enviar — un campo vacío nunca dispara el envío automático.
+- El dictado en un campo vacío ahora empieza con mayúscula.
+- Tras tu primer dictado aparece una única invitación a dejar una reseña en Chrome Web Store — un buen lugar para pedir la próxima función.
+- Selector de idioma de la interfaz — el panel de ajustes puede cambiarse a cualquiera de los 9 idiomas sin depender del navegador.
 
 **Versión 2.7**  
 - Nuevo: el dictado ahora también funciona en DeepSeek (chat.deepseek.com), con micrófono, envío automático, Push-to-Talk y puntuación por voz.
@@ -284,6 +305,13 @@ Tus datos de voz nunca salen de tu dispositivo. Todo el procesamiento se realiza
 
 **Що нового**
 
+**Версія 2.8**  
+- Один активний мікрофон на всі вкладки: запуск диктування в ChatGPT або DeepSeek вимикає його на іншій вкладці — сесії більше не перетинаються.
+- Відлік за тишею тепер працює лише коли є що надіслати — порожнє поле не викличе автовідправку.
+- Диктування в порожнє поле тепер починається з великої літери.
+- Після першого диктування один раз з'явиться пропозиція залишити відгук у Chrome Web Store — там можна й попросити нову функцію.
+- Вибір мови інтерфейсу — панель налаштувань можна перемкнути на будь-яку з 9 мов незалежно від мови браузера.
+
 **Версія 2.7**  
 - Нове: диктовка тепер працює і в DeepSeek (chat.deepseek.com) — там також підтримуються мікрофон, автовідправка, Push-to-Talk і голосова пунктуація.
 - Налаштування тепер залежать від сайту — опції, які стосуються лише ChatGPT (наприклад, ширина контенту), приховані на DeepSeek.
@@ -365,6 +393,13 @@ ChatGPT 和 DeepSeek 语音输入
 您的语音数据永远不会离开您的设备。所有处理都在浏览器内通过内置的 Web Speech API 完成。
 
 **更新内容**
+
+**版本 2.8**  
+- 各标签页只保留一个活跃麦克风：在 ChatGPT 或 DeepSeek 上开始听写会关闭另一页——会话不再重叠。
+- 倒计时现在仅在有文本可发送时运行——空白输入框绝不会触发自动发送。
+- 向空白输入框听写时现在会以大写字母开头。
+- 首次听写后可能会显示一次性提示，邀请您在 Chrome 应用商店留下评价——这也是提出新功能建议的好地方。
+- 界面语言选择器——设置面板可独立于浏览器语言切换为 9 种界面语言之一。
 
 **版本 2.7**  
 - 新增：听写现在也可在 DeepSeek（chat.deepseek.com）上使用——麦克风、自动发送、按键说话和语音标点均已支持。
@@ -448,6 +483,13 @@ ChatGPT 및 DeepSeek에서 음성을 텍스트로 변환하세요.
 
 **업데이트 내용**
 
+**버전 2.8**  
+- 모든 탭에서 마이크는 하나만 활성화됩니다: ChatGPT 또는 DeepSeek에서 받아쓰기를 시작하면 다른 탭은 꺼집니다 — 세션이 겹치지 않습니다.
+- 이제 카운트다운은 보낼 텍스트가 있을 때만 작동합니다 — 빈 입력란은 자동 전송을 유발하지 않습니다.
+- 빈 필드에 받아쓰기를 시작하면 첫 글자가 대문자로 입력됩니다.
+- 첫 받아쓰기 후 Chrome 웹 스토어 리뷰를 남기라는 안내가 한 번 표시될 수 있습니다 — 다음 기능을 요청하기 좋은 곳입니다.
+- 인터페이스 언어 선택 — 브라우저 언어와 관계없이 설정 패널을 9개 UI 언어 중 하나로 전환할 수 있습니다.
+
 **버전 2.7**  
 - 신규: DeepSeek(chat.deepseek.com)에서도 받아쓰기가 작동합니다 — 마이크, 자동 전송, Push-to-Talk, 음성 문장 부호 모두 지원됩니다.
 - 설정이 이제 사이트에 따라 표시됩니다 — 콘텐츠 너비처럼 ChatGPT 전용 옵션은 DeepSeek에서 숨겨집니다.
@@ -529,6 +571,13 @@ Fonctionnalités principales :
 Vos données vocales ne quittent jamais votre appareil. Tout le traitement s'effectue dans le navigateur via l'API Web Speech intégrée.
 
 **Nouveautés**
+
+**Version 2.8**  
+- Un seul micro actif entre les onglets : lancer la dictée sur ChatGPT ou DeepSeek coupe l'autre — fini les sessions qui se chevauchent.
+- Le compte à rebours ne tourne que s'il y a du texte à envoyer — un champ vide ne déclenche jamais l'envoi automatique.
+- La dictée dans un champ vide commence désormais par une majuscule.
+- Après votre première dictée, une invitation unique peut vous proposer de laisser un avis sur le Chrome Web Store — l'endroit idéal pour demander une fonctionnalité.
+- Sélecteur de langue de l'interface — le panneau de réglages peut passer sur l'une des 9 langues indépendamment du navigateur.
 
 **Version 2.7**  
 - Nouveau : la dictée fonctionne désormais aussi sur DeepSeek (chat.deepseek.com) — micro, envoi automatique, Push-to-Talk et ponctuation vocale inclus.
@@ -612,6 +661,13 @@ Seus dados de voz nunca saem do seu dispositivo. Todo o processamento ocorre den
 
 **Novidades**
 
+**Versão 2.8**  
+- Um único microfone ativo entre abas: iniciar o ditado no ChatGPT ou DeepSeek silencia a outra — sem sessões sobrepostas.
+- A contagem regressiva só corre quando há texto para enviar — um campo vazio nunca dispara o envio automático.
+- O ditado num campo vazio agora começa com letra maiúscula.
+- Após seu primeiro ditado, um convite único pode sugerir deixar uma avaliação na Chrome Web Store — um ótimo lugar para pedir o próximo recurso.
+- Seletor de idioma da interface — o painel de configurações pode ser alternado para qualquer um dos 9 idiomas independentemente do navegador.
+
 **Versão 2.7**  
 - Novo: o ditado agora também funciona no DeepSeek (chat.deepseek.com) — com microfone, envio automático, Push-to-Talk e pontuação por voz.
 - As configurações agora dependem do site — opções exclusivas do ChatGPT (como a largura do conteúdo) ficam ocultas no DeepSeek.
@@ -693,6 +749,13 @@ ChatGPT और DeepSeek के लिए वॉइस टाइपिंग
 आपकी आवाज़ का डेटा कभी भी आपके डिवाइस को नहीं छोड़ता। सारी प्रोसेसिंग बिल्ट-इन Web Speech API के माध्यम से ब्राउज़र के अंदर होती है।
 
 **नया क्या है**
+
+**संस्करण 2.8**  
+- टैबों में एक ही सक्रिय माइक्रोफ़ोन: ChatGPT या DeepSeek पर डिक्टेशन शुरू करने से दूसरा टैब म्यूट हो जाता है — सत्र अब ओवरलैप नहीं होते।
+- टाइमर अब केवल तभी चलता है जब भेजने के लिए टेक्स्ट हो — खाली फ़ील्ड कभी ऑटो-सेंड नहीं करती।
+- खाली फ़ील्ड में डिक्टेशन अब बड़े अक्षर से शुरू होती है।
+- पहली डिक्टेशन के बाद एक बार Chrome Web Store पर समीक्षा छोड़ने का सुझाव आ सकता है — वहाँ आप अगली सुविधा का अनुरोध भी कर सकते हैं।
+- इंटरफ़ेस भाषा चयनकर्ता — सेटिंग्स पैनल को ब्राउज़र भाषा से स्वतंत्र रूप से 9 UI भाषाओं में से किसी पर बदला जा सकता है।
 
 **संस्करण 2.7**  
 - नया: डिक्टेशन अब DeepSeek (chat.deepseek.com) पर भी काम करता है — वहां भी माइक्रोफ़ोन, ऑटो-सेंड, Push-to-Talk और वॉइस विराम-चिह्न समर्थित हैं।

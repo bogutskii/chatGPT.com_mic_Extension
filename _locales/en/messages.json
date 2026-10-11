@@ -243,5 +243,45 @@
   "soundOnCountdownWarningHint": {
     "message": "Beeps on each of the last seconds before the auto-send fires — pick a 3s or 5s warning.",
     "description": "Hint for the countdown warning sound option."
+  },
+  "reviewPromptTitle": {
+    "message": "Enjoying voice dictation?",
+    "description": "Title of the one-time review prompt shown after first dictation."
+  },
+  "reviewPromptText": {
+    "message": "Leave a review in the Chrome Web Store — in your review you can also suggest a feature you would like to see in the next version.",
+    "description": "Body of the review prompt — explains that reviews can include feature suggestions."
+  },
+  "reviewPromptButton": {
+    "message": "Leave a review",
+    "description": "Primary button in the review prompt opening the Chrome Web Store listing."
+  },
+  "reviewPromptLater": {
+    "message": "Maybe later",
+    "description": "Dismiss button in the review prompt."
+  },
+  "ariaInfo": {
+    "message": "Info"
+  },
+  "ariaRemove": {
+    "message": "Remove"
+  },
+  "ariaClose": {
+    "message": "Close"
+  },
+  "ariaWhatsNew": {
+    "message": "What's new"
+  },
+  "uiLanguageLabel": {
+    "message": "Interface language"
+  },
+  "uiLanguageAuto": {
+    "message": "Auto (browser)"
+  },
+  "uiLanguageHint": {
+    "message": "Choose the language of this panel and tooltips. \"Auto\" follows your browser language."
+  },
+  "rateUs": {
+    "message": "Rate us"
   }
 }

@@ -1,6 +1,10 @@
-import {localizePage, t} from './i18n.js';
+import {localizePage, t, loadLocaleOverride} from './i18n.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const {uiLanguage} = await chrome.storage.local.get('uiLanguage');
+    await loadLocaleOverride(uiLanguage);
+  } catch {}
   localizePage();
 
   const manifest = chrome.runtime.getManifest();

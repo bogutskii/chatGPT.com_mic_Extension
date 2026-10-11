@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "__MSG_extensionName__",
-  "version": "2.7",
+  "version": "2.8",
   "description": "__MSG_extensionDescription__",
   "default_locale": "en",
   "author": "Petr Bogutskii",
@@ -45,6 +45,7 @@
     {
       "resources": [
         "img/*",
+        "_locales/*/messages.json",
         "styles.css",
         "languages.js",
         "ui.js",

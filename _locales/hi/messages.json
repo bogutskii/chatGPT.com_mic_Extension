@@ -243,5 +243,45 @@
   "soundOnCountdownWarningHint": {
     "message": "ऑटो-सेंड से पहले अंतिम सेकंडों पर बीप करता है — 3s या 5s चेतावनी चुनें।",
     "description": "Hint for the countdown warning sound option."
+  },
+  "reviewPromptTitle": {
+    "message": "वॉइस डिक्टेशन पसंद आया?",
+    "description": "Title of the one-time review prompt shown after first dictation."
+  },
+  "reviewPromptText": {
+    "message": "Chrome Web Store पर एक समीक्षा छोड़ें — अपनी समीक्षा में आप अगले वर्ज़न के लिए कोई फ़ीचर भी सुझा सकते हैं।",
+    "description": "Body of the review prompt — explains that reviews can include feature suggestions."
+  },
+  "reviewPromptButton": {
+    "message": "समीक्षा छोड़ें",
+    "description": "Primary button in the review prompt opening the Chrome Web Store listing."
+  },
+  "reviewPromptLater": {
+    "message": "शायद बाद में",
+    "description": "Dismiss button in the review prompt."
+  },
+  "ariaInfo": {
+    "message": "जानकारी"
+  },
+  "ariaRemove": {
+    "message": "हटाएँ"
+  },
+  "ariaClose": {
+    "message": "बंद करें"
+  },
+  "ariaWhatsNew": {
+    "message": "नया क्या है"
+  },
+  "uiLanguageLabel": {
+    "message": "इंटरफ़ेस भाषा"
+  },
+  "uiLanguageAuto": {
+    "message": "ऑटो (ब्राउज़र)"
+  },
+  "uiLanguageHint": {
+    "message": "इस पैनल और टूलटिप की भाषा चुनें। \"ऑटो\" आपके ब्राउज़र की भाषा का पालन करता है।"
+  },
+  "rateUs": {
+    "message": "रेटिंग दें"
   }
 }

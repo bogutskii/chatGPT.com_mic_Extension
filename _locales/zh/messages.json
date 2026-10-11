@@ -243,5 +243,45 @@
   "soundOnCountdownWarningHint": {
     "message": "在自动发送前的最后几秒发出提示音——可选3秒或5秒警告。",
     "description": "Hint for the countdown warning sound option."
+  },
+  "reviewPromptTitle": {
+    "message": "喜欢语音听写吗？",
+    "description": "Title of the one-time review prompt shown after first dictation."
+  },
+  "reviewPromptText": {
+    "message": "请在 Chrome 应用商店留下评价——您还可以在评价中提出希望在下个版本中看到的功能建议。",
+    "description": "Body of the review prompt — explains that reviews can include feature suggestions."
+  },
+  "reviewPromptButton": {
+    "message": "留下评价",
+    "description": "Primary button in the review prompt opening the Chrome Web Store listing."
+  },
+  "reviewPromptLater": {
+    "message": "以后再说",
+    "description": "Dismiss button in the review prompt."
+  },
+  "ariaInfo": {
+    "message": "信息"
+  },
+  "ariaRemove": {
+    "message": "移除"
+  },
+  "ariaClose": {
+    "message": "关闭"
+  },
+  "ariaWhatsNew": {
+    "message": "新功能"
+  },
+  "uiLanguageLabel": {
+    "message": "界面语言"
+  },
+  "uiLanguageAuto": {
+    "message": "自动（浏览器）"
+  },
+  "uiLanguageHint": {
+    "message": "选择此面板和提示的语言。「自动」跟随浏览器语言。"
+  },
+  "rateUs": {
+    "message": "给我们评分"
   }
 }
